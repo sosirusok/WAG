@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6f6f3">
+  <meta name="description" content="{{PAGE_DESCRIPTION}}">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:title" content="{{PAGE_TITLE}}">
+  <meta property="og:description" content="{{PAGE_DESCRIPTION}}">
+  <meta property="og:url" content="{{CANONICAL_URL}}">
+  <meta property="og:image" content="{{OG_URL}}">
+  <base href="{{SITE_URL}}">
+  <link rel="canonical" href="{{CANONICAL_URL}}">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>{{PAGE_TITLE}}</title>
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{{STRUCTURED_DATA}}</script>
+</head>
+<body id="top" data-page="project">
+  <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
+  {{HEADER}}
+  <main id="main">
+    <article class="project-page">
+      <header class="project-hero shell reveal">
+        <a class="breadcrumb" href="work/">← 작업 목록</a>
+        <div class="project-heading">
+          <p>{{PROJECT_CATEGORY}} / {{PROJECT_YEAR}}</p>
+          <h1>{{PROJECT_TITLE}}</h1>
+          <div><p>{{PROJECT_SUMMARY}}</p>{{PROJECT_EXTERNAL}}</div>
+        </div>
+      </header>
+      <figure class="project-cover shell reveal">{{PROJECT_IMAGE}}</figure>
+      <section class="project-facts shell" aria-label="프로젝트 구축 내용">
+        <article class="reveal"><span>요청</span><p>{{PROJECT_PROBLEM}}</p></article>
+        <article class="reveal"><span>구축</span><p>{{PROJECT_SOLUTION}}</p></article>
+        <article class="reveal"><span>운영 구조</span><p>{{PROJECT_RESULT}}</p></article>
+      </section>
+      <section class="project-features shell reveal" aria-labelledby="project-features-title">
+        <div><p>구축 기능</p><h2 id="project-features-title">이 작업에 포함된 범위</h2></div>
+        <ul>{{PROJECT_FEATURES}}</ul>
+      </section>
+      <div class="project-next shell reveal">{{NEXT_PROJECT}}</div>
+    </article>
+  </main>
+  {{FOOTER}}
+  <script src="app.js" defer></script>
+</body>
+</html>

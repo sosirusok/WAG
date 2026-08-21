@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6f6f3">
+  <meta name="description" content="{{PAGE_DESCRIPTION}}">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:title" content="{{PAGE_TITLE}}">
+  <meta property="og:description" content="{{PAGE_DESCRIPTION}}">
+  <meta property="og:url" content="{{CANONICAL_URL}}">
+  <meta property="og:image" content="{{OG_URL}}">
+  <base href="{{SITE_URL}}">
+  <link rel="canonical" href="{{CANONICAL_URL}}">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>{{PAGE_TITLE}}</title>
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{{STRUCTURED_DATA}}</script>
+</head>
+<body id="top" data-page="contact">
+  <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
+  {{HEADER}}
+  <main id="main">
+    <header class="page-hero contact-page-hero shell reveal">
+      <p>진행과 상담</p>
+      <div><h1>필요한 기능을 고르면<br>문의 내용이 정리됩니다.</h1><p>{{RESPONSE_NOTE}}</p></div>
+    </header>
+
+    <section class="scope-section shell reveal" aria-labelledby="scope-title">
+      <div class="scope-section-heading"><p>문의 내용 만들기</p><h2 id="scope-title">개인정보를 입력하지 않고<br>제작 범위부터 정리해 보세요.</h2></div>
+      <div class="scope-builder" data-scope-builder>
+        <div class="scope-form">
+          <div class="scope-progress"><span data-scope-progress>1 / 4</span><div><i data-scope-progress-bar></i></div></div>
+
+          <section class="scope-step" data-scope-step="1">
+            <span>첫 번째</span><h3>무엇을 만들 예정인가요?</h3>
+            <div class="choice-grid type-choices">{{PLANNER_TYPES}}</div>
+          </section>
+
+          <section class="scope-step" data-scope-step="2" hidden>
+            <span>두 번째</span><h3>어떤 기능이 필요한가요?</h3>
+            <p>여러 개를 선택할 수 있습니다.</p>
+            <div class="choice-grid feature-choices">{{PLANNER_FEATURES}}</div>
+          </section>
+
+          <section class="scope-step" data-scope-step="3" hidden>
+            <span>세 번째</span><h3>현재 준비 상태를 골라주세요.</h3>
+            <div class="choice-grid state-choices">
+              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="준비 상태" data-scope-value="아이디어만 있음">아이디어만 있음</button>
+              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="준비 상태" data-scope-value="참고 사이트 있음">참고 사이트 있음</button>
+              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="준비 상태" data-scope-value="기획안 있음">기획안 있음</button>
+              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="준비 상태" data-scope-value="기존 사이트 수정">기존 사이트 수정</button>
+            </div>
+          </section>
+
+          <section class="scope-step" data-scope-step="4" hidden>
+            <span>마지막</span><h3>희망 일정을 골라주세요.</h3>
+            <div class="choice-grid schedule-choices">
+              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="희망 일정" data-scope-value="가능한 빠르게">가능한 빠르게</button>
+              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="희망 일정" data-scope-value="1개월 안">1개월 안</button>
+              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="희망 일정" data-scope-value="1개월에서 3개월">1개월에서 3개월</button>
+              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="희망 일정" data-scope-value="일정 협의 필요">일정 협의 필요</button>
+            </div>
+          </section>
+
+          <div class="scope-controls">
+            <button type="button" data-scope-back disabled>이전</button>
+            <button type="button" data-scope-next>다음 <span aria-hidden="true">→</span></button>
+          </div>
+        </div>
+
+        <aside class="scope-summary" aria-labelledby="summary-title">
+          <span>상담용 요약</span><h3 id="summary-title">선택한 내용</h3>
+          <pre data-scope-summary aria-live="polite">아직 선택한 내용이 없습니다.</pre>
+          <div class="summary-actions">
+            <button type="button" data-scope-copy>문의 내용 복사</button>
+            <a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 상담 열기 ↗</a>
+          </div>
+          <p data-copy-status aria-live="polite"></p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="process-section shell" aria-labelledby="process-title">
+      <div class="section-intro reveal"><p>진행 방식</p><div><h2 id="process-title">범위를 먼저 정하고<br>확인 가능한 화면부터 만듭니다.</h2></div></div>
+      <ol class="process-list">{{PROCESS}}</ol>
+    </section>
+
+    <section class="faq-section shell" aria-labelledby="faq-title">
+      <div class="section-intro reveal"><p>자주 묻는 질문</p><div><h2 id="faq-title">문의 전에<br>확인해 주세요.</h2></div></div>
+      <div class="faq-list">{{FAQ}}</div>
+    </section>
+
+    <section class="direct-contact reveal">
+      <div class="shell direct-contact-inner"><p>바로 문의하기</p><div><h2>정리된 내용이 없어도<br>상담할 수 있습니다.</h2><a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 <span aria-hidden="true">↗</span></a><a href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a></div></div>
+    </section>
+  </main>
+  {{FOOTER}}
+  <script src="app.js" defer></script>
+</body>
+</html>
