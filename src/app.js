@@ -9,8 +9,8 @@
   const footer = document.querySelector(".site-footer");
   const wordmark = document.querySelector(".wordmark");
   const mobileContactBar = document.querySelector(".mobile-contact-bar");
-const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-document.documentElement.classList.add("motion-ready");
+  const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  document.documentElement.classList.add("motion-ready");
   let reduceMotion = motionQuery.matches;
   motionQuery.addEventListener?.("change", (event) => { reduceMotion = event.matches; });
 
