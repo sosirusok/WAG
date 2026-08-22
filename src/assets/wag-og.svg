@@ -1,20 +1,45 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
-    <clipPath id="screen"><rect x="538" y="56" width="598" height="414"/></clipPath>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M60 0H0V60" fill="none" stroke="#ffffff" stroke-opacity=".045"/>
+    </pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#000000" flood-opacity=".55"/>
+    </filter>
+    <clipPath id="primary-screen"><rect x="618" y="80" width="514" height="353" rx="1"/></clipPath>
+    <clipPath id="secondary-screen"><rect x="788" y="342" width="344" height="216" rx="1"/></clipPath>
   </defs>
-  <rect width="1200" height="630" fill="#f6f6f3"/>
-  <rect x="64" y="56" width="8" height="414" fill="#3157ff"/>
-  <text x="104" y="154" fill="#111214" font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="800" letter-spacing="-7">WAG</text>
-  <text x="108" y="199" fill="#676a70" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" letter-spacing="2.6">WEB / APP / GAME</text>
-  <line x1="104" y1="260" x2="454" y2="260" stroke="#111214" stroke-width="1"/>
-  <text x="104" y="304" fill="#111214" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700">WEB / APP / GAME / SYSTEM</text>
-  <text x="104" y="345" fill="#676a70" font-family="Arial, Helvetica, sans-serif" font-size="17">Design, build and operation.</text>
-  <text x="104" y="442" fill="#676a70" font-family="Arial, Helvetica, sans-serif" font-size="15">sosirusok.github.io/WAG/</text>
-  <rect x="528" y="46" width="618" height="434" fill="#ffffff" stroke="#d8dadf" stroke-width="2"/>
-  <image x="538" y="56" width="598" height="414" xlink:href="case-catharsis.jpg" preserveAspectRatio="xMidYMin slice" clip-path="url(#screen)"/>
-  <rect x="528" y="480" width="618" height="50" fill="#ffffff" stroke="#d8dadf" stroke-width="2"/>
-  <text x="548" y="512" fill="#111214" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700">WORK 01 / 2026</text>
-  <rect x="0" y="530" width="1200" height="100" fill="#181a1f"/>
-  <text x="64" y="590" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Web, app, game and operation systems.</text>
-  <text x="1136" y="590" fill="#9cb0ff" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">WAG</text>
+  <rect width="1200" height="630" fill="#0b0d11"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <circle cx="72" cy="82" r="5" fill="#7df29a"/>
+  <text x="91" y="88" fill="#ffffff" fill-opacity=".62" font-family="Wanted Sans WAG, Arial, sans-serif" font-size="14" font-weight="650">새 프로젝트 상담 중</text>
+  <text x="64" y="190" fill="#ffffff" font-family="Wanted Sans WAG, Arial, sans-serif" font-size="92" font-weight="850" letter-spacing="-7">WAG</text>
+  <text x="68" y="236" fill="#ffffff" fill-opacity=".45" font-family="Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="3">WEB / APP / GAME</text>
+  <text x="64" y="338" fill="#ffffff" font-family="Wanted Sans WAG, Arial, sans-serif" font-size="48" font-weight="720" letter-spacing="-2">웹, 앱, 게임.</text>
+  <text x="64" y="398" fill="#ee5a40" font-family="Wanted Sans WAG, Arial, sans-serif" font-size="48" font-weight="720" letter-spacing="-2">화면부터 운영 기능까지.</text>
+  <text x="66" y="456" fill="#ffffff" fill-opacity=".58" font-family="Wanted Sans WAG, Arial, sans-serif" font-size="19" font-weight="500">예약, 결제, 광고, 데이터베이스, 관리자 기능을 구축합니다.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="606" y="52" width="538" height="405" rx="5" fill="#14171c" stroke="#ffffff" stroke-opacity=".28"/>
+    <circle cx="626" cy="67" r="4" fill="#ee5a40"/>
+    <circle cx="640" cy="67" r="4" fill="#ffffff" fill-opacity=".2"/>
+    <circle cx="654" cy="67" r="4" fill="#ffffff" fill-opacity=".2"/>
+    <text x="674" y="71" fill="#ffffff" fill-opacity=".6" font-family="Wanted Sans WAG, Arial, sans-serif" font-size="10">카타르시스 이스케이프</text>
+    <image x="618" y="80" width="514" height="353" xlink:href="case-catharsis.jpg" preserveAspectRatio="xMidYMin slice" clip-path="url(#primary-screen)"/>
+    <text x="620" y="446" fill="#ffffff" fill-opacity=".58" font-family="Arial, sans-serif" font-size="9" letter-spacing="1.3">01 / LIVE OUTPUT</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="776" y="314" width="368" height="268" rx="5" fill="#344b9a" stroke="#ffffff" stroke-opacity=".38"/>
+    <text x="790" y="333" fill="#ffffff" fill-opacity=".8" font-family="Wanted Sans WAG, Arial, sans-serif" font-size="10">크라임씬플레이 서면1호점</text>
+    <image x="788" y="342" width="344" height="216" xlink:href="case-crimescene.jpg" preserveAspectRatio="xMidYMin slice" clip-path="url(#secondary-screen)"/>
+    <text x="790" y="573" fill="#ffffff" fill-opacity=".68" font-family="Arial, sans-serif" font-size="9" letter-spacing="1.3">02 / LIVE OUTPUT</text>
+  </g>
+
+  <line x1="64" y1="536" x2="548" y2="536" stroke="#ffffff" stroke-opacity=".2"/>
+  <text x="64" y="575" fill="#ffffff" fill-opacity=".52" font-family="Wanted Sans WAG, Arial, sans-serif" font-size="13">반응형 웹</text>
+  <text x="188" y="575" fill="#ffffff" fill-opacity=".52" font-family="Wanted Sans WAG, Arial, sans-serif" font-size="13">앱과 웹앱</text>
+  <text x="300" y="575" fill="#ffffff" fill-opacity=".52" font-family="Wanted Sans WAG, Arial, sans-serif" font-size="13">웹게임</text>
+  <text x="382" y="575" fill="#ffffff" fill-opacity=".52" font-family="Wanted Sans WAG, Arial, sans-serif" font-size="13">예약, 결제, 관리자</text>
 </svg>

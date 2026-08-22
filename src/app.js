@@ -9,7 +9,26 @@
   const footer = document.querySelector(".site-footer");
   const wordmark = document.querySelector(".wordmark");
   const mobileContactBar = document.querySelector(".mobile-contact-bar");
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let reduceMotion = motionQuery.matches;
+  motionQuery.addEventListener?.("change", (event) => { reduceMotion = event.matches; });
+
+  const siteProgress = document.querySelector("[data-site-progress]");
+  let scrollFrame = 0;
+  const updateScrollState = () => {
+    scrollFrame = 0;
+    if (!siteProgress) return;
+    const scrollable = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+    const progress = Math.min(Math.max(window.scrollY / scrollable, 0), 1);
+    siteProgress.style.transform = `scaleX(${progress})`;
+  };
+  const requestScrollState = () => {
+    if (scrollFrame) return;
+    scrollFrame = window.requestAnimationFrame(updateScrollState);
+  };
+  updateScrollState();
+  window.addEventListener("scroll", requestScrollState, { passive: true });
+  window.addEventListener("resize", requestScrollState, { passive: true });
 
   if (header && sentinel && "IntersectionObserver" in window) {
     const headerObserver = new IntersectionObserver(([entry]) => {
@@ -95,6 +114,101 @@
     revealElements.forEach((element) => revealObserver.observe(element));
   }
 
+  const hero = document.querySelector("[data-hero]");
+  const heroStage = document.querySelector("[data-hero-stage]");
+  let heroFrame = 0;
+  let heroPointer = null;
+  const resetHeroStage = () => {
+    if (!heroStage || reduceMotion) return;
+    heroStage.style.setProperty("--stage-x", "0px");
+    heroStage.style.setProperty("--stage-y", "0px");
+    heroStage.style.setProperty("--stage-rx", "0deg");
+    heroStage.style.setProperty("--stage-ry", "0deg");
+  };
+  const paintHeroStage = () => {
+    heroFrame = 0;
+    if (!heroStage || !heroPointer || reduceMotion || window.innerWidth <= 620) return;
+    const rect = heroStage.getBoundingClientRect();
+    const x = Math.min(Math.max((heroPointer.clientX - rect.left) / rect.width, 0), 1) - .5;
+    const y = Math.min(Math.max((heroPointer.clientY - rect.top) / rect.height, 0), 1) - .5;
+    heroStage.style.setProperty("--stage-x", `${(x * 11).toFixed(2)}px`);
+    heroStage.style.setProperty("--stage-y", `${(y * 9).toFixed(2)}px`);
+    heroStage.style.setProperty("--stage-rx", `${(x * 1.4).toFixed(2)}deg`);
+    heroStage.style.setProperty("--stage-ry", `${(y * 1.2).toFixed(2)}deg`);
+    hero?.style.setProperty("--light-x", `${(68 + x * 12).toFixed(1)}%`);
+    hero?.style.setProperty("--light-y", `${(34 + y * 10).toFixed(1)}%`);
+  };
+  heroStage?.addEventListener("pointermove", (event) => {
+    if (event.pointerType === "touch") return;
+    heroPointer = event;
+    if (!heroFrame) heroFrame = window.requestAnimationFrame(paintHeroStage);
+  });
+  heroStage?.addEventListener("pointerleave", () => {
+    heroPointer = null;
+    resetHeroStage();
+  });
+  window.addEventListener("blur", resetHeroStage);
+
+  document.querySelectorAll("[data-case-stories]").forEach((root) => {
+    const stories = [...root.querySelectorAll("[data-case-story]")];
+    const links = [...root.querySelectorAll("[data-case-nav]")];
+    if (!stories.length || !links.length || !("IntersectionObserver" in window)) return;
+    const setActiveCase = (id) => {
+      links.forEach((link) => {
+        if (link.dataset.caseNav === id) link.setAttribute("aria-current", "step");
+        else link.removeAttribute("aria-current");
+      });
+    };
+    const caseObserver = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) setActiveCase(visible.target.dataset.caseStory);
+    }, { rootMargin: "-28% 0px -46%", threshold: [0, .15, .35, .6] });
+    stories.forEach((story) => caseObserver.observe(story));
+  });
+
+  document.querySelectorAll("[data-project-link]").forEach((link) => {
+    link.addEventListener("click", () => {
+      if (reduceMotion) return;
+      document.querySelectorAll("[data-project-link] figure").forEach((figure) => { figure.style.viewTransitionName = "none"; });
+      const figure = link.querySelector("figure");
+      if (figure) figure.style.viewTransitionName = "project-cover";
+    });
+  });
+
+  document.querySelectorAll("[data-screen-open]").forEach((openButton) => {
+    const dialog = document.getElementById(openButton.dataset.screenOpen);
+    if (!(dialog instanceof HTMLDialogElement)) return;
+    const image = dialog.querySelector("[data-screen-image]");
+    const zoomButtons = [...dialog.querySelectorAll("[data-screen-zoom]")];
+    const closeButton = dialog.querySelector("[data-screen-close]");
+    const closeDialog = () => dialog.close();
+    openButton.addEventListener("click", () => {
+      if (typeof dialog.showModal === "function") dialog.showModal();
+      else dialog.setAttribute("open", "");
+      document.body.classList.add("dialog-open");
+      closeButton?.focus();
+    });
+    closeButton?.addEventListener("click", closeDialog);
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) closeDialog();
+    });
+    dialog.addEventListener("close", () => {
+      document.body.classList.remove("dialog-open");
+      if (image) image.style.width = "100%";
+      zoomButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.screenZoom === "100")));
+      openButton.focus();
+    });
+    zoomButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const zoom = Number(button.dataset.screenZoom || 100);
+        if (image) image.style.width = `${zoom}%`;
+        zoomButtons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+      });
+    });
+  });
+
   const setupTabs = (rootSelector, buttonSelector, panelSelector, buttonAttribute, panelAttribute) => {
     document.querySelectorAll(rootSelector).forEach((root) => {
       const buttons = [...root.querySelectorAll(buttonSelector)];
@@ -173,8 +287,11 @@
     const summary = builder.querySelector("[data-scope-summary]");
     const copyButton = builder.querySelector("[data-scope-copy]");
     const copyStatus = builder.querySelector("[data-copy-status]");
+    const jumpButtons = [...builder.querySelectorAll("[data-scope-jump]")];
     const singleGroups = new Set(["제작 종류", "준비 상태", "희망 일정"]);
     const requiredGroups = ["제작 종류", "필요 기능", "준비 상태", "희망 일정"];
+    const groupByStep = ["제작 종류", "필요 기능", "준비 상태", "희망 일정"];
+    const storageKey = "wag-scope-builder-v1";
     let currentStep = 1;
 
     const selectedValues = (group) => choices
@@ -188,7 +305,7 @@
       const schedules = selectedValues("희망 일정");
       if (![types, features, states, schedules].some((items) => items.length)) return "아직 선택한 내용이 없습니다.";
       return [
-        "[WAG 외주 문의]",
+        "[WAG 제작 문의]",
         `제작 종류: ${types.join(", ") || "선택 전"}`,
         `필요 기능: ${features.join(", ") || "선택 전"}`,
         `준비 상태: ${states.join(", ") || "선택 전"}`,
@@ -204,13 +321,40 @@
     const isComplete = () => requiredGroups.every((group) => selectedValues(group).length > 0);
 
     const isCurrentStepComplete = () => {
-      const groupByStep = ["제작 종류", "필요 기능", "준비 상태", "희망 일정"];
       return selectedValues(groupByStep[currentStep - 1]).length > 0;
+    };
+
+    const saveBuilderState = () => {
+      try {
+        const selected = choices
+          .filter((choice) => choice.getAttribute("aria-pressed") === "true")
+          .map((choice) => ({ group: choice.dataset.scopeGroup, value: choice.dataset.scopeValue }));
+        sessionStorage.setItem(storageKey, JSON.stringify({ step: currentStep, selected }));
+      } catch {
+        // The builder still works when session storage is unavailable.
+      }
+    };
+
+    const restoreBuilderState = () => {
+      try {
+        const saved = JSON.parse(sessionStorage.getItem(storageKey) || "null");
+        if (!saved || !Array.isArray(saved.selected)) return;
+        choices.forEach((choice) => {
+          const selected = saved.selected.some((item) => item.group === choice.dataset.scopeGroup && item.value === choice.dataset.scopeValue);
+          choice.setAttribute("aria-pressed", String(selected));
+        });
+        if (Number.isInteger(saved.step)) currentStep = Math.min(Math.max(saved.step, 1), steps.length);
+      } catch {
+        // Ignore stale or unavailable session data.
+      }
     };
 
     const updateControls = () => {
       if (next) next.disabled = !isCurrentStepComplete();
       if (copyButton) copyButton.disabled = !isComplete();
+      jumpButtons.forEach((button, index) => {
+        button.dataset.complete = String(selectedValues(groupByStep[index]).length > 0);
+      });
     };
 
     const showStep = (step, moveFocus = true) => {
@@ -220,10 +364,15 @@
       if (progressBar) progressBar.style.width = `${(currentStep / steps.length) * 100}%`;
       if (back) back.disabled = currentStep === 1;
       if (next) next.innerHTML = currentStep === steps.length ? '요약 확인 <span aria-hidden="true">↗</span>' : '다음 <span aria-hidden="true">→</span>';
+      jumpButtons.forEach((button) => {
+        if (Number(button.dataset.scopeJump) === currentStep) button.setAttribute("aria-current", "step");
+        else button.removeAttribute("aria-current");
+      });
       if (moveFocus) {
         steps[currentStep - 1]?.querySelector("button")?.focus({ preventScroll: true });
       }
       updateControls();
+      saveBuilderState();
     };
 
     choices.forEach((choice) => {
@@ -238,6 +387,7 @@
         }
         updateSummary();
         updateControls();
+        saveBuilderState();
       });
     });
 
@@ -250,6 +400,10 @@
       }
     });
 
+    jumpButtons.forEach((button) => {
+      button.addEventListener("click", () => showStep(Number(button.dataset.scopeJump)));
+    });
+
     copyButton?.addEventListener("click", async () => {
       try {
         await copyText(summaryText());
@@ -259,12 +413,18 @@
       }
     });
 
+    restoreBuilderState();
+
     const requestedType = new URLSearchParams(window.location.search).get("type");
     const requestedChoice = choices.find((choice) => choice.dataset.scopeKey === requestedType);
-    if (requestedChoice) requestedChoice.setAttribute("aria-pressed", "true");
+    if (requestedChoice) {
+      choices.filter((choice) => choice.dataset.scopeGroup === "제작 종류").forEach((choice) => choice.setAttribute("aria-pressed", "false"));
+      requestedChoice.setAttribute("aria-pressed", "true");
+      currentStep = 1;
+    }
 
     updateSummary();
-    showStep(1, false);
+    showStep(currentStep, false);
   });
 
   document.querySelectorAll("[data-year]").forEach((element) => {
