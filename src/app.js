@@ -9,7 +9,8 @@
   const footer = document.querySelector(".site-footer");
   const wordmark = document.querySelector(".wordmark");
   const mobileContactBar = document.querySelector(".mobile-contact-bar");
-  const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+document.documentElement.classList.add("motion-ready");
   let reduceMotion = motionQuery.matches;
   motionQuery.addEventListener?.("change", (event) => { reduceMotion = event.matches; });
 
@@ -305,7 +306,7 @@
       const schedules = selectedValues("희망 일정");
       if (![types, features, states, schedules].some((items) => items.length)) return "아직 선택한 내용이 없습니다";
       return [
-        "[WAG 제작 문의]",
+        "[SWAG 제작 문의]",
         `제작 종류: ${types.join(", ") || "선택 전"}`,
         `필요 기능: ${features.join(", ") || "선택 전"}`,
         `준비 상태: ${states.join(", ") || "선택 전"}`,

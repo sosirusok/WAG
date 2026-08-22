@@ -128,4 +128,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log("WAG content validation passed");
+console.log("SWAG content validation passed");
