@@ -45,7 +45,7 @@ const normalizedSiteUrl = (() => {
 const pageUrl = (relative = "") => new URL(relative, normalizedSiteUrl).href;
 const kakaoUrl = safeHttpUrl(data.contact.kakao);
 const phoneDigits = data.contact.phone.replace(/\D/g, "");
-const ogUrl = pageUrl("assets/wag-og.jpg");
+const ogUrl = pageUrl("assets/wag-og.webp");
 
 const publicProjects = data.projects
   .filter((project) => project.published)
@@ -56,18 +56,18 @@ const activeAttr = (active, key) => active === key ? ' aria-current="page"' : ""
 
 const renderHeader = (active = "") => `
   <header class="site-header" data-header>
-    <div class="site-progress" data-site-progress aria-hidden="true"></div>
     <div class="header-inner">
       <a class="wordmark" href="./" aria-label="WAG 홈">
-        <span>WAG</span><small><b>WEB</b><b>APP</b><b>GAME</b></small>
+        <strong>WAG</strong><span>WEB APP GAME</span>
       </a>
       <nav class="main-nav" aria-label="주요 메뉴">
+        <a href="services/"${activeAttr(active, "services")}>서비스</a>
+        <a href="process/"${activeAttr(active, "process")}>진행 방식</a>
         <a href="work/"${activeAttr(active, "work")}>작업</a>
-        <a href="services/"${activeAttr(active, "services")}>제작 범위</a>
-        <a href="contact/"${activeAttr(active, "contact")}>진행 방식</a>
+        <a href="contact/"${activeAttr(active, "contact")}>문의</a>
       </nav>
       <a class="header-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">
-        카카오 문의 <span aria-hidden="true">↗</span>
+        카카오 상담
       </a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
         <span class="menu-label">메뉴</span><i aria-hidden="true"></i>
@@ -75,29 +75,30 @@ const renderHeader = (active = "") => `
     </div>
     <nav class="mobile-nav" id="mobile-menu" aria-label="모바일 메뉴" data-mobile-menu hidden>
       <a href="./">홈</a>
+      <a href="services/"${activeAttr(active, "services")}>서비스</a>
+      <a href="process/"${activeAttr(active, "process")}>진행 방식</a>
       <a href="work/"${activeAttr(active, "work")}>작업</a>
-      <a href="services/"${activeAttr(active, "services")}>제작 범위</a>
-      <a href="contact/"${activeAttr(active, "contact")}>진행 방식</a>
-      <a class="mobile-nav-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 ↗</a>
+      <a href="contact/"${activeAttr(active, "contact")}>문의</a>
+      <a class="mobile-nav-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 상담</a>
     </nav>
   </header>
   <div class="header-sentinel" data-header-sentinel aria-hidden="true"></div>`;
 
 const renderFooter = (currentUrl = normalizedSiteUrl) => `
   <a class="mobile-contact-bar" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">
-    <span>프로젝트 상담</span><b>카카오로 문의하기</b><i aria-hidden="true">↗</i>
+    <span>제작 문의</span><b>카카오로 상담하기</b>
   </a>
   <footer class="site-footer">
     <div class="footer-main">
-      <div class="footer-wordmark"><strong>WAG</strong><span>WEB APP GAME</span></div>
+      <div class="footer-wordmark"><strong>WAG</strong></div>
       <p>웹사이트, 앱, 게임과 예약, 결제, 데이터베이스, 관리자 기능을 구축합니다.</p>
-      <a class="footer-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오로 견적 문의 ↗</a>
+      <a class="footer-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅</a>
     </div>
     <div class="footer-meta">
       <dl><dt>운영</dt><dd>${escapeHtml(data.contact.owner)}</dd></dl>
       <dl><dt>전화</dt><dd><a href="tel:${phoneDigits}">${escapeHtml(data.contact.phone)}</a></dd></dl>
       <nav aria-label="하단 메뉴">
-        <a href="work/">작업</a><a href="services/">제작 범위</a><a href="contact/">진행 방식</a><a href="privacy.html">개인정보처리 안내</a>
+        <a href="services/">서비스</a><a href="process/">진행 방식</a><a href="work/">작업</a><a href="contact/">문의</a><a href="privacy.html">개인정보처리 안내</a>
       </nav>
     </div>
     <div class="footer-bottom"><span>© <b data-year>2026</b> WAG</span><a href="${escapeHtml(currentUrl)}#top">위로 ↑</a></div>
@@ -203,6 +204,9 @@ const renderCapabilityLab = () => {
 const renderHomeProcess = () => data.process.map((item) => `
   <li class="delivery-step reveal"><span>${escapeHtml(item.number)}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description)}</p><i aria-hidden="true"></i></li>`).join("");
 
+const renderHomeServices = () => data.services.map((service) => `
+  <a href="services/#${escapeHtml(service.id)}"><span>${escapeHtml(service.number)}</span><h3>${escapeHtml(service.title)}</h3><p>${escapeHtml(service.description)}</p><i>보기</i></a>`).join("");
+
 const renderWorkCards = () => publicProjects.map((project, index) => `
   <a class="work-card reveal" href="work/${escapeHtml(project.id)}.html">
     <figure>${renderImage(project, { priority: index === 0 })}<span>${String(index + 1).padStart(2, "0")}</span></figure>
@@ -291,13 +295,15 @@ await writePage("index.template.html", "index.html", {
   HEADLINE_TOP: data.brand.headlineTop,
   HEADLINE_FOCUS: data.brand.headlineFocus,
   HERO_DESCRIPTION: data.brand.description,
+  HOME_SERVICES: renderHomeServices(),
+  HOME_WORK: renderWorkCards(),
   HERO_STAGE: renderHeroStage(),
   CASE_NAVIGATION: renderCaseNavigation(),
   WORK_STORIES: renderWorkStories(),
   CAPABILITY_LAB: renderCapabilityLab(),
   HOME_PROCESS: renderHomeProcess(),
   RESPONSE_NOTE: data.contact.responseNote
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HERO_STAGE", "CASE_NAVIGATION", "WORK_STORIES", "CAPABILITY_LAB", "HOME_PROCESS"]);
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_SERVICES", "HOME_WORK", "HERO_STAGE", "CASE_NAVIGATION", "WORK_STORIES", "CAPABILITY_LAB", "HOME_PROCESS"]);
 
 await writePage("work.template.html", "work/index.html", {
   PAGE_TITLE: `작업 | ${data.brand.name}`,
@@ -341,8 +347,17 @@ await writePage("services.template.html", "services/index.html", {
   CAPABILITY_CHIPS: renderCapabilityChips()
 }, ["STRUCTURED_DATA", "HEADER", "FOOTER", "SERVICE_CHAPTERS", "CAPABILITY_CHIPS"]);
 
-await writePage("contact.template.html", "contact/index.html", {
+await writePage("process.template.html", "process/index.html", {
   PAGE_TITLE: `진행 방식 | ${data.brand.name}`,
+  PAGE_DESCRIPTION: "상담부터 화면 확인, 기능 연결, 검수와 배포까지 WAG의 제작 과정을 확인하세요.",
+  CANONICAL_URL: pageUrl("process/"),
+  HEADER: renderHeader("process"),
+  FOOTER: renderFooter(pageUrl("process/")),
+  PROCESS: renderProcess()
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "PROCESS"]);
+
+await writePage("contact.template.html", "contact/index.html", {
+  PAGE_TITLE: `문의 | ${data.brand.name}`,
   PAGE_DESCRIPTION: "제작 종류와 필요한 기능을 골라 상담 내용을 정리하고 WAG에 바로 문의할 수 있습니다.",
   CANONICAL_URL: pageUrl("contact/"),
   HEADER: renderHeader("contact"),
@@ -379,7 +394,7 @@ await writeFile(path.join(output, "version.json"), JSON.stringify(version, null,
 await writeFile(path.join(output, ".nojekyll"), "");
 await writeFile(path.join(output, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${pageUrl("sitemap.xml")}\n`);
 
-const sitemapEntries = ["", "work/", ...publicProjects.map((project) => `work/${project.id}.html`), "services/", "contact/", "privacy.html"];
+const sitemapEntries = ["", "services/", "process/", "work/", ...publicProjects.map((project) => `work/${project.id}.html`), "contact/", "privacy.html"];
 await writeFile(path.join(output, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${sitemapEntries.map((entry) => `<url><loc>${escapeHtml(pageUrl(entry))}</loc></url>`).join("")}</urlset>\n`);
 
 console.log(`Built WAG to ${output}`);
