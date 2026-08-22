@@ -98,7 +98,7 @@
   });
 
   window.addEventListener("resize", () => {
-    if (window.innerWidth > 960 && mobileMenu && !mobileMenu.hidden) setMenu(false);
+    if (window.innerWidth > 900 && mobileMenu && !mobileMenu.hidden) setMenu(false);
   }, { passive: true });
 
   const revealElements = document.querySelectorAll(".reveal");

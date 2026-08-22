@@ -45,7 +45,7 @@ const normalizedSiteUrl = (() => {
 const pageUrl = (relative = "") => new URL(relative, normalizedSiteUrl).href;
 const kakaoUrl = safeHttpUrl(data.contact.kakao);
 const phoneDigits = data.contact.phone.replace(/\D/g, "");
-const ogUrl = pageUrl("assets/swag-og.png");
+const ogUrl = pageUrl("assets/case-catharsis.jpg");
 
 const publicProjects = data.projects
   .filter((project) => project.published)
@@ -62,9 +62,9 @@ const renderHeader = (active = "") => `
         <strong>SWAG</strong><span>System Web App Game</span>
       </a>
       <nav class="main-nav" aria-label="주요 메뉴">
+        <a href="work/"${activeAttr(active, "work")}>작업</a>
         <a href="services/"${activeAttr(active, "services")}>제작 범위</a>
-        <a href="work/"${activeAttr(active, "work")}>작업 사례</a>
-        <a href="process/"${activeAttr(active, "process")}>진행 과정</a>
+        <a href="process/"${activeAttr(active, "process")}>진행 방식</a>
         <a href="contact/"${activeAttr(active, "contact")}>문의</a>
       </nav>
       <a class="header-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">
@@ -76,9 +76,9 @@ const renderHeader = (active = "") => `
     </div>
     <nav class="mobile-nav" id="mobile-menu" aria-label="모바일 메뉴" data-mobile-menu hidden>
       <a href="./">홈</a>
+      <a href="work/"${activeAttr(active, "work")}>작업</a>
       <a href="services/"${activeAttr(active, "services")}>제작 범위</a>
-      <a href="work/"${activeAttr(active, "work")}>작업 사례</a>
-      <a href="process/"${activeAttr(active, "process")}>진행 과정</a>
+      <a href="process/"${activeAttr(active, "process")}>진행 방식</a>
       <a href="contact/"${activeAttr(active, "contact")}>문의</a>
       <a class="mobile-nav-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">상담 문의</a>
     </nav>
@@ -99,7 +99,7 @@ const renderFooter = (currentUrl = normalizedSiteUrl) => `
       <dl><dt>운영</dt><dd>${escapeHtml(data.contact.owner)}</dd></dl>
       <dl><dt>전화</dt><dd><a href="tel:${phoneDigits}">${escapeHtml(data.contact.phone)}</a></dd></dl>
       <nav aria-label="하단 메뉴">
-        <a href="services/">제작 범위</a><a href="work/">작업 사례</a><a href="process/">진행 과정</a><a href="contact/">문의</a><a href="privacy.html">개인정보처리 안내</a>
+        <a href="work/">작업</a><a href="services/">제작 범위</a><a href="process/">진행 방식</a><a href="contact/">문의</a><a href="privacy.html">개인정보처리 안내</a>
       </nav>
     </div>
     <div class="footer-bottom"><span>© <b data-year>2026</b> SWAG</span><a href="${escapeHtml(currentUrl)}#top">위로 ↑</a></div>
@@ -113,33 +113,23 @@ const renderImage = (project, options = {}) => {
 };
 
 const renderHeroStage = () => {
-  const projects = (featuredProjects.length ? featuredProjects : publicProjects).slice(0, 2);
+  const projects = (featuredProjects.length ? featuredProjects : publicProjects).slice(0, 1);
   if (!projects.length) return "";
   const primary = projects[0];
-  const secondary = projects[1] || projects[0];
   return `
-    <div class="project-stage reveal" data-hero-stage aria-label="실제 작업 화면 미리보기">
-      <figure class="stage-visual">${renderImage(primary, { priority: true })}</figure>
-      <div class="stage-caption">
-        <div><span>대표 작업 / 01</span><h2>${escapeHtml(primary.title)}</h2><p>${escapeHtml(primary.category)}</p></div>
-        <a href="work/${escapeHtml(primary.id)}.html" aria-label="${escapeHtml(primary.title)} 작업 상세 보기">자세히 보기 <i aria-hidden="true">↗</i></a>
-      </div>
-      <a class="stage-next" href="work/${escapeHtml(secondary.id)}.html" aria-label="${escapeHtml(secondary.title)} 작업 상세 보기">
-        <span>02 / 다음 작업</span><b>${escapeHtml(secondary.title)}</b><i aria-hidden="true">↗</i>
-      </a>
-    </div>`;
+    <a class="project-stage reveal" data-hero-stage href="work/${escapeHtml(primary.id)}.html" aria-label="${escapeHtml(primary.title)} 작업 상세 보기">
+      <figure>${renderImage(primary, { priority: true })}</figure>
+      <div class="project-stage-caption"><span>${escapeHtml(primary.category)}</span><b>${escapeHtml(primary.title)}</b><i aria-hidden="true">↗</i></div>
+    </a>`;
 };
-
-const renderHomeServices = () => data.services.map((service) => `
-  <a href="services/#${escapeHtml(service.id)}"><span>${escapeHtml(service.number)}</span><div><h3>${escapeHtml(service.title)}</h3><p>${escapeHtml(service.subtitle)}</p></div><p>${escapeHtml(service.description)}</p><i aria-hidden="true">↗</i></a>`).join("");
 
 const renderWorkCards = () => publicProjects.map((project, index) => `
   <a class="work-card reveal" href="work/${escapeHtml(project.id)}.html">
-    <figure>${renderImage(project, { priority: index === 0 })}<span>운영 중 ${String(index + 1).padStart(2, "0")}</span></figure>
+    <figure>${renderImage(project, { priority: index === 0 })}</figure>
     <div class="work-card-copy">
-      <p>${escapeHtml(project.category)}</p>
+      <p>${String(index + 1).padStart(2, "0")} / ${escapeHtml(project.category)}</p>
       <h2>${escapeHtml(project.title)}</h2>
-      <div><span>${escapeHtml(project.summary)}</span><ul>${project.features.slice(0, 3).map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}</ul><i aria-hidden="true">운영 내용 보기 ↗</i></div>
+      <div><span>${escapeHtml(project.summary)}</span><i aria-hidden="true">자세히 보기 ↗</i></div>
     </div>
   </a>`).join("");
 
@@ -224,11 +214,10 @@ await writePage("index.template.html", "index.html", {
   HERO_DESCRIPTION: data.brand.description,
   PRIMARY_CTA: data.brand.primaryCta,
   SECONDARY_CTA: data.brand.secondaryCta,
-  HOME_SERVICES: renderHomeServices(),
   HOME_WORK: renderWorkCards(),
   HERO_STAGE: renderHeroStage(),
   RESPONSE_NOTE: data.contact.responseNote
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_SERVICES", "HOME_WORK", "HERO_STAGE"]);
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_WORK", "HERO_STAGE"]);
 
 await writePage("work.template.html", "work/index.html", {
   PAGE_TITLE: `작업 | ${data.brand.name}`,
@@ -245,6 +234,7 @@ for (const [index, project] of publicProjects.entries()) {
   await writePage("project.template.html", `work/${project.id}.html`, {
     PAGE_TITLE: `${project.title} | SWAG 작업`,
     PAGE_DESCRIPTION: project.summary,
+    OG_URL: pageUrl(project.image),
     CANONICAL_URL: pageUrl(`work/${project.id}.html`),
     HEADER: renderHeader("work"),
     FOOTER: renderFooter(pageUrl(`work/${project.id}.html`)),
@@ -269,7 +259,7 @@ await writePage("services.template.html", "services/index.html", {
   HEADER: renderHeader("services"),
   FOOTER: renderFooter(pageUrl("services/")),
   SERVICE_CHAPTERS: renderServiceChapters(),
-  CAPABILITY_GRID: renderCapabilityGrid()
+  CAPABILITY_GRID: renderCapabilityGrid(),
 }, ["STRUCTURED_DATA", "HEADER", "FOOTER", "SERVICE_CHAPTERS", "CAPABILITY_GRID"]);
 
 await writePage("process.template.html", "process/index.html", {

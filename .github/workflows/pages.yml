@@ -30,6 +30,8 @@ jobs:
         run: npm run build
         env:
           SITE_URL: https://sosirusok.github.io/WAG/
+      - name: Verify generated routes and assets
+        run: node scripts/audit-links.mjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
