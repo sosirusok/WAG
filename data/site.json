@@ -7,13 +7,13 @@
   },
   "brand": {
     "name": "SWAG",
-    "expansion": "SYSTEM · WEB · APP · GAME",
+    "expansion": "System Web App Game",
     "availability": "프로젝트 상담 중",
-    "eyebrow": "SYSTEM / WEB / APP / GAME",
-    "headlineTop": "웹사이트, 앱,",
-    "headlineFocus": "게임과 운영 시스템",
+    "eyebrow": "System Web App Game",
+    "headlineTop": "웹, 앱, 게임과",
+    "headlineFocus": "운영 시스템.",
     "headlineBottom": "",
-    "description": "브랜드 화면부터 예약, 결제, 회원, 데이터베이스와 관리자 기능까지 실제 운영에 필요한 흐름을 구축합니다",
+    "description": "필요한 화면부터 예약, 결제, 회원, 데이터와 관리자 기능까지 실제 운영에 맞게 연결합니다",
     "primaryCta": "프로젝트 문의",
     "secondaryCta": "작업 사례 보기"
   },
@@ -41,7 +41,7 @@
     "외부 API / 웹훅",
     "관리자 / 통계",
     "광고 / 방문 분석",
-    "AI / 업무 자동화"
+    "검색 / 업무 자동화"
   ],
   "technology": [
     "RESPONSIVE WEB",
@@ -57,12 +57,12 @@
     "ANALYTICS"
   ],
   "capabilityGroups": [
-    { "code": "01", "title": "회원과 권한", "description": "소셜 로그인, 역할별 화면, 승인과 이용권한", "tech": "AUTH · RLS · OAUTH" },
-    { "code": "02", "title": "예약과 커머스", "description": "실시간 예약, 재고, 주문, 쿠폰, PG 결제와 구독", "tech": "BOOKING · PAYMENT" },
-    { "code": "03", "title": "데이터와 API", "description": "PostgreSQL, Supabase, Firebase, 외부 API와 웹훅", "tech": "DATABASE · API" },
-    { "code": "04", "title": "실시간 기능", "description": "채팅, 상태 동기화, 멀티플레이, 랭킹과 알림", "tech": "REALTIME · PUSH" },
-    { "code": "05", "title": "운영과 분석", "description": "관리자 도구, 통계, 광고 전환, 로그와 모니터링", "tech": "ADMIN · ANALYTICS" },
-    { "code": "06", "title": "AI와 자동화", "description": "챗봇, 문서 검색, 추천, 반복 업무와 알림 자동화", "tech": "AI · AUTOMATION" }
+    { "code": "01", "title": "회원과 권한", "description": "소셜 로그인, 역할별 화면, 승인과 이용권한", "tech": "로그인 · 권한" },
+    { "code": "02", "title": "예약과 결제", "description": "실시간 예약, 재고, 주문, 쿠폰, 카드 결제와 구독", "tech": "예약 · 결제" },
+    { "code": "03", "title": "데이터와 연동", "description": "관계형 데이터베이스, 파일 저장, 외부 연동과 웹훅", "tech": "데이터 · 연동" },
+    { "code": "04", "title": "실시간 기능", "description": "채팅, 상태 동기화, 멀티플레이, 랭킹과 알림", "tech": "실시간 · 알림" },
+    { "code": "05", "title": "운영과 분석", "description": "관리자 도구, 통계, 광고 전환, 로그와 모니터링", "tech": "관리 · 분석" },
+    { "code": "06", "title": "자동화", "description": "문서 검색, 추천, 반복 업무와 알림 자동화", "tech": "검색 · 자동화" }
   ],
   "services": [
     {

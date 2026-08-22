@@ -98,7 +98,7 @@
   });
 
   window.addEventListener("resize", () => {
-    if (window.innerWidth > 820 && mobileMenu && !mobileMenu.hidden) setMenu(false);
+    if (window.innerWidth > 960 && mobileMenu && !mobileMenu.hidden) setMenu(false);
   }, { passive: true });
 
   const revealElements = document.querySelectorAll(".reveal");
@@ -114,136 +114,6 @@
     }, { rootMargin: "0px 0px -7%", threshold: 0.05 });
     revealElements.forEach((element) => revealObserver.observe(element));
   }
-
-  const hero = document.querySelector("[data-hero]");
-  const heroStage = document.querySelector("[data-hero-stage]");
-  let heroFrame = 0;
-  let heroPointer = null;
-  const resetHeroStage = () => {
-    if (!heroStage || reduceMotion) return;
-    heroStage.style.setProperty("--stage-x", "0px");
-    heroStage.style.setProperty("--stage-y", "0px");
-    heroStage.style.setProperty("--stage-rx", "0deg");
-    heroStage.style.setProperty("--stage-ry", "0deg");
-  };
-  const paintHeroStage = () => {
-    heroFrame = 0;
-    if (!heroStage || !heroPointer || reduceMotion || window.innerWidth <= 620) return;
-    const rect = heroStage.getBoundingClientRect();
-    const x = Math.min(Math.max((heroPointer.clientX - rect.left) / rect.width, 0), 1) - .5;
-    const y = Math.min(Math.max((heroPointer.clientY - rect.top) / rect.height, 0), 1) - .5;
-    heroStage.style.setProperty("--stage-x", `${(x * 11).toFixed(2)}px`);
-    heroStage.style.setProperty("--stage-y", `${(y * 9).toFixed(2)}px`);
-    heroStage.style.setProperty("--stage-rx", `${(x * 1.4).toFixed(2)}deg`);
-    heroStage.style.setProperty("--stage-ry", `${(y * 1.2).toFixed(2)}deg`);
-    hero?.style.setProperty("--light-x", `${(68 + x * 12).toFixed(1)}%`);
-    hero?.style.setProperty("--light-y", `${(34 + y * 10).toFixed(1)}%`);
-  };
-  heroStage?.addEventListener("pointermove", (event) => {
-    if (event.pointerType === "touch") return;
-    heroPointer = event;
-    if (!heroFrame) heroFrame = window.requestAnimationFrame(paintHeroStage);
-  });
-  heroStage?.addEventListener("pointerleave", () => {
-    heroPointer = null;
-    resetHeroStage();
-  });
-  window.addEventListener("blur", resetHeroStage);
-
-  document.querySelectorAll("[data-case-stories]").forEach((root) => {
-    const stories = [...root.querySelectorAll("[data-case-story]")];
-    const links = [...root.querySelectorAll("[data-case-nav]")];
-    if (!stories.length || !links.length || !("IntersectionObserver" in window)) return;
-    const setActiveCase = (id) => {
-      links.forEach((link) => {
-        if (link.dataset.caseNav === id) link.setAttribute("aria-current", "step");
-        else link.removeAttribute("aria-current");
-      });
-    };
-    const caseObserver = new IntersectionObserver((entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (visible) setActiveCase(visible.target.dataset.caseStory);
-    }, { rootMargin: "-28% 0px -46%", threshold: [0, .15, .35, .6] });
-    stories.forEach((story) => caseObserver.observe(story));
-  });
-
-  document.querySelectorAll("[data-project-link]").forEach((link) => {
-    link.addEventListener("click", () => {
-      if (reduceMotion) return;
-      document.querySelectorAll("[data-project-link] figure").forEach((figure) => { figure.style.viewTransitionName = "none"; });
-      const figure = link.querySelector("figure");
-      if (figure) figure.style.viewTransitionName = "project-cover";
-    });
-  });
-
-  document.querySelectorAll("[data-screen-open]").forEach((openButton) => {
-    const dialog = document.getElementById(openButton.dataset.screenOpen);
-    if (!(dialog instanceof HTMLDialogElement)) return;
-    const image = dialog.querySelector("[data-screen-image]");
-    const zoomButtons = [...dialog.querySelectorAll("[data-screen-zoom]")];
-    const closeButton = dialog.querySelector("[data-screen-close]");
-    const closeDialog = () => dialog.close();
-    openButton.addEventListener("click", () => {
-      if (typeof dialog.showModal === "function") dialog.showModal();
-      else dialog.setAttribute("open", "");
-      document.body.classList.add("dialog-open");
-      closeButton?.focus();
-    });
-    closeButton?.addEventListener("click", closeDialog);
-    dialog.addEventListener("click", (event) => {
-      if (event.target === dialog) closeDialog();
-    });
-    dialog.addEventListener("close", () => {
-      document.body.classList.remove("dialog-open");
-      if (image) image.style.width = "100%";
-      zoomButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.screenZoom === "100")));
-      openButton.focus();
-    });
-    zoomButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const zoom = Number(button.dataset.screenZoom || 100);
-        if (image) image.style.width = `${zoom}%`;
-        zoomButtons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
-      });
-    });
-  });
-
-  const setupTabs = (rootSelector, buttonSelector, panelSelector, buttonAttribute, panelAttribute) => {
-    document.querySelectorAll(rootSelector).forEach((root) => {
-      const buttons = [...root.querySelectorAll(buttonSelector)];
-      const panels = [...root.querySelectorAll(panelSelector)];
-      if (!buttons.length || !panels.length) return;
-      const activate = (button, focus = false) => {
-        const value = button.getAttribute(buttonAttribute);
-        buttons.forEach((item) => {
-          const selected = item === button;
-          item.setAttribute("aria-selected", String(selected));
-          item.tabIndex = selected ? 0 : -1;
-        });
-        panels.forEach((panel) => { panel.hidden = panel.getAttribute(panelAttribute) !== value; });
-        if (focus) button.focus();
-      };
-      buttons.forEach((button, index) => {
-        button.tabIndex = button.getAttribute("aria-selected") === "true" ? 0 : -1;
-        button.addEventListener("click", () => activate(button));
-        button.addEventListener("keydown", (event) => {
-          if (!["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp", "Home", "End"].includes(event.key)) return;
-          event.preventDefault();
-          let nextIndex = index;
-          if (["ArrowRight", "ArrowDown"].includes(event.key)) nextIndex = (index + 1) % buttons.length;
-          if (["ArrowLeft", "ArrowUp"].includes(event.key)) nextIndex = (index - 1 + buttons.length) % buttons.length;
-          if (event.key === "Home") nextIndex = 0;
-          if (event.key === "End") nextIndex = buttons.length - 1;
-          activate(buttons[nextIndex], true);
-        });
-      });
-    });
-  };
-
-  setupTabs("[data-showcase]", "[data-showcase-button]", "[data-showcase-panel]", "data-showcase-button", "data-showcase-panel");
-  setupTabs("[data-service-explorer]", "[data-service-tab]", "[data-service-panel]", "data-service-tab", "data-service-panel");
 
   document.querySelectorAll(".faq-item").forEach((item) => {
     item.addEventListener("toggle", () => {
@@ -292,7 +162,7 @@
     const singleGroups = new Set(["제작 종류", "준비 상태", "희망 일정"]);
     const requiredGroups = ["제작 종류", "필요 기능", "준비 상태", "희망 일정"];
     const groupByStep = ["제작 종류", "필요 기능", "준비 상태", "희망 일정"];
-    const storageKey = "wag-scope-builder-v1";
+    const storageKey = "swag-scope-builder-v1";
     let currentStep = 1;
 
     const selectedValues = (group) => choices

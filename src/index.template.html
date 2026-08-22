@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f3f6f7">
+  <meta name="theme-color" content="#18362f">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -16,6 +16,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/Pretendard-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
@@ -28,7 +29,7 @@
   <main id="main">
     <section class="home-hero shell" data-hero>
       <div class="home-hero-copy reveal">
-        <div class="hero-brand"><b>SWAG</b><span>Digital product studio</span></div>
+        <div class="hero-brand"><b>SWAG</b><span>스웨그</span></div>
         <h1>{{HEADLINE_TOP}}<br><span>{{HEADLINE_FOCUS}}</span></h1>
         <p class="hero-description">{{HERO_DESCRIPTION}}</p>
         <div class="hero-actions">
@@ -36,15 +37,17 @@
           <a class="button secondary" href="work/">{{SECONDARY_CTA}}</a>
         </div>
         <div class="brand-lockup" aria-label="SWAG 영문 의미">
-          <span><b>S</b>System</span><span><b>W</b>Web</span><span><b>A</b>App</span><span><b>G</b>Game</span>
+          <span><b>S</b><i>System</i></span><span><b>W</b><i>Web</i></span><span><b>A</b><i>App</i></span><span><b>G</b><i>Game</i></span>
         </div>
       </div>
       {{HERO_STAGE}}
     </section>
 
-    <section class="home-services shell" aria-labelledby="service-title">
-      <div class="home-section-head reveal"><div><span>01</span><h2 id="service-title">제작 분야</h2></div><a href="services/">전체 범위 보기 <i aria-hidden="true">↗</i></a></div>
-      <div class="service-list">{{HOME_SERVICES}}</div>
+    <section class="home-services-section" aria-labelledby="service-title">
+      <div class="home-services shell">
+        <div class="home-section-head reveal"><div><span>01</span><h2 id="service-title">제작 분야</h2></div><a href="services/">자세히 보기 <i aria-hidden="true">↗</i></a></div>
+        <div class="service-list">{{HOME_SERVICES}}</div>
+      </div>
     </section>
 
     <section class="home-work-section">
@@ -54,18 +57,9 @@
       </div>
     </section>
 
-    <section class="home-routes shell" aria-labelledby="guide-title">
-      <div class="home-section-head reveal"><div><span>03</span><h2 id="guide-title">프로젝트 안내</h2></div></div>
-      <div class="route-cards reveal">
-        <a href="services/"><span>제작 범위</span><p>유형별 기본 기능과 추가 가능한 연동을 확인합니다</p><i aria-hidden="true">↗</i></a>
-        <a href="process/"><span>진행 과정</span><p>상담, 화면 확인, 기능 연결과 배포 순서를 확인합니다</p><i aria-hidden="true">↗</i></a>
-        <a href="contact/"><span>문의 정리</span><p>필요한 기능을 선택해 상담 내용을 미리 정리합니다</p><i aria-hidden="true">↗</i></a>
-      </div>
-    </section>
-
     <section class="contact-band reveal">
       <div class="shell">
-        <div><span>PROJECT REQUEST</span><h2>프로젝트 상담</h2><p>{{RESPONSE_NOTE}}</p></div>
+        <div><span>프로젝트 문의</span><h2>프로젝트 상담</h2><p>{{RESPONSE_NOTE}}</p></div>
         <div><a class="button light" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 <i aria-hidden="true">↗</i></a><a href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a></div>
       </div>
     </section>

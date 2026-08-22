@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#18362f">
+  <meta name="robots" content="noindex,follow">
+  <base href="{{SITE_URL}}">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/Pretendard-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <title>페이지를 찾을 수 없습니다 | SWAG</title>
+</head>
+<body id="top" data-page="not-found">
+  <a class="skip-link" href="{{SITE_URL}}404.html#main">본문으로 바로가기</a>
+  {{HEADER}}
+  <main id="main" class="not-found-main shell">
+    <div class="not-found-code" aria-hidden="true">404</div>
+    <div class="not-found-copy">
+      <p>페이지를 찾을 수 없습니다</p>
+      <h1>요청하신 주소가<br>바뀌었거나 사라졌습니다.</h1>
+      <span>주소를 다시 확인하시거나 아래에서 필요한 내용을 찾아보세요.</span>
+      <nav aria-label="다른 페이지로 이동">
+        <a class="button" href="./">홈으로</a>
+        <a class="button secondary" href="work/">작업 보기</a>
+        <a class="button secondary" href="contact/">문의하기</a>
+      </nav>
+    </div>
+  </main>
+  {{FOOTER}}
+  <script src="app.js" defer></script>
+</body>
+</html>

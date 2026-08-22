@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f7f8f8">
+  <meta name="theme-color" content="#18362f">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -15,6 +15,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/Pretendard-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
@@ -25,7 +26,7 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <header class="page-intro shell reveal"><p>SERVICES</p><div><h1>제작 범위</h1><span>웹사이트, 앱, 웹게임과 운영 시스템을 프로젝트 목적에 맞춰 구성합니다</span></div></header>
+    <header class="page-intro shell reveal"><p>분야별 안내</p><div><h1>제작 범위</h1><span>웹사이트, 앱, 웹게임과 운영 시스템을 프로젝트 목적에 맞춰 구성합니다</span></div></header>
 
     <section class="service-chapters shell" aria-label="서비스별 제작 범위">{{SERVICE_CHAPTERS}}</section>
 
@@ -36,7 +37,14 @@
       </div>
     </section>
 
-    <section class="service-tech shell reveal"><div><p>연동 기술</p><h2>사용 가능한 기술과 환경</h2></div><div class="service-tech-list">{{TECHNOLOGY_STACK}}</div></section>
+    <section class="service-standards shell reveal" aria-labelledby="standard-title">
+      <div><p>구축 기준</p><h2 id="standard-title">운영 환경에 맞춰 결정합니다</h2></div>
+      <div class="standard-list">
+        <p><b>관리 가능성</b><span>완성 뒤 직접 수정하고 운영할 수 있는 구조를 우선합니다</span></p>
+        <p><b>안정성</b><span>예약, 결제와 데이터 처리의 실패 상황까지 함께 확인합니다</span></p>
+        <p><b>확장성</b><span>지금 필요한 범위와 이후 추가할 기능을 분리해 구성합니다</span></p>
+      </div>
+    </section>
 
     <section class="service-note shell reveal"><div><p>외부 계정</p><h2>외부 서비스 연동</h2></div><p>결제사, 문자, 지도와 광고 서비스는 각 제공업체의 운영 계정이나 키가 필요합니다 필요한 준비 항목과 연결 범위를 먼저 안내합니다</p></section>
 
