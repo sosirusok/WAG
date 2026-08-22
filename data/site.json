@@ -1,21 +1,21 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-08-22T05:00:00+09:00",
+    "updatedAt": "2026-08-22T18:00:00+09:00",
     "title": "WAG | 웹, 앱, 게임 외주 제작",
-    "description": "웹사이트, 앱, 게임과 예약, 결제, 광고, 데이터베이스, 관리자 기능을 구축합니다. 필수 기능부터 시작해 비용을 줄이고 핵심 화면부터 빠르게 확인합니다."
+    "description": "웹사이트, 앱, 웹게임과 예약, 결제, 데이터베이스, 관리자 기능을 제작합니다."
   },
   "brand": {
     "name": "WAG",
-    "expansion": "WEB / APP / GAME",
+    "expansion": "WEB APP GAME",
     "availability": "새 프로젝트 상담 중",
     "eyebrow": "웹, 앱, 게임 제작",
-    "headlineTop": "웹, 앱, 게임.",
-    "headlineFocus": "화면부터 운영 기능까지.",
+    "headlineTop": "웹, 앱, 게임을",
+    "headlineFocus": "제작합니다.",
     "headlineBottom": "",
-    "description": "소개 사이트부터 예약, 결제, 광고, 데이터베이스와 관리자 화면까지 구축합니다. 필수 기능부터 시작해 비용을 낮추고, 핵심 화면부터 빠르게 확인합니다.",
-    "primaryCta": "작업 사례 보기",
-    "secondaryCta": "카카오로 문의하기"
+    "description": "소개 사이트부터 예약, 결제, 광고, 데이터베이스와 관리자 화면까지 필요한 기능을 구축합니다.",
+    "primaryCta": "카카오로 문의하기",
+    "secondaryCta": "제작 범위 확인"
   },
   "contact": {
     "owner": "김의현",
@@ -26,16 +26,16 @@
   },
   "principles": [
     {
-      "title": "필요한 것만",
-      "description": "사용하지 않을 페이지와 기능을 억지로 늘리지 않습니다. 실제 목적에 필요한 범위로 비용을 맞춥니다."
+      "title": "기능 기준 견적",
+      "description": "사용하지 않을 페이지와 기능을 제외하고 실제 구현 범위로 견적합니다."
     },
     {
-      "title": "빠르게 확인",
-      "description": "완성될 때까지 기다리게 하지 않습니다. 핵심 화면과 흐름을 먼저 만들어 방향을 확인합니다."
+      "title": "핵심 화면 우선",
+      "description": "중요한 화면과 사용 흐름을 먼저 제작해 디자인과 작동 방식을 확인합니다."
     },
     {
-      "title": "운영까지 생각",
-      "description": "보여주기용 화면에서 끝내지 않고 관리자, 데이터, 결제와 배포 이후 운영까지 연결합니다."
+      "title": "운영 기능 연결",
+      "description": "고객 화면, 관리자, 데이터베이스, 결제와 배포를 하나의 사용 과정으로 연결합니다."
     }
   ],
   "capabilities": [
