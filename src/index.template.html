@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f6f6f3">
+  <meta name="theme-color" content="#0b0d11">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="format-detection" content="telephone=no">
@@ -17,6 +17,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -27,58 +28,96 @@
   {{HEADER}}
 
   <main id="main">
-    <section class="home-hero shell" aria-labelledby="hero-title">
-      <div class="hero-status reveal">
-        <span>WEB / APP / GAME</span>
-        <p>{{AVAILABILITY}}</p>
-      </div>
-      <h1 id="hero-title" class="reveal">
-        <span>{{HEADLINE_TOP}}</span>
-        <strong>{{HEADLINE_FOCUS}}</strong>
-      </h1>
-      <div class="hero-bottom reveal">
-        <div class="hero-intro">
-          <p>{{HERO_DESCRIPTION}}</p>
-          <div class="hero-actions">
-            <a class="primary-action" href="work/">작업 사례 보기 <span aria-hidden="true">↗</span></a>
-            <a class="text-action" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기</a>
+    <section class="studio-hero" data-hero aria-labelledby="hero-title">
+      <div class="hero-grid shell">
+        <div class="hero-copy reveal">
+          <div class="hero-kicker">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span>{{AVAILABILITY}}</span>
+            <span>WEB / APP / GAME</span>
           </div>
+          <h1 id="hero-title">
+            <span>{{HEADLINE_TOP}}</span>
+            <strong>{{HEADLINE_FOCUS}}</strong>
+          </h1>
+          <p class="hero-description">{{HERO_DESCRIPTION}}</p>
+          <div class="hero-actions">
+            <a class="primary-action signal" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 견적 문의 <span aria-hidden="true">↗</span></a>
+            <a class="text-action light" href="work/">실제 작업 보기 <span aria-hidden="true">↓</span></a>
+          </div>
+          <p class="hero-assurance">기획서가 없어도 괜찮습니다. 구현할 기능부터 함께 정리합니다.</p>
         </div>
-        {{HERO_PROOF}}
+        {{HERO_STAGE}}
+      </div>
+      <div class="hero-spectrum shell" aria-label="주요 제작 분야">
+        <span>01 반응형 웹</span>
+        <span>02 앱과 웹앱</span>
+        <span>03 웹게임</span>
+        <span>04 예약, 결제, 관리자</span>
       </div>
     </section>
 
-    <section class="home-work shell reveal" aria-labelledby="selected-work-title">
-      <div class="section-intro">
-        <p>최근 작업</p>
-        <div>
-          <h2 id="selected-work-title">설명보다 실제 화면으로<br>확인하실 수 있습니다.</h2>
-          <a href="work/">모든 작업 보기 <span aria-hidden="true">↗</span></a>
-        </div>
+    <section class="proof-strip shell reveal" aria-labelledby="proof-title">
+      <p class="section-label">실제 작업</p>
+      <div>
+        <h2 id="proof-title">직접 열어볼 수 있는<br>작업만 보여드립니다.</h2>
+        <p>소개용 이미지가 아니라 실제 운영 화면과 연결된 기능을 확인할 수 있습니다.</p>
       </div>
-      {{SHOWCASE}}
+      <a href="work/" aria-label="전체 작업 보기">전체 작업 <span aria-hidden="true">↗</span></a>
     </section>
 
-    <section class="home-services shell reveal" aria-labelledby="service-title">
-      <div class="section-intro">
-        <p>제작 범위</p>
-        <div>
-          <h2 id="service-title">필요한 범위만 골라<br>하나의 흐름으로 연결합니다.</h2>
-          <a href="services/">전체 제작 범위 <span aria-hidden="true">↗</span></a>
-        </div>
+    <section class="case-section" aria-labelledby="case-title">
+      <div class="case-layout shell" data-case-stories>
+        <aside class="case-index reveal">
+          <p class="section-label">작업 기록</p>
+          <h2 id="case-title">화면과 기능을<br>같이 설계합니다.</h2>
+          <p>고객이 보는 화면과 운영자가 쓰는 도구를 분리하지 않고 하나의 사용 과정으로 연결했습니다.</p>
+          {{CASE_NAVIGATION}}
+        </aside>
+        <div class="case-feed">{{WORK_STORIES}}</div>
       </div>
-      {{SERVICE_EXPLORER}}
     </section>
 
-    <section class="home-contact reveal" aria-labelledby="home-contact-title">
-      <div class="shell home-contact-grid">
-        <p>프로젝트 상담</p>
+    <section class="lab-section" aria-labelledby="lab-title">
+      <div class="lab-heading shell reveal">
         <div>
-          <h2 id="home-contact-title">만들려는 서비스와<br>필요한 기능만 보내주세요.</h2>
-          <p>{{RESPONSE_NOTE}}</p>
+          <p class="section-label">구축 범위</p>
+          <h2 id="lab-title">화면만 필요한지,<br>운영 기능까지 필요한지.</h2>
+        </div>
+        <p>만들 종류를 선택하면 기획, 화면, 기능, 배포가 어떻게 연결되는지 바로 확인할 수 있습니다.</p>
+      </div>
+      <div class="shell">{{CAPABILITY_LAB}}</div>
+    </section>
+
+    <section class="quote-section shell reveal" aria-labelledby="quote-title">
+      <div class="quote-mark" aria-hidden="true">↘</div>
+      <div>
+        <p class="section-label">가격과 속도</p>
+        <h2 id="quote-title">견적은 기능 단위로,<br>확인은 화면 단위로.</h2>
+      </div>
+      <p>필수 기능과 나중에 추가할 기능을 나눠 불필요한 비용을 줄입니다. 핵심 화면부터 구현해 방향을 먼저 확인한 뒤 예약, 결제, 광고, 데이터베이스와 관리자 기능을 연결합니다.</p>
+    </section>
+
+    <section class="delivery-section" aria-labelledby="delivery-title">
+      <div class="shell">
+        <div class="delivery-heading reveal">
+          <p class="section-label">진행 방식</p>
+          <h2 id="delivery-title">확인할 수 있는 결과를<br>단계마다 보여드립니다.</h2>
+        </div>
+        <ol class="delivery-track">{{HOME_PROCESS}}</ol>
+      </div>
+    </section>
+
+    <section class="home-contact" aria-labelledby="home-contact-title">
+      <div class="home-contact-orbit" aria-hidden="true"></div>
+      <div class="shell home-contact-grid reveal">
+        <p class="section-label">프로젝트 상담</p>
+        <div>
+          <h2 id="home-contact-title">만들려는 것과<br>꼭 필요한 기능만 보내주세요.</h2>
+          <p>정리된 기획서가 없어도 김의현이 구현 범위부터 확인합니다.</p>
           <div class="home-contact-actions">
-            <a class="primary-action light" href="contact/">문의 내용 만들기 <span aria-hidden="true">↗</span></a>
-            <a class="text-action light" href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a>
+            <a class="primary-action light" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 <span aria-hidden="true">↗</span></a>
+            <a class="text-action light" href="tel:{{PHONE_DIGITS}}">{{OWNER}} {{PHONE}}</a>
           </div>
         </div>
       </div>

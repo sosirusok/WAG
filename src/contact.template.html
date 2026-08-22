@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f6f6f3">
+  <meta name="theme-color" content="#f3f0e9">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -15,6 +15,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -25,14 +26,20 @@
   {{HEADER}}
   <main id="main">
     <header class="page-hero contact-page-hero shell reveal">
-      <p>진행과 상담</p>
-      <div><h1>필요한 기능을 고르면<br>문의 내용이 정리됩니다.</h1><p>{{RESPONSE_NOTE}}</p></div>
+      <p>진행 방식</p>
+      <div><h1>기획서가 없어도<br>괜찮습니다.</h1><p>만들려는 서비스, 필요한 기능, 준비 상태와 희망 일정을 대략 골라도 상담용 문장이 완성됩니다.</p><div class="contact-hero-actions"><a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">바로 카카오 문의 <span aria-hidden="true">↗</span></a><span>{{RESPONSE_NOTE}}</span></div></div>
     </header>
 
     <section class="scope-section shell reveal" aria-labelledby="scope-title">
-      <div class="scope-section-heading"><p>문의 내용 만들기</p><h2 id="scope-title">개인정보를 입력하지 않고<br>제작 범위부터 정리해 보세요.</h2></div>
+      <div class="scope-section-heading"><p>문의 내용 만들기</p><h2 id="scope-title">개인정보 입력 없이<br>네 가지만 골라주세요.</h2></div>
       <div class="scope-builder" data-scope-builder>
         <div class="scope-form">
+          <nav class="scope-step-nav" aria-label="문의 작성 단계">
+            <button type="button" data-scope-jump="1" aria-current="step"><span>01</span><b>제작 종류</b></button>
+            <button type="button" data-scope-jump="2"><span>02</span><b>필요 기능</b></button>
+            <button type="button" data-scope-jump="3"><span>03</span><b>준비 상태</b></button>
+            <button type="button" data-scope-jump="4"><span>04</span><b>희망 일정</b></button>
+          </nav>
           <div class="scope-progress"><span data-scope-progress>1 / 4</span><div><i data-scope-progress-bar></i></div></div>
 
           <section class="scope-step" data-scope-step="1">

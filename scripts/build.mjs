@@ -56,17 +56,18 @@ const activeAttr = (active, key) => active === key ? ' aria-current="page"' : ""
 
 const renderHeader = (active = "") => `
   <header class="site-header" data-header>
+    <div class="site-progress" data-site-progress aria-hidden="true"></div>
     <div class="header-inner">
       <a class="wordmark" href="./" aria-label="WAG 홈">
-        <span>WAG</span><small>WEB APP GAME</small>
+        <span>WAG</span><small><b>WEB</b><b>APP</b><b>GAME</b></small>
       </a>
       <nav class="main-nav" aria-label="주요 메뉴">
         <a href="work/"${activeAttr(active, "work")}>작업</a>
         <a href="services/"${activeAttr(active, "services")}>제작 범위</a>
-        <a href="contact/"${activeAttr(active, "contact")}>진행과 상담</a>
+        <a href="contact/"${activeAttr(active, "contact")}>진행 방식</a>
       </nav>
       <a class="header-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">
-        상담하기 <span aria-hidden="true">↗</span>
+        카카오 문의 <span aria-hidden="true">↗</span>
       </a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
         <span class="menu-label">메뉴</span><i aria-hidden="true"></i>
@@ -76,7 +77,7 @@ const renderHeader = (active = "") => `
       <a href="./">홈</a>
       <a href="work/"${activeAttr(active, "work")}>작업</a>
       <a href="services/"${activeAttr(active, "services")}>제작 범위</a>
-      <a href="contact/"${activeAttr(active, "contact")}>진행과 상담</a>
+      <a href="contact/"${activeAttr(active, "contact")}>진행 방식</a>
       <a class="mobile-nav-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 ↗</a>
     </nav>
   </header>
@@ -89,14 +90,14 @@ const renderFooter = (currentUrl = normalizedSiteUrl) => `
   <footer class="site-footer">
     <div class="footer-main">
       <div class="footer-wordmark"><strong>WAG</strong><span>WEB APP GAME</span></div>
-      <p>웹사이트, 앱, 게임과 운영 시스템을 필요한 범위로 제작합니다.</p>
-      <a class="footer-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">프로젝트 이야기하기 ↗</a>
+      <p>웹사이트, 앱, 게임과 예약, 결제, 데이터베이스, 관리자 기능을 구축합니다.</p>
+      <a class="footer-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오로 견적 문의 ↗</a>
     </div>
     <div class="footer-meta">
       <dl><dt>운영</dt><dd>${escapeHtml(data.contact.owner)}</dd></dl>
       <dl><dt>전화</dt><dd><a href="tel:${phoneDigits}">${escapeHtml(data.contact.phone)}</a></dd></dl>
       <nav aria-label="하단 메뉴">
-        <a href="work/">작업</a><a href="services/">제작 범위</a><a href="contact/">진행과 상담</a><a href="privacy.html">개인정보처리 안내</a>
+        <a href="work/">작업</a><a href="services/">제작 범위</a><a href="contact/">진행 방식</a><a href="privacy.html">개인정보처리 안내</a>
       </nav>
     </div>
     <div class="footer-bottom"><span>© <b data-year>2026</b> WAG</span><a href="${escapeHtml(currentUrl)}#top">위로 ↑</a></div>
@@ -109,50 +110,98 @@ const renderImage = (project, options = {}) => {
   return `<img src="${escapeHtml(image)}" alt="${escapeHtml(project.imageAlt || project.title)}" decoding="async"${priority}>`;
 };
 
-const renderHeroProof = () => {
-  const project = featuredProjects[0] || publicProjects[0];
-  if (!project) return "";
+const renderHeroStage = () => {
+  const projects = (featuredProjects.length ? featuredProjects : publicProjects).slice(0, 2);
+  if (!projects.length) return "";
+  const primary = projects[0];
+  const secondary = projects[1] || projects[0];
   return `
-    <a class="hero-proof" href="work/${escapeHtml(project.id)}.html" aria-label="${escapeHtml(project.title)} 작업 상세 보기">
-      <figure>${renderImage(project, { priority: true })}</figure>
-      <div><span>최근 작업</span><b>${escapeHtml(project.title)}</b><i aria-hidden="true">↗</i></div>
-    </a>`;
-};
-
-const renderShowcase = () => {
-  const projects = featuredProjects.length ? featuredProjects : publicProjects.slice(0, 2);
-  const tabs = projects.map((project, index) => `
-    <button id="showcase-tab-${escapeHtml(project.id)}" type="button" role="tab" aria-selected="${index === 0}" aria-controls="showcase-panel-${escapeHtml(project.id)}" data-showcase-button="${escapeHtml(project.id)}">
-      <span>${String(index + 1).padStart(2, "0")}</span><b>${escapeHtml(project.title)}</b><i aria-hidden="true">↗</i>
-    </button>`).join("");
-  const panels = projects.map((project, index) => `
-    <article id="showcase-panel-${escapeHtml(project.id)}" class="showcase-panel" role="tabpanel" aria-labelledby="showcase-tab-${escapeHtml(project.id)}" data-showcase-panel="${escapeHtml(project.id)}"${index === 0 ? "" : " hidden"}>
-      <a class="showcase-image" href="work/${escapeHtml(project.id)}.html" aria-label="${escapeHtml(project.title)} 상세 보기">
-        ${renderImage(project, { priority: index === 0 })}
-        <span class="live-label">실제 운영 화면</span>
+    <div class="project-stage reveal" data-hero-stage aria-label="실제 작업 화면 미리보기">
+      <div class="stage-grid" aria-hidden="true"></div>
+      <p class="stage-coordinate stage-coordinate-top">LIVE OUTPUT / 2026</p>
+      <p class="stage-coordinate stage-coordinate-side">WAG BUILD SYSTEM</p>
+      <a class="screen-window screen-window-primary" href="work/${escapeHtml(primary.id)}.html" data-stage-layer="1" aria-label="${escapeHtml(primary.title)} 작업 상세 보기">
+        <div class="screen-bar"><span></span><span></span><span></span><b>${escapeHtml(primary.title)}</b><i>↗</i></div>
+        <figure>${renderImage(primary, { priority: true })}</figure>
+        <footer><span>01</span><b>${escapeHtml(primary.category)}</b><em>운영 화면</em></footer>
       </a>
-      <div class="showcase-caption">
-        <div><span>${escapeHtml(project.category)}</span><h3>${escapeHtml(project.title)}</h3></div>
-        <p>${escapeHtml(project.summary)}</p>
-        <a href="work/${escapeHtml(project.id)}.html">구축 내용 보기 <span aria-hidden="true">↗</span></a>
-      </div>
-    </article>`).join("");
-  return `<div class="showcase" data-showcase><div class="showcase-tabs" role="tablist" aria-label="대표 작업 선택">${tabs}</div><div class="showcase-panels">${panels}</div></div>`;
+      <a class="screen-window screen-window-secondary" href="work/${escapeHtml(secondary.id)}.html" data-stage-layer="2" aria-label="${escapeHtml(secondary.title)} 작업 상세 보기">
+        <div class="screen-bar"><span></span><span></span><span></span><b>${escapeHtml(secondary.title)}</b><i>↗</i></div>
+        <figure>${renderImage(secondary, { priority: true })}</figure>
+        <footer><span>02</span><b>${escapeHtml(secondary.category)}</b><em>운영 화면</em></footer>
+      </a>
+      <div class="stage-status" aria-hidden="true"><span></span><b>BUILD</b><i>LIVE</i></div>
+    </div>`;
 };
 
-const renderServiceExplorer = () => {
-  const tabs = data.services.map((service, index) => `
-    <button id="service-tab-${escapeHtml(service.id)}" type="button" role="tab" aria-selected="${index === 0}" aria-controls="service-panel-${escapeHtml(service.id)}" data-service-tab="${escapeHtml(service.id)}">
-      <span>${escapeHtml(service.number)}</span><b>${escapeHtml(service.title)}</b><small>${escapeHtml(service.subtitle)}</small>
-    </button>`).join("");
-  const panels = data.services.map((service, index) => `
-    <article id="service-panel-${escapeHtml(service.id)}" class="service-panel" role="tabpanel" aria-labelledby="service-tab-${escapeHtml(service.id)}" data-service-panel="${escapeHtml(service.id)}"${index === 0 ? "" : " hidden"}>
-      <div class="service-panel-copy"><span>${escapeHtml(service.title)}</span><h3>${escapeHtml(service.subtitle)}</h3><p>${escapeHtml(service.description)}</p></div>
-      <ul>${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-      <a href="contact/?type=${escapeHtml(service.id)}">이 범위로 문의 준비하기 <span aria-hidden="true">↗</span></a>
-    </article>`).join("");
-  return `<div class="service-explorer" data-service-explorer><div class="service-tabs" role="tablist" aria-label="제작 유형 선택">${tabs}</div><div class="service-panels">${panels}</div></div>`;
+const renderCaseNavigation = () => `<nav class="case-navigation" aria-label="작업 선택">${publicProjects.map((project, index) => `
+  <a href="#case-${escapeHtml(project.id)}" data-case-nav="${escapeHtml(project.id)}"${index === 0 ? ' aria-current="step"' : ""}>
+    <span>${String(index + 1).padStart(2, "0")}</span><b>${escapeHtml(project.title)}</b>
+  </a>`).join("")}</nav>`;
+
+const renderWorkStories = () => publicProjects.map((project, index) => `
+  <article class="case-story reveal" id="case-${escapeHtml(project.id)}" data-case-story="${escapeHtml(project.id)}">
+    <div class="case-screen-wrap">
+      <a class="case-screen case-screen-${escapeHtml(project.visual || "blue")}" href="work/${escapeHtml(project.id)}.html" aria-label="${escapeHtml(project.title)} 구축 내용 보기" data-project-link>
+        <div class="case-screen-bar"><span>WAG / ${String(index + 1).padStart(2, "0")}</span><b>${escapeHtml(project.title)}</b><i>↗</i></div>
+        <figure>${renderImage(project, { priority: index === 0 })}</figure>
+        <div class="case-screen-shadow" aria-hidden="true"></div>
+      </a>
+      <button class="screen-open" type="button" data-screen-open="screen-dialog-${escapeHtml(project.id)}">화면 크게 보기 <span aria-hidden="true">⤢</span></button>
+      <dialog class="screen-dialog" id="screen-dialog-${escapeHtml(project.id)}" data-screen-dialog aria-labelledby="screen-dialog-title-${escapeHtml(project.id)}">
+        <div class="screen-dialog-frame">
+          <header>
+            <div><span>운영 화면</span><h3 id="screen-dialog-title-${escapeHtml(project.id)}">${escapeHtml(project.title)}</h3></div>
+            <div class="screen-zoom" aria-label="화면 확대율">
+              <button type="button" aria-pressed="true" data-screen-zoom="100">100%</button>
+              <button type="button" aria-pressed="false" data-screen-zoom="125">125%</button>
+              <button type="button" aria-pressed="false" data-screen-zoom="150">150%</button>
+            </div>
+            ${safeHttpUrl(project.url) ? `<a href="${escapeHtml(safeHttpUrl(project.url))}" target="_blank" rel="noopener noreferrer">운영 사이트 ↗</a>` : ""}
+            <button class="screen-close" type="button" data-screen-close>닫기 <span aria-hidden="true">×</span></button>
+          </header>
+          <div class="screen-dialog-canvas"><img src="${escapeHtml(safeImage(project.image))}" alt="${escapeHtml(project.imageAlt || project.title)}" data-screen-image></div>
+        </div>
+      </dialog>
+    </div>
+    <div class="case-story-copy">
+      <div><span>${escapeHtml(project.category)}</span><h3>${escapeHtml(project.title)}</h3></div>
+      <div><p>${escapeHtml(project.summary)}</p><ul>${project.features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}</ul></div>
+      <div class="case-story-actions">
+        <a href="work/${escapeHtml(project.id)}.html">구축 내용 <span aria-hidden="true">↗</span></a>
+        ${safeHttpUrl(project.url) ? `<a href="${escapeHtml(safeHttpUrl(project.url))}" target="_blank" rel="noopener noreferrer">운영 사이트 <span aria-hidden="true">↗</span></a>` : ""}
+      </div>
+    </div>
+  </article>`).join("");
+
+const serviceTouchpoints = {
+  web: ["정보 구조", "반응형 화면", "예약 또는 문의", "도메인 배포"],
+  app: ["서비스 구조", "사용자 화면", "로그인과 알림", "앱 배포"],
+  game: ["게임 규칙", "플레이 화면", "기록과 랭킹", "웹 배포"],
+  system: ["업무 구조", "고객과 관리자", "DB와 외부 API", "운영 배포"]
 };
+
+const renderCapabilityLab = () => {
+  const tabs = data.services.map((service, index) => `
+    <button id="lab-tab-${escapeHtml(service.id)}" type="button" role="tab" aria-selected="${index === 0}" aria-controls="lab-panel-${escapeHtml(service.id)}" data-service-tab="${escapeHtml(service.id)}">
+      <span>${escapeHtml(service.number)}</span><b>${escapeHtml(service.title)}</b><small>${escapeHtml(service.subtitle)}</small><i aria-hidden="true">↗</i>
+    </button>`).join("");
+  const panels = data.services.map((service, index) => {
+    const nodes = serviceTouchpoints[service.id] || service.items;
+    return `
+      <article id="lab-panel-${escapeHtml(service.id)}" class="lab-panel" role="tabpanel" aria-labelledby="lab-tab-${escapeHtml(service.id)}" data-service-panel="${escapeHtml(service.id)}"${index === 0 ? "" : " hidden"}>
+        <div class="lab-panel-head"><span>SELECTED / ${escapeHtml(service.number)}</span><b>${escapeHtml(service.title)}</b><p>${escapeHtml(service.description)}</p></div>
+        <div class="lab-flow" aria-label="${escapeHtml(service.title)} 제작 연결 구조">
+          ${nodes.slice(0, 4).map((node, nodeIndex) => `<div class="flow-node"><span>${String(nodeIndex + 1).padStart(2, "0")}</span><b>${escapeHtml(node)}</b>${nodeIndex < 3 ? '<i aria-hidden="true"></i>' : ""}</div>`).join("")}
+        </div>
+        <div class="lab-panel-foot"><ul>${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul><a href="contact/?type=${escapeHtml(service.id)}">이 구성으로 문의 정리 <span aria-hidden="true">↗</span></a></div>
+      </article>`;
+  }).join("");
+  return `<div class="build-lab" data-service-explorer><div class="lab-controls" role="tablist" aria-label="제작 유형 선택">${tabs}</div><div class="lab-panels">${panels}</div></div>`;
+};
+
+const renderHomeProcess = () => data.process.map((item) => `
+  <li class="delivery-step reveal"><span>${escapeHtml(item.number)}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description)}</p><i aria-hidden="true"></i></li>`).join("");
 
 const renderWorkCards = () => publicProjects.map((project, index) => `
   <a class="work-card reveal" href="work/${escapeHtml(project.id)}.html">
@@ -242,11 +291,13 @@ await writePage("index.template.html", "index.html", {
   HEADLINE_TOP: data.brand.headlineTop,
   HEADLINE_FOCUS: data.brand.headlineFocus,
   HERO_DESCRIPTION: data.brand.description,
-  HERO_PROOF: renderHeroProof(),
-  SHOWCASE: renderShowcase(),
-  SERVICE_EXPLORER: renderServiceExplorer(),
+  HERO_STAGE: renderHeroStage(),
+  CASE_NAVIGATION: renderCaseNavigation(),
+  WORK_STORIES: renderWorkStories(),
+  CAPABILITY_LAB: renderCapabilityLab(),
+  HOME_PROCESS: renderHomeProcess(),
   RESPONSE_NOTE: data.contact.responseNote
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HERO_PROOF", "SHOWCASE", "SERVICE_EXPLORER"]);
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HERO_STAGE", "CASE_NAVIGATION", "WORK_STORIES", "CAPABILITY_LAB", "HOME_PROCESS"]);
 
 await writePage("work.template.html", "work/index.html", {
   PAGE_TITLE: `작업 | ${data.brand.name}`,
@@ -291,7 +342,7 @@ await writePage("services.template.html", "services/index.html", {
 }, ["STRUCTURED_DATA", "HEADER", "FOOTER", "SERVICE_CHAPTERS", "CAPABILITY_CHIPS"]);
 
 await writePage("contact.template.html", "contact/index.html", {
-  PAGE_TITLE: `진행과 상담 | ${data.brand.name}`,
+  PAGE_TITLE: `진행 방식 | ${data.brand.name}`,
   PAGE_DESCRIPTION: "제작 종류와 필요한 기능을 골라 상담 내용을 정리하고 WAG에 바로 문의할 수 있습니다.",
   CANONICAL_URL: pageUrl("contact/"),
   HEADER: renderHeader("contact"),
