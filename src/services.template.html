@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#fafafa">
+  <meta name="theme-color" content="#f7f8f8">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -25,27 +25,22 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <header class="page-intro shell reveal">
-      <p>서비스</p>
-      <div><h1>필요한 범위부터<br>정합니다.</h1><span>웹사이트 한 장부터 예약, 결제, 데이터베이스와 관리자 화면까지 필요한 기능만 묶어 제작합니다.</span></div>
-    </header>
-    <section class="service-chapters shell" aria-label="서비스별 제작 범위">
-      {{SERVICE_CHAPTERS}}
-    </section>
-    <section class="capability-board reveal" aria-labelledby="capability-title">
-      <div class="shell capability-board-inner">
-        <div><p>연결 가능한 기능</p><h2 id="capability-title">운영에 필요한 기능을<br>함께 구축합니다.</h2></div>
-        <div class="capability-chips">{{CAPABILITY_CHIPS}}</div>
+    <header class="page-intro shell reveal"><p>SERVICE</p><div><h1>간단한 웹부터<br>복잡한 운영 시스템까지</h1><span>지금 필요한 범위와 확장할 범위를 나눠 예산과 일정에 맞게 제작합니다</span></div></header>
+
+    <section class="service-chapters shell" aria-label="서비스별 제작 범위">{{SERVICE_CHAPTERS}}</section>
+
+    <section class="scope-board reveal" aria-labelledby="capability-title">
+      <div class="shell">
+        <div class="scope-board-head"><p>EXTENDED SCOPE</p><div><h2 id="capability-title">기능이 복잡해져도<br>구조부터 정리해서</h2><span>아래 기능은 프로젝트 목적과 운영 방식에 맞춰 필요한 것만 선택합니다</span></div></div>
+        <div class="scope-board-grid">{{CAPABILITY_GRID}}</div>
       </div>
     </section>
-    <section class="service-note shell reveal">
-      <div><p>외부 발급이 필요한 기능</p><h2>결제, 문자, 지도, 광고는<br>발급된 계정과 키를 연결합니다.</h2></div>
-      <p>결제사, 문자, 지도, 광고는 발급된 계정과 키가 필요합니다. 준비 절차와 연결 범위를 먼저 안내한 뒤 실제 운영 환경에 연결합니다.</p>
-    </section>
-    <section class="compact-contact shell reveal">
-      <p>필요한 범위가 정리되지 않았나요?</p>
-      <a href="contact/"><span>기능을 선택하면<br>상담 내용이 자동으로 정리됩니다.</span><i aria-hidden="true">↗</i></a>
-    </section>
+
+    <section class="service-tech shell reveal"><div><p>BUILD STACK</p><h2>연동 가능한 범위</h2></div><div class="service-tech-list">{{TECHNOLOGY_STACK}}</div></section>
+
+    <section class="service-note shell reveal"><div><p>외부 서비스 연동</p><h2>실제 운영 계정에<br>안전하게 연결</h2></div><p>결제사, 문자, 지도와 광고는 서비스 제공업체의 계정이나 키가 필요합니다 준비 절차와 연결 범위를 먼저 안내해드립니다</p></section>
+
+    <section class="compact-contact shell reveal"><p>필요한 범위가 아직 정리되지 않았다면</p><a href="contact/"><span>기능을 고르면<br>상담 내용이 바로 정리됩니다</span><i aria-hidden="true">↗</i></a></section>
   </main>
   {{FOOTER}}
   <script src="app.js" defer></script>

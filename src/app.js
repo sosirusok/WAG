@@ -303,7 +303,7 @@
       const features = selectedValues("필요 기능");
       const states = selectedValues("준비 상태");
       const schedules = selectedValues("희망 일정");
-      if (![types, features, states, schedules].some((items) => items.length)) return "아직 선택한 내용이 없습니다.";
+      if (![types, features, states, schedules].some((items) => items.length)) return "아직 선택한 내용이 없습니다";
       return [
         "[WAG 제작 문의]",
         `제작 종류: ${types.join(", ") || "선택 전"}`,
@@ -407,9 +407,9 @@
     copyButton?.addEventListener("click", async () => {
       try {
         await copyText(summaryText());
-        if (copyStatus) copyStatus.textContent = "문의 내용이 복사되었습니다. 카카오 상담에서 붙여넣으시면 됩니다.";
+        if (copyStatus) copyStatus.textContent = "문의 내용이 복사됐습니다 카카오 상담에 붙여넣으시면 됩니다";
       } catch {
-        if (copyStatus) copyStatus.textContent = "복사하지 못했습니다. 위 내용을 직접 선택해 복사해 주세요.";
+        if (copyStatus) copyStatus.textContent = "복사하지 못했습니다 위 내용을 직접 선택해 복사해 주세요";
       }
     });
 

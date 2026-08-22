@@ -58,7 +58,7 @@ const renderHeader = (active = "") => `
   <header class="site-header" data-header>
     <div class="header-inner">
       <a class="wordmark" href="./" aria-label="WAG 홈">
-        <strong>WAG</strong><span>WEB APP GAME</span>
+        <strong>WAG</strong><span>WEB · APP · GAME</span>
       </a>
       <nav class="main-nav" aria-label="주요 메뉴">
         <a href="services/"${activeAttr(active, "services")}>서비스</a>
@@ -67,7 +67,7 @@ const renderHeader = (active = "") => `
         <a href="contact/"${activeAttr(active, "contact")}>문의</a>
       </nav>
       <a class="header-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">
-        카카오 상담
+        카카오 상담 <i aria-hidden="true">↗</i>
       </a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
         <span class="menu-label">메뉴</span><i aria-hidden="true"></i>
@@ -91,8 +91,8 @@ const renderFooter = (currentUrl = normalizedSiteUrl) => `
   <footer class="site-footer">
     <div class="footer-main">
       <div class="footer-wordmark"><strong>WAG</strong></div>
-      <p>웹사이트, 앱, 게임과 예약, 결제, 데이터베이스, 관리자 기능을 구축합니다.</p>
-      <a class="footer-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅</a>
+      <p><b>WEB · APP · GAME</b><span>외주의 외와 그곳의 그를 담은 이름</span></p>
+      <a class="footer-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a>
     </div>
     <div class="footer-meta">
       <dl><dt>운영</dt><dd>${escapeHtml(data.contact.owner)}</dd></dl>
@@ -106,7 +106,7 @@ const renderFooter = (currentUrl = normalizedSiteUrl) => `
 
 const renderImage = (project, options = {}) => {
   const image = safeImage(project.image);
-  if (!image) return '<div class="image-unavailable">등록된 작업 화면이 없습니다.</div>';
+  if (!image) return '<div class="image-unavailable">등록된 작업 화면이 없습니다</div>';
   const priority = options.priority ? ' fetchpriority="high"' : ' loading="lazy"';
   return `<img src="${escapeHtml(image)}" alt="${escapeHtml(project.imageAlt || project.title)}" decoding="async"${priority}>`;
 };
@@ -205,25 +205,37 @@ const renderHomeProcess = () => data.process.map((item) => `
   <li class="delivery-step reveal"><span>${escapeHtml(item.number)}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description)}</p><i aria-hidden="true"></i></li>`).join("");
 
 const renderHomeServices = () => data.services.map((service) => `
-  <a href="services/#${escapeHtml(service.id)}"><span>${escapeHtml(service.number)}</span><h3>${escapeHtml(service.title)}</h3><p>${escapeHtml(service.description)}</p><i>보기</i></a>`).join("");
+  <a href="services/#${escapeHtml(service.id)}"><span>${escapeHtml(service.number)}</span><h3>${escapeHtml(service.title)}</h3><div><p>${escapeHtml(service.description)}</p><ul>${(service.advanced || service.items).slice(0, 3).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div><i aria-hidden="true">↗</i></a>`).join("");
 
 const renderWorkCards = () => publicProjects.map((project, index) => `
   <a class="work-card reveal" href="work/${escapeHtml(project.id)}.html">
-    <figure>${renderImage(project, { priority: index === 0 })}<span>${String(index + 1).padStart(2, "0")}</span></figure>
+    <figure>${renderImage(project, { priority: index === 0 })}<span>LIVE SITE ${String(index + 1).padStart(2, "0")}</span></figure>
     <div class="work-card-copy">
-      <p>${escapeHtml(project.category)} / ${escapeHtml(project.year)}</p>
+      <p>${escapeHtml(project.category)}</p>
       <h2>${escapeHtml(project.title)}</h2>
-      <div><span>${escapeHtml(project.summary)}</span><i aria-hidden="true">↗</i></div>
+      <div><span>${escapeHtml(project.summary)}</span><ul>${project.features.slice(0, 3).map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}</ul><i aria-hidden="true">운영 내용 보기 ↗</i></div>
     </div>
   </a>`).join("");
 
 const renderServiceChapters = () => data.services.map((service) => `
   <article class="service-chapter reveal" id="${escapeHtml(service.id)}">
     <div class="service-chapter-title"><span>${escapeHtml(service.number)}</span><h2>${escapeHtml(service.title)}</h2><p>${escapeHtml(service.subtitle)}</p></div>
-    <div class="service-chapter-body"><p>${escapeHtml(service.description)}</p><ul>${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul><a href="contact/?type=${escapeHtml(service.id)}">상담 내용 만들기 ↗</a></div>
+    <div class="service-chapter-body"><p>${escapeHtml(service.description)}</p><div class="service-scope-columns"><section><h3>핵심 구축</h3><ul>${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section><section><h3>고급 기능</h3><ul>${(service.advanced || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section><section><h3>운영과 인프라</h3><ul>${(service.operations || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section></div><a href="contact/?type=${escapeHtml(service.id)}">이 범위로 문의하기 ↗</a></div>
   </article>`).join("");
 
 const renderCapabilityChips = () => data.capabilities.map((item) => `<span>${escapeHtml(item)}</span>`).join("");
+
+const renderTechnologyRail = () => [...data.technology, ...data.technology]
+  .map((item) => `<span><i aria-hidden="true"></i>${escapeHtml(item)}</span>`)
+  .join("");
+
+const renderCapabilityGrid = () => data.capabilityGroups.map((item) => `
+  <article><span>${escapeHtml(item.code)}</span><p>${escapeHtml(item.tech)}</p><h3>${escapeHtml(item.title)}</h3><b>${escapeHtml(item.description)}</b></article>`).join("");
+
+const renderTechnologyStack = () => data.technology.map((item) => `<span>${escapeHtml(item)}</span>`).join("");
+
+const renderHomeFaq = () => data.faq.slice(0, 3).map((item) => `
+  <details class="faq-item reveal"><summary><span>${escapeHtml(item.question)}</span><i aria-hidden="true"></i></summary><p>${escapeHtml(item.answer)}</p></details>`).join("");
 
 const renderPlannerTypes = () => data.services.map((service) => `
   <button type="button" aria-pressed="false" data-scope-choice data-scope-key="${escapeHtml(service.id)}" data-scope-group="제작 종류" data-scope-value="${escapeHtml(service.title)}">${escapeHtml(service.title)}<small>${escapeHtml(service.subtitle)}</small></button>`).join("");
@@ -258,7 +270,8 @@ const commonTokens = {
   KAKAO_URL: kakaoUrl,
   PHONE: data.contact.phone,
   PHONE_DIGITS: phoneDigits,
-  OWNER: data.contact.owner
+  OWNER: data.contact.owner,
+  RESPONSE_NOTE: data.contact.responseNote
 };
 
 const fillTemplate = (template, tokens, rawKeys = new Set()) => Object.entries(tokens).reduce((html, [key, value]) => {
@@ -295,19 +308,26 @@ await writePage("index.template.html", "index.html", {
   HEADLINE_TOP: data.brand.headlineTop,
   HEADLINE_FOCUS: data.brand.headlineFocus,
   HERO_DESCRIPTION: data.brand.description,
+  BRAND_ORIGIN: data.brand.origin,
+  BRAND_STORY: data.brand.story,
+  PRIMARY_CTA: data.brand.primaryCta,
+  SECONDARY_CTA: data.brand.secondaryCta,
+  TECHNOLOGY_RAIL: renderTechnologyRail(),
+  CAPABILITY_GRID: renderCapabilityGrid(),
   HOME_SERVICES: renderHomeServices(),
   HOME_WORK: renderWorkCards(),
+  HOME_FAQ: renderHomeFaq(),
   HERO_STAGE: renderHeroStage(),
   CASE_NAVIGATION: renderCaseNavigation(),
   WORK_STORIES: renderWorkStories(),
   CAPABILITY_LAB: renderCapabilityLab(),
   HOME_PROCESS: renderHomeProcess(),
   RESPONSE_NOTE: data.contact.responseNote
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_SERVICES", "HOME_WORK", "HERO_STAGE", "CASE_NAVIGATION", "WORK_STORIES", "CAPABILITY_LAB", "HOME_PROCESS"]);
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "TECHNOLOGY_RAIL", "CAPABILITY_GRID", "HOME_SERVICES", "HOME_WORK", "HOME_FAQ", "HERO_STAGE", "CASE_NAVIGATION", "WORK_STORIES", "CAPABILITY_LAB", "HOME_PROCESS"]);
 
 await writePage("work.template.html", "work/index.html", {
   PAGE_TITLE: `작업 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "WAG가 구축한 웹사이트와 운영 시스템의 실제 화면과 제작 범위를 확인할 수 있습니다.",
+  PAGE_DESCRIPTION: "WAG가 구축한 웹사이트와 운영 시스템의 실제 화면과 제작 범위",
   CANONICAL_URL: pageUrl("work/"),
   HEADER: renderHeader("work"),
   FOOTER: renderFooter(pageUrl("work/")),
@@ -339,17 +359,19 @@ for (const [index, project] of publicProjects.entries()) {
 
 await writePage("services.template.html", "services/index.html", {
   PAGE_TITLE: `제작 범위 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "웹사이트, 앱, 웹게임, 예약, 결제, 데이터베이스와 관리자 도구까지 WAG의 제작 범위를 확인하세요.",
+  PAGE_DESCRIPTION: "웹사이트, 앱, 웹게임, 예약, 결제, 데이터베이스와 관리자 도구까지 WAG의 제작 범위",
   CANONICAL_URL: pageUrl("services/"),
   HEADER: renderHeader("services"),
   FOOTER: renderFooter(pageUrl("services/")),
   SERVICE_CHAPTERS: renderServiceChapters(),
-  CAPABILITY_CHIPS: renderCapabilityChips()
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "SERVICE_CHAPTERS", "CAPABILITY_CHIPS"]);
+  CAPABILITY_CHIPS: renderCapabilityChips(),
+  CAPABILITY_GRID: renderCapabilityGrid(),
+  TECHNOLOGY_STACK: renderTechnologyStack()
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "SERVICE_CHAPTERS", "CAPABILITY_CHIPS", "CAPABILITY_GRID", "TECHNOLOGY_STACK"]);
 
 await writePage("process.template.html", "process/index.html", {
   PAGE_TITLE: `진행 방식 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "상담부터 화면 확인, 기능 연결, 검수와 배포까지 WAG의 제작 과정을 확인하세요.",
+  PAGE_DESCRIPTION: "상담부터 화면 확인, 기능 연결, 검수와 배포까지 WAG의 제작 과정",
   CANONICAL_URL: pageUrl("process/"),
   HEADER: renderHeader("process"),
   FOOTER: renderFooter(pageUrl("process/")),
@@ -358,7 +380,7 @@ await writePage("process.template.html", "process/index.html", {
 
 await writePage("contact.template.html", "contact/index.html", {
   PAGE_TITLE: `문의 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "제작 종류와 필요한 기능을 골라 상담 내용을 정리하고 WAG에 바로 문의할 수 있습니다.",
+  PAGE_DESCRIPTION: "제작 종류와 필요한 기능을 골라 정리하는 WAG 상담 문의",
   CANONICAL_URL: pageUrl("contact/"),
   HEADER: renderHeader("contact"),
   FOOTER: renderFooter(pageUrl("contact/")),
@@ -371,7 +393,7 @@ await writePage("contact.template.html", "contact/index.html", {
 
 await writePage("privacy.template.html", "privacy.html", {
   PAGE_TITLE: "개인정보처리 안내 | WAG",
-  PAGE_DESCRIPTION: "WAG 웹사이트의 개인정보 처리 안내입니다.",
+  PAGE_DESCRIPTION: "WAG 웹사이트의 개인정보 처리 안내",
   CANONICAL_URL: pageUrl("privacy.html"),
   HEADER: renderHeader(""),
   FOOTER: renderFooter(pageUrl("privacy.html"))

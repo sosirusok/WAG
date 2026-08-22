@@ -26,12 +26,12 @@
   {{HEADER}}
   <main id="main">
     <header class="page-intro contact-page-hero shell reveal">
-      <p>문의</p>
-      <div><h1>필요한 내용을<br>간단히 골라주세요.</h1><span>개인정보 입력 없이 제작 종류와 기능을 선택하면 카카오 상담에 보낼 내용이 정리됩니다.</span><div class="contact-hero-actions"><a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">바로 카카오 문의</a><span>{{RESPONSE_NOTE}}</span></div></div>
+      <p>PROJECT INQUIRY</p>
+      <div><h1>무엇이 필요한지<br>간단히 골라주세요</h1><span>개인정보 입력 없이 제작 종류와 기능을 고르면 카카오 상담에 보낼 내용이 정리됩니다</span><div class="contact-hero-actions"><a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">바로 카카오 문의</a><span>{{RESPONSE_NOTE}}</span></div></div>
     </header>
 
     <section class="scope-section shell reveal" aria-labelledby="scope-title">
-      <div class="scope-section-heading"><p>문의 내용 만들기</p><h2 id="scope-title">개인정보 입력 없이<br>네 가지만 골라주세요.</h2></div>
+      <div class="scope-section-heading"><p>문의 내용 만들기</p><h2 id="scope-title">개인정보 입력 없이<br>네 가지만 선택</h2></div>
       <div class="scope-builder" data-scope-builder>
         <div class="scope-form">
           <nav class="scope-step-nav" aria-label="문의 작성 단계">
@@ -49,12 +49,12 @@
 
           <section class="scope-step" data-scope-step="2" hidden>
             <span>두 번째</span><h3>어떤 기능이 필요한가요?</h3>
-            <p>여러 개를 선택할 수 있습니다.</p>
+            <p>여러 개를 선택할 수 있습니다</p>
             <div class="choice-grid feature-choices">{{PLANNER_FEATURES}}</div>
           </section>
 
           <section class="scope-step" data-scope-step="3" hidden>
-            <span>세 번째</span><h3>현재 준비 상태를 골라주세요.</h3>
+            <span>세 번째</span><h3>현재 준비 상태를 골라주세요</h3>
             <div class="choice-grid state-choices">
               <button type="button" aria-pressed="false" data-scope-choice data-scope-group="준비 상태" data-scope-value="아이디어만 있음">아이디어만 있음</button>
               <button type="button" aria-pressed="false" data-scope-choice data-scope-group="준비 상태" data-scope-value="참고 사이트 있음">참고 사이트 있음</button>
@@ -64,7 +64,7 @@
           </section>
 
           <section class="scope-step" data-scope-step="4" hidden>
-            <span>마지막</span><h3>희망 일정을 골라주세요.</h3>
+            <span>마지막</span><h3>희망 일정을 골라주세요</h3>
             <div class="choice-grid schedule-choices">
               <button type="button" aria-pressed="false" data-scope-choice data-scope-group="희망 일정" data-scope-value="가능한 빠르게">가능한 빠르게</button>
               <button type="button" aria-pressed="false" data-scope-choice data-scope-group="희망 일정" data-scope-value="1개월 안">1개월 안</button>
@@ -81,7 +81,7 @@
 
         <aside class="scope-summary" aria-labelledby="summary-title">
           <span>상담용 요약</span><h3 id="summary-title">선택한 내용</h3>
-          <pre data-scope-summary aria-live="polite">아직 선택한 내용이 없습니다.</pre>
+          <pre data-scope-summary aria-live="polite">아직 선택한 내용이 없습니다</pre>
           <div class="summary-actions">
             <button type="button" data-scope-copy>문의 내용 복사</button>
             <a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 상담 열기 ↗</a>
@@ -92,12 +92,12 @@
     </section>
 
     <section class="faq-section shell" aria-labelledby="faq-title">
-      <div class="section-intro reveal"><p>자주 묻는 질문</p><div><h2 id="faq-title">문의 전에<br>확인해 주세요.</h2></div></div>
+      <div class="section-intro reveal"><p>FAQ</p><div><h2 id="faq-title">문의 전에<br>많이 묻는 내용</h2></div></div>
       <div class="faq-list">{{FAQ}}</div>
     </section>
 
     <section class="direct-contact reveal">
-      <div class="shell direct-contact-inner"><p>바로 문의하기</p><div><h2>정리된 내용이 없어도<br>상담할 수 있습니다.</h2><a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 <span aria-hidden="true">↗</span></a><a href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a></div></div>
+      <div class="shell direct-contact-inner"><p>바로 문의하기</p><div><h2>아직 정리되지 않았다면<br>그대로 말씀해 주세요</h2><a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 <span aria-hidden="true">↗</span></a><a href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a></div></div>
     </section>
   </main>
   {{FOOTER}}
