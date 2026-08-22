@@ -1,4 +1,4 @@
-name: Deploy WAG to GitHub Pages
+name: Deploy SWAG to GitHub Pages
 
 on:
   push:

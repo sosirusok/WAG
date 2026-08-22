@@ -45,7 +45,7 @@ const normalizedSiteUrl = (() => {
 const pageUrl = (relative = "") => new URL(relative, normalizedSiteUrl).href;
 const kakaoUrl = safeHttpUrl(data.contact.kakao);
 const phoneDigits = data.contact.phone.replace(/\D/g, "");
-const ogUrl = pageUrl("assets/wag-og.webp");
+const ogUrl = pageUrl("assets/swag-og.png");
 
 const publicProjects = data.projects
   .filter((project) => project.published)
@@ -56,18 +56,19 @@ const activeAttr = (active, key) => active === key ? ' aria-current="page"' : ""
 
 const renderHeader = (active = "") => `
   <header class="site-header" data-header>
+    <i class="site-progress" data-site-progress aria-hidden="true"></i>
     <div class="header-inner">
-      <a class="wordmark" href="./" aria-label="WAG 홈">
-        <strong>WAG</strong><span>WEB · APP · GAME</span>
+      <a class="wordmark" href="./" aria-label="SWAG 홈">
+        <strong>SWAG</strong><span>SYSTEM / WEB / APP / GAME</span>
       </a>
       <nav class="main-nav" aria-label="주요 메뉴">
-        <a href="services/"${activeAttr(active, "services")}>서비스</a>
-        <a href="process/"${activeAttr(active, "process")}>진행 방식</a>
-        <a href="work/"${activeAttr(active, "work")}>작업</a>
+        <a href="services/"${activeAttr(active, "services")}>제작 범위</a>
+        <a href="work/"${activeAttr(active, "work")}>작업 사례</a>
+        <a href="process/"${activeAttr(active, "process")}>진행 과정</a>
         <a href="contact/"${activeAttr(active, "contact")}>문의</a>
       </nav>
       <a class="header-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">
-        카카오 상담 <i aria-hidden="true">↗</i>
+        상담 문의 <i aria-hidden="true">↗</i>
       </a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
         <span class="menu-label">메뉴</span><i aria-hidden="true"></i>
@@ -75,11 +76,11 @@ const renderHeader = (active = "") => `
     </div>
     <nav class="mobile-nav" id="mobile-menu" aria-label="모바일 메뉴" data-mobile-menu hidden>
       <a href="./">홈</a>
-      <a href="services/"${activeAttr(active, "services")}>서비스</a>
-      <a href="process/"${activeAttr(active, "process")}>진행 방식</a>
-      <a href="work/"${activeAttr(active, "work")}>작업</a>
+      <a href="services/"${activeAttr(active, "services")}>제작 범위</a>
+      <a href="work/"${activeAttr(active, "work")}>작업 사례</a>
+      <a href="process/"${activeAttr(active, "process")}>진행 과정</a>
       <a href="contact/"${activeAttr(active, "contact")}>문의</a>
-      <a class="mobile-nav-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 상담</a>
+      <a class="mobile-nav-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">상담 문의</a>
     </nav>
   </header>
   <div class="header-sentinel" data-header-sentinel aria-hidden="true"></div>`;
@@ -90,18 +91,18 @@ const renderFooter = (currentUrl = normalizedSiteUrl) => `
   </a>
   <footer class="site-footer">
     <div class="footer-main">
-      <div class="footer-wordmark"><strong>WAG</strong></div>
-      <p><b>WEB · APP · GAME</b><span>외주의 외와 그곳의 그를 담은 이름</span></p>
+      <div class="footer-wordmark"><strong>SWAG</strong></div>
+      <p><b>SYSTEM · WEB · APP · GAME</b></p>
       <a class="footer-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a>
     </div>
     <div class="footer-meta">
       <dl><dt>운영</dt><dd>${escapeHtml(data.contact.owner)}</dd></dl>
       <dl><dt>전화</dt><dd><a href="tel:${phoneDigits}">${escapeHtml(data.contact.phone)}</a></dd></dl>
       <nav aria-label="하단 메뉴">
-        <a href="services/">서비스</a><a href="process/">진행 방식</a><a href="work/">작업</a><a href="contact/">문의</a><a href="privacy.html">개인정보처리 안내</a>
+        <a href="services/">제작 범위</a><a href="work/">작업 사례</a><a href="process/">진행 과정</a><a href="contact/">문의</a><a href="privacy.html">개인정보처리 안내</a>
       </nav>
     </div>
-    <div class="footer-bottom"><span>© <b data-year>2026</b> WAG</span><a href="${escapeHtml(currentUrl)}#top">위로 ↑</a></div>
+    <div class="footer-bottom"><span>© <b data-year>2026</b> SWAG</span><a href="${escapeHtml(currentUrl)}#top">위로 ↑</a></div>
   </footer>`;
 
 const renderImage = (project, options = {}) => {
@@ -120,7 +121,7 @@ const renderHeroStage = () => {
     <div class="project-stage reveal" data-hero-stage aria-label="실제 작업 화면 미리보기">
       <div class="stage-grid" aria-hidden="true"></div>
       <p class="stage-coordinate stage-coordinate-top">LIVE OUTPUT / 2026</p>
-      <p class="stage-coordinate stage-coordinate-side">WAG BUILD SYSTEM</p>
+      <p class="stage-coordinate stage-coordinate-side">SWAG / SYSTEM WEB APP GAME</p>
       <a class="screen-window screen-window-primary" href="work/${escapeHtml(primary.id)}.html" data-stage-layer="1" aria-label="${escapeHtml(primary.title)} 작업 상세 보기">
         <div class="screen-bar"><span></span><span></span><span></span><b>${escapeHtml(primary.title)}</b><i>↗</i></div>
         <figure>${renderImage(primary, { priority: true })}</figure>
@@ -144,7 +145,7 @@ const renderWorkStories = () => publicProjects.map((project, index) => `
   <article class="case-story reveal" id="case-${escapeHtml(project.id)}" data-case-story="${escapeHtml(project.id)}">
     <div class="case-screen-wrap">
       <a class="case-screen case-screen-${escapeHtml(project.visual || "blue")}" href="work/${escapeHtml(project.id)}.html" aria-label="${escapeHtml(project.title)} 구축 내용 보기" data-project-link>
-        <div class="case-screen-bar"><span>WAG / ${String(index + 1).padStart(2, "0")}</span><b>${escapeHtml(project.title)}</b><i>↗</i></div>
+        <div class="case-screen-bar"><span>SWAG / ${String(index + 1).padStart(2, "0")}</span><b>${escapeHtml(project.title)}</b><i>↗</i></div>
         <figure>${renderImage(project, { priority: index === 0 })}</figure>
         <div class="case-screen-shadow" aria-hidden="true"></div>
       </a>
@@ -327,7 +328,7 @@ await writePage("index.template.html", "index.html", {
 
 await writePage("work.template.html", "work/index.html", {
   PAGE_TITLE: `작업 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "WAG가 구축한 웹사이트와 운영 시스템의 실제 화면과 제작 범위",
+  PAGE_DESCRIPTION: "SWAG가 구축한 웹사이트와 운영 시스템의 실제 화면과 제작 범위",
   CANONICAL_URL: pageUrl("work/"),
   HEADER: renderHeader("work"),
   FOOTER: renderFooter(pageUrl("work/")),
@@ -338,7 +339,7 @@ for (const [index, project] of publicProjects.entries()) {
   const next = publicProjects[(index + 1) % publicProjects.length];
   const externalUrl = safeHttpUrl(project.url);
   await writePage("project.template.html", `work/${project.id}.html`, {
-    PAGE_TITLE: `${project.title} | WAG 작업`,
+    PAGE_TITLE: `${project.title} | SWAG 작업`,
     PAGE_DESCRIPTION: project.summary,
     CANONICAL_URL: pageUrl(`work/${project.id}.html`),
     HEADER: renderHeader("work"),
@@ -359,7 +360,7 @@ for (const [index, project] of publicProjects.entries()) {
 
 await writePage("services.template.html", "services/index.html", {
   PAGE_TITLE: `제작 범위 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "웹사이트, 앱, 웹게임, 예약, 결제, 데이터베이스와 관리자 도구까지 WAG의 제작 범위",
+  PAGE_DESCRIPTION: "웹사이트, 앱, 웹게임, 예약, 결제, 데이터베이스와 관리자 도구까지 SWAG의 제작 범위",
   CANONICAL_URL: pageUrl("services/"),
   HEADER: renderHeader("services"),
   FOOTER: renderFooter(pageUrl("services/")),
@@ -371,7 +372,7 @@ await writePage("services.template.html", "services/index.html", {
 
 await writePage("process.template.html", "process/index.html", {
   PAGE_TITLE: `진행 방식 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "상담부터 화면 확인, 기능 연결, 검수와 배포까지 WAG의 제작 과정",
+  PAGE_DESCRIPTION: "상담부터 화면 확인, 기능 연결, 검수와 배포까지 SWAG의 제작 과정",
   CANONICAL_URL: pageUrl("process/"),
   HEADER: renderHeader("process"),
   FOOTER: renderFooter(pageUrl("process/")),
@@ -380,7 +381,7 @@ await writePage("process.template.html", "process/index.html", {
 
 await writePage("contact.template.html", "contact/index.html", {
   PAGE_TITLE: `문의 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "제작 종류와 필요한 기능을 골라 정리하는 WAG 상담 문의",
+  PAGE_DESCRIPTION: "제작 종류와 필요한 기능을 골라 정리하는 SWAG 상담 문의",
   CANONICAL_URL: pageUrl("contact/"),
   HEADER: renderHeader("contact"),
   FOOTER: renderFooter(pageUrl("contact/")),
@@ -392,8 +393,8 @@ await writePage("contact.template.html", "contact/index.html", {
 }, ["STRUCTURED_DATA", "HEADER", "FOOTER", "PLANNER_TYPES", "PLANNER_FEATURES", "PROCESS", "FAQ"]);
 
 await writePage("privacy.template.html", "privacy.html", {
-  PAGE_TITLE: "개인정보처리 안내 | WAG",
-  PAGE_DESCRIPTION: "WAG 웹사이트의 개인정보 처리 안내",
+  PAGE_TITLE: "개인정보처리 안내 | SWAG",
+  PAGE_DESCRIPTION: "SWAG 웹사이트의 개인정보 처리 안내",
   CANONICAL_URL: pageUrl("privacy.html"),
   HEADER: renderHeader(""),
   FOOTER: renderFooter(pageUrl("privacy.html"))
@@ -419,4 +420,4 @@ await writeFile(path.join(output, "robots.txt"), `User-agent: *\nAllow: /\nSitem
 const sitemapEntries = ["", "services/", "process/", "work/", ...publicProjects.map((project) => `work/${project.id}.html`), "contact/", "privacy.html"];
 await writeFile(path.join(output, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${sitemapEntries.map((entry) => `<url><loc>${escapeHtml(pageUrl(entry))}</loc></url>`).join("")}</urlset>\n`);
 
-console.log(`Built WAG to ${output}`);
+console.log(`Built SWAG to ${output}`);

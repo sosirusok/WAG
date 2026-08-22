@@ -15,7 +15,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/Pretendard-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -26,12 +26,12 @@
   {{HEADER}}
   <main id="main">
     <header class="page-intro contact-page-hero shell reveal">
-      <p>PROJECT INQUIRY</p>
-      <div><h1>무엇이 필요한지<br>간단히 골라주세요</h1><span>개인정보 입력 없이 제작 종류와 기능을 고르면 카카오 상담에 보낼 내용이 정리됩니다</span><div class="contact-hero-actions"><a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">바로 카카오 문의</a><span>{{RESPONSE_NOTE}}</span></div></div>
+      <p>CONTACT</p>
+      <div><h1>프로젝트 문의</h1><span>제작 종류와 필요한 기능을 고르면 카카오 상담에 보낼 내용이 정리됩니다</span><div class="contact-hero-actions"><a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 문의</a><span>{{RESPONSE_NOTE}}</span></div></div>
     </header>
 
     <section class="scope-section shell reveal" aria-labelledby="scope-title">
-      <div class="scope-section-heading"><p>문의 내용 만들기</p><h2 id="scope-title">개인정보 입력 없이<br>네 가지만 선택</h2></div>
+      <div class="scope-section-heading"><p>문의 내용 만들기</p><h2 id="scope-title">네 가지 항목 선택</h2></div>
       <div class="scope-builder" data-scope-builder>
         <div class="scope-form">
           <nav class="scope-step-nav" aria-label="문의 작성 단계">
@@ -92,12 +92,12 @@
     </section>
 
     <section class="faq-section shell" aria-labelledby="faq-title">
-      <div class="section-intro reveal"><p>FAQ</p><div><h2 id="faq-title">문의 전에<br>많이 묻는 내용</h2></div></div>
+      <div class="section-intro reveal"><p>FAQ</p><div><h2 id="faq-title">자주 묻는 내용</h2></div></div>
       <div class="faq-list">{{FAQ}}</div>
     </section>
 
     <section class="direct-contact reveal">
-      <div class="shell direct-contact-inner"><p>바로 문의하기</p><div><h2>아직 정리되지 않았다면<br>그대로 말씀해 주세요</h2><a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 <span aria-hidden="true">↗</span></a><a href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a></div></div>
+      <div class="shell direct-contact-inner"><p>직접 문의</p><div><h2>카카오와 전화 상담</h2><a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 <span aria-hidden="true">↗</span></a><a href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a></div></div>
     </section>
   </main>
   {{FOOTER}}
