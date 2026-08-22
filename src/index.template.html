@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#fafafa">
+  <meta name="theme-color" content="#f7f8f8">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -28,42 +28,66 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <section class="modern-hero shell">
+    <section class="modern-hero shell" data-hero>
       <div class="modern-hero-copy reveal">
         <p class="availability"><i aria-hidden="true"></i>{{AVAILABILITY}}</p>
-        <h1>{{HEADLINE_TOP}}<br>{{HEADLINE_FOCUS}}</h1>
+        <p class="hero-kicker">WEB · APP · GAME</p>
+        <h1>{{HEADLINE_TOP}}<br><span>{{HEADLINE_FOCUS}}</span></h1>
         <p class="hero-description">{{HERO_DESCRIPTION}}</p>
         <div class="hero-actions">
-          <a class="button" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기</a>
-          <a class="button secondary" href="services/">제작 범위 확인</a>
+          <a class="button" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">{{PRIMARY_CTA}} <i aria-hidden="true">↗</i></a>
+          <a class="button secondary" href="services/">{{SECONDARY_CTA}}</a>
         </div>
-        <ul class="hero-points"><li>기획서 없이 상담 가능</li><li>모바일 화면 우선 확인</li><li>운영 기능과 관리자 도구 구축</li></ul>
+        <ul class="hero-points"><li>기획서 없이 시작 가능</li><li>빠른 1차 화면 확인</li><li>오픈 뒤 관리까지</li></ul>
       </div>
-      <figure class="modern-hero-media reveal"><img src="assets/wag-hero-studio.webp" alt="웹과 앱 제작을 위한 디지털 작업 환경" width="1586" height="992" fetchpriority="high"><figcaption><span>WEB</span><span>APP</span><span>GAME</span><span>SYSTEM</span></figcaption></figure>
+      <figure class="modern-hero-media reveal" data-hero-stage>
+        <img src="assets/wag-hero-studio.webp" alt="웹과 앱 제작을 위한 디지털 작업 환경" width="1586" height="992" fetchpriority="high">
+        <div class="hero-media-note"><span>WAG</span><p>기획부터 화면, 기능과 배포까지</p></div>
+        <figcaption><span>WEB</span><span>APP</span><span>GAME</span><span>SYSTEM</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="capability-rail" aria-label="제작 가능 기술"><div class="rail-track">{{TECHNOLOGY_RAIL}}</div></section>
+
+    <section class="brand-story shell reveal" aria-labelledby="brand-story-title">
+      <div class="brand-monogram" aria-hidden="true">WAG</div>
+      <div class="brand-story-copy">
+        <p class="brand-origin"><strong>외</strong>주의 외 <i aria-hidden="true"></i> <strong>그</strong>곳의 그</p>
+        <h2 id="brand-story-title">Web App Game</h2>
+        <p>{{BRAND_STORY}}</p>
+        <div class="brand-letters" aria-label="WAG 영문 의미"><span><b>W</b>Web</span><span><b>A</b>App</span><span><b>G</b>Game</span></div>
+      </div>
     </section>
 
     <section class="service-overview shell" aria-labelledby="service-title">
-      <div class="section-heading reveal"><p>제작 범위</p><div><h2 id="service-title">필요한 기능을 한곳에서<br>구축합니다.</h2><span>화면만 만드는 작업부터 실제 운영에 필요한 기능까지 범위를 나눠 진행합니다.</span></div></div>
+      <div class="section-heading reveal"><p>SERVICE</p><div><h2 id="service-title">화면만 필요한 작업부터<br>운영이 필요한 서비스까지</h2><span>지금 꼭 필요한 기능과 나중에 확장할 기능을 나눠 예산과 일정에 맞춥니다</span></div></div>
       <div class="service-list">{{HOME_SERVICES}}</div>
     </section>
 
-    <section class="operations">
-      <div class="shell operations-grid reveal"><div><p>운영 기능</p><h2>예약, 결제, 데이터와<br>관리자 기능을 연결합니다.</h2></div><div class="operation-list"><div><span>예약과 결제</span><p>고객 선택부터 결제 완료까지 한 흐름으로 연결합니다.</p></div><div><span>데이터베이스</span><p>회원, 주문, 예약과 콘텐츠를 필요한 구조로 저장합니다.</p></div><div><span>관리자 화면</span><p>사이트 내용과 운영 상태를 직접 확인하고 수정할 수 있게 만듭니다.</p></div><div><span>광고와 외부 연동</span><p>광고 코드, 지도, 문자와 외부 API를 실제 계정에 연결합니다.</p></div></div></div>
+    <section class="operations reveal">
+      <div class="shell operations-head"><div><p>ADVANCED BUILD</p><h2>보이는 화면 뒤의<br>어려운 기능까지</h2></div><p>결제와 실시간 데이터, 권한, 외부 API, 광고 전환과 자동화처럼 운영에 필요한 기능을 프로젝트에 맞춰 연결합니다</p></div>
+      <div class="shell capability-grid">{{CAPABILITY_GRID}}</div>
+      <div class="shell"><a class="dark-link" href="services/">전체 제작 범위 확인 <i aria-hidden="true">↗</i></a></div>
     </section>
 
     <section class="home-work shell" aria-labelledby="work-title">
-      <div class="section-heading compact reveal"><p>구축 사례</p><div><h2 id="work-title">공개 가능한 화면만<br>간단히 정리했습니다.</h2><span>작업 사례는 제작 범위를 확인하는 보조 자료로 제공합니다.</span></div></div>
+      <div class="section-heading compact reveal"><p>SELECTED WORK</p><div><h2 id="work-title">실제 운영 중인 작업</h2><span>공개 가능한 사이트의 화면과 구현 범위만 정리했습니다</span></div></div>
       <div class="home-work-list">{{HOME_WORK}}</div>
-      <a class="plain-link" href="work/">작업 내용 자세히 보기</a>
+      <a class="plain-link" href="work/">작업 내용 자세히 보기 <i aria-hidden="true">↗</i></a>
     </section>
 
     <section class="principles shell" aria-labelledby="principles-title">
-      <div class="section-heading reveal"><p>진행 기준</p><div><h2 id="principles-title">견적과 제작은 실제 기능을<br>기준으로 진행합니다.</h2></div></div>
-      <div class="principle-table"><article><b>01</b><h3>기능 기준 견적</h3><p>사용하지 않을 페이지와 기능을 제외하고 실제 구현 범위로 견적합니다.</p></article><article><b>02</b><h3>핵심 화면 우선</h3><p>중요한 화면을 먼저 제작해 디자인과 사용 방식을 일찍 확인합니다.</p></article><article><b>03</b><h3>운영까지 연결</h3><p>고객 화면, 데이터와 관리자 기능을 하나의 사용 과정으로 연결합니다.</p></article></div>
-      <a class="plain-link" href="process/">전체 진행 방식 보기</a>
+      <div class="section-heading reveal"><p>HOW WE WORK</p><div><h2 id="principles-title">복잡한 외주도<br>확인하기 쉽게</h2><span>중요한 결정을 한꺼번에 요구하지 않고 화면과 기능을 순서대로 확인합니다</span></div></div>
+      <div class="principle-table"><article class="reveal"><b>01</b><h3>범위부터 정리</h3><p>아이디어와 참고 사이트만 있어도 필요한 기능을 먼저 나눕니다</p></article><article class="reveal"><b>02</b><h3>화면을 먼저 확인</h3><p>중요한 화면과 모바일 동선을 일찍 확인해 방향을 맞춥니다</p></article><article class="reveal"><b>03</b><h3>운영까지 연결</h3><p>사용자 화면, 데이터와 관리자 기능을 실제 운영 흐름으로 잇습니다</p></article></div>
+      <a class="plain-link" href="process/">전체 진행 방식 보기 <i aria-hidden="true">↗</i></a>
     </section>
 
-    <section class="contact-band"><div class="shell reveal"><div><span>제작 문의</span><h2>필요한 기능만 알려주세요.</h2><p>기획서가 없어도 구현 범위부터 정리할 수 있습니다.</p></div><div><a class="button light" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 상담하기</a><a href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a></div></div></section>
+    <section class="faq shell" aria-labelledby="faq-title">
+      <div class="section-heading compact reveal"><p>FAQ</p><div><h2 id="faq-title">문의 전에 많이 묻는 내용</h2></div></div>
+      <div class="faq-list">{{HOME_FAQ}}</div>
+    </section>
+
+    <section class="contact-band reveal"><div class="shell"><div><span>PROJECT INQUIRY</span><h2>생각해둔 기능부터<br>편하게 말씀해 주세요</h2><p>{{RESPONSE_NOTE}}</p></div><div><a class="button light" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 상담하기 <i aria-hidden="true">↗</i></a><a href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a></div></div></section>
   </main>
   {{FOOTER}}
   <script src="app.js" defer></script>
