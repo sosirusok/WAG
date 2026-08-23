@@ -3,16 +3,10 @@
 
   const header = document.querySelector("[data-header]");
   const sentinel = document.querySelector("[data-header-sentinel]");
-  const menuToggle = document.querySelector("[data-menu-toggle]");
-  const mobileMenu = document.querySelector("[data-mobile-menu]");
-  const main = document.querySelector("main");
-  const footer = document.querySelector(".site-footer");
-  const wordmark = document.querySelector(".wordmark");
-  const mobileContactBar = document.querySelector(".mobile-contact-bar");
   const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const finePointerQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
   document.documentElement.classList.add("motion-ready");
   let reduceMotion = motionQuery.matches;
-  motionQuery.addEventListener?.("change", (event) => { reduceMotion = event.matches; });
 
   const siteProgress = document.querySelector("[data-site-progress]");
   let scrollFrame = 0;
@@ -42,84 +36,82 @@
     window.addEventListener("scroll", updateHeader, { passive: true });
   }
 
-  let returnFocus = null;
-  const setOutsideInert = (inert) => {
-    [main, footer, wordmark, mobileContactBar].forEach((element) => {
-      if (!element) return;
-      if ("inert" in element) element.inert = inert;
-      else if (inert) element.setAttribute("aria-hidden", "true");
-      else element.removeAttribute("aria-hidden");
+  const revealElements = document.querySelectorAll(".reveal");
+  const revealAll = () => {
+    revealElements.forEach((element) => element.classList.add("is-visible"));
+  };
+  const revealAboveFold = () => {
+    const revealFold = window.innerHeight + 24;
+    revealElements.forEach((element) => {
+      if (element.classList.contains("is-visible")) return;
+      const rect = element.getBoundingClientRect();
+      if (rect.top < revealFold && rect.bottom > 0) element.classList.add("is-visible");
     });
   };
 
-  const setMenu = (open, restoreFocus = false) => {
-    if (!menuToggle || !mobileMenu) return;
-    menuToggle.setAttribute("aria-expanded", String(open));
-    menuToggle.querySelector(".menu-label").textContent = open ? "닫기" : "메뉴";
-    mobileMenu.hidden = !open;
-    document.body.classList.toggle("menu-open", open);
-    header?.classList.toggle("menu-visible", open);
-    setOutsideInert(open);
-    if (open) {
-      returnFocus = document.activeElement;
-      mobileMenu.querySelector("a")?.focus();
-    } else if (restoreFocus && returnFocus instanceof HTMLElement) {
-      returnFocus.focus();
-    }
-  };
-
-  menuToggle?.addEventListener("click", () => {
-    setMenu(menuToggle.getAttribute("aria-expanded") !== "true", true);
-  });
-
-  mobileMenu?.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => setMenu(false));
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (!mobileMenu || mobileMenu.hidden) return;
-    if (event.key === "Escape") {
-      event.preventDefault();
-      setMenu(false, true);
-      return;
-    }
-    if (event.key !== "Tab") return;
-    const focusable = [menuToggle, ...mobileMenu.querySelectorAll("a, button")].filter((element) => element && !element.hasAttribute("disabled"));
-    if (!focusable.length) return;
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
-  });
-
-  window.addEventListener("resize", () => {
-    if (window.innerWidth > 900 && mobileMenu && !mobileMenu.hidden) setMenu(false);
-  }, { passive: true });
-
-  const revealElements = document.querySelectorAll(".reveal");
+  let revealObserver = null;
   if (reduceMotion || !("IntersectionObserver" in window)) {
-    revealElements.forEach((element) => element.classList.add("is-visible"));
+    revealAll();
   } else {
-    const revealObserver = new IntersectionObserver((entries) => {
+    revealAboveFold();
+    revealObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         entry.target.classList.add("is-visible");
         revealObserver.unobserve(entry.target);
       });
-    }, { rootMargin: "0px 0px -7%", threshold: 0.05 });
-    const revealFold = window.innerHeight * 0.93;
+    }, { rootMargin: "80px 0px -6%", threshold: 0.01 });
     revealElements.forEach((element) => {
-      const rect = element.getBoundingClientRect();
-      const visibleAtLoad = rect.width > 0 && rect.height > 0 && rect.top < revealFold && rect.bottom > 0;
-      if (visibleAtLoad) element.classList.add("is-visible");
-      else revealObserver.observe(element);
+      if (!element.classList.contains("is-visible")) revealObserver.observe(element);
     });
+    window.requestAnimationFrame(revealAboveFold);
+    window.addEventListener("load", revealAboveFold, { once: true });
   }
+
+  const heroStage = document.querySelector(".hero-stage");
+  let stageFrame = 0;
+  let stageX = 0;
+  let stageY = 0;
+
+  const paintStage = () => {
+    stageFrame = 0;
+    if (!heroStage) return;
+    heroStage.style.setProperty("--stage-x", `${stageX.toFixed(2)}px`);
+    heroStage.style.setProperty("--stage-y", `${stageY.toFixed(2)}px`);
+  };
+  const requestStagePaint = () => {
+    if (!stageFrame) stageFrame = window.requestAnimationFrame(paintStage);
+  };
+  const resetStage = () => {
+    stageX = 0;
+    stageY = 0;
+    requestStagePaint();
+  };
+
+  heroStage?.addEventListener("pointermove", (event) => {
+    if (reduceMotion || !finePointerQuery.matches || event.pointerType !== "mouse") return;
+    const rect = heroStage.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const normalizedX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    const normalizedY = ((event.clientY - rect.top) / rect.height) * 2 - 1;
+    stageX = Math.max(-1, Math.min(1, normalizedX)) * 8;
+    stageY = Math.max(-1, Math.min(1, normalizedY)) * 6;
+    requestStagePaint();
+  }, { passive: true });
+  heroStage?.addEventListener("pointerleave", resetStage, { passive: true });
+
+  const handleMotionChange = (event) => {
+    reduceMotion = event.matches;
+    if (reduceMotion) {
+      revealObserver?.disconnect();
+      revealAll();
+      resetStage();
+    }
+  };
+  motionQuery.addEventListener?.("change", handleMotionChange);
+  finePointerQuery.addEventListener?.("change", (event) => {
+    if (!event.matches) resetStage();
+  });
 
   document.querySelectorAll(".faq-item").forEach((item) => {
     item.addEventListener("toggle", () => {
