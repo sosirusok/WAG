@@ -96,9 +96,11 @@
     }
     const scrollOffset = Math.max(-3, Math.min(3, window.scrollY * -0.004));
     ambientElements.forEach((element) => {
+      const parsedDepth = Number.parseFloat(element.dataset.ambientDepth || "1");
+      const depth = Number.isFinite(parsedDepth) ? Math.max(.1, Math.min(parsedDepth, 1.6)) : 1;
       element.style.setProperty(
         "translate",
-        `${ambientPointerX.toFixed(2)}px ${(ambientPointerY + scrollOffset).toFixed(2)}px`
+        `${(ambientPointerX * depth).toFixed(2)}px ${((ambientPointerY * depth) + (scrollOffset * depth)).toFixed(2)}px`
       );
     });
   };
