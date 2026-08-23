@@ -59,7 +59,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-body, button, input, textarea, select { font-family: inherit; }
+button, input, textarea, select { font-family: inherit; }
 img, picture, video { display: block; max-width: 100%; }
 figure, p, h1, h2, h3, ul, ol, pre { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
