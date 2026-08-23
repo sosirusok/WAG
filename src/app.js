@@ -112,7 +112,13 @@
         revealObserver.unobserve(entry.target);
       });
     }, { rootMargin: "0px 0px -7%", threshold: 0.05 });
-    revealElements.forEach((element) => revealObserver.observe(element));
+    const revealFold = window.innerHeight * 0.93;
+    revealElements.forEach((element) => {
+      const rect = element.getBoundingClientRect();
+      const visibleAtLoad = rect.width > 0 && rect.height > 0 && rect.top < revealFold && rect.bottom > 0;
+      if (visibleAtLoad) element.classList.add("is-visible");
+      else revealObserver.observe(element);
+    });
   }
 
   document.querySelectorAll(".faq-item").forEach((item) => {
