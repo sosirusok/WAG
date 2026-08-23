@@ -62,15 +62,12 @@ const renderHeader = (active = "") => `
       <a class="logo" href="./" aria-label="SWAG 홈">
         <strong>SWAG</strong>
       </a>
-      <nav class="desktop-nav" aria-label="주요 메뉴">
+      <nav class="desktop-nav top-nav" aria-label="주요 메뉴">
         <a href="work/"${activeAttr(active, "work")}>작업</a>
         <a href="services/"${activeAttr(active, "services")}>제작 범위</a>
         <a href="process/"${activeAttr(active, "process")}>진행 방식</a>
         <a href="contact/"${activeAttr(active, "contact")}>문의</a>
       </nav>
-      <a class="header-cta" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">
-        <span>상담 문의</span><i aria-hidden="true">↗</i>
-      </a>
     </div>
   </header>
   <div class="header-sentinel" data-header-sentinel aria-hidden="true"></div>`;
@@ -80,7 +77,7 @@ const renderFooter = (currentUrl = normalizedSiteUrl) => `
     <div class="footer-top shell">
       <div class="footer-brand"><strong>SWAG</strong></div>
       <nav class="footer-links" aria-label="하단 메뉴"><a href="work/">작업</a><a href="services/">제작 범위</a><a href="process/">진행 방식</a><a href="contact/">문의</a></nav>
-      <div class="footer-contact"><span>CONTACT</span><a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a href="tel:${phoneDigits}">${escapeHtml(data.contact.owner)} ${escapeHtml(data.contact.phone)}</a></div>
+      <div class="footer-contact"><span>문의</span><a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a href="tel:${phoneDigits}">${escapeHtml(data.contact.owner)} ${escapeHtml(data.contact.phone)}</a></div>
     </div>
     <div class="footer-bottom shell"><span>© <b data-year>2026</b> SWAG</span><a href="privacy.html">개인정보처리 안내</a><a href="${escapeHtml(currentUrl)}#top">위로 ↑</a></div>
   </footer>`;
@@ -93,37 +90,45 @@ const renderImage = (project, options = {}) => {
 };
 
 const renderHeroStage = () => {
-  const projects = (featuredProjects.length ? featuredProjects : publicProjects).slice(0, 2);
+  const projects = (featuredProjects.length ? featuredProjects : publicProjects).slice(0, 1);
   if (!projects.length) return "";
   const primary = projects[0];
-  const secondary = projects[1] || primary;
   return `
-    <div class="hero-stage reveal" data-hero-stage aria-label="실제 작업 사례">
-      <div class="stage-color stage-color-one" aria-hidden="true"></div><div class="stage-color stage-color-two" aria-hidden="true"></div>
-      <a class="stage-main" href="${escapeHtml(safeHttpUrl(primary.url) || `work/${primary.id}.html`)}" target="_blank" rel="noopener noreferrer">
-        <span class="stage-toolbar"><i></i><i></i><i></i><b>운영 사이트 01</b></span>
+    <div class="cloud-stage reveal" data-hero-stage aria-label="실제 운영 화면">
+      <div class="ambient-layer" data-ambient aria-hidden="true"><i class="cloud cloud-one"></i><i class="cloud cloud-two"></i></div>
+      <a class="browser-frame browser-frame-hero" data-project-visual href="${escapeHtml(safeHttpUrl(primary.url) || `work/${primary.id}.html`)}" target="_blank" rel="noopener noreferrer">
+        <span class="browser-bar"><i></i><i></i><i></i><b>${escapeHtml(primary.title)}</b></span>
         <figure>${renderImage(primary, { priority: true })}</figure>
-        <div class="stage-caption"><span>${escapeHtml(primary.category)}</span><strong>${escapeHtml(primary.title)}</strong><i aria-hidden="true">↗</i></div>
       </a>
-      <a class="stage-side" href="${escapeHtml(safeHttpUrl(secondary.url) || `work/${secondary.id}.html`)}" target="_blank" rel="noopener noreferrer"><figure>${renderImage(secondary)}</figure><span>운영 중인 프로젝트 02</span></a>
-      <div class="stage-note"><b>${data.services.length}</b><span>제작 분야</span></div>
+      <div class="glass-panel hero-project-card"><span>${escapeHtml(primary.category)}</span><b>${escapeHtml(primary.title)}</b><a href="work/${escapeHtml(primary.id)}.html">구축 내용 보기 <i aria-hidden="true">↗</i></a></div>
     </div>`;
 };
 
-const renderHomeServiceCards = () => data.services.map((service, index) => `<a href="services/#${escapeHtml(service.id)}"><span>${String(index + 1).padStart(2, "0")}</span><h3>${escapeHtml(service.title)}</h3><p>${escapeHtml(service.subtitle)}</p><ul>${service.items.slice(0, 2).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul><i aria-hidden="true">↗</i></a>`).join("");
+const renderHomeServiceCards = () => data.services.map((service) => `<a class="scope-preview-item" href="services/#${escapeHtml(service.id)}"><h3>${escapeHtml(service.title)}</h3><p>${escapeHtml(service.subtitle)}</p><i aria-hidden="true">↗</i></a>`).join("");
 
-const renderHomeWorkPreview = () => publicProjects.map((project, index) => `<a href="${escapeHtml(safeHttpUrl(project.url) || `work/${project.id}.html`)}" target="_blank" rel="noopener noreferrer"><figure>${renderImage(project, { priority: index === 0 })}</figure><div><span>${String(index + 1).padStart(2, "0")} / ${escapeHtml(project.category)}</span><h3>${escapeHtml(project.title)}</h3><p>${escapeHtml(project.summary)}</p><b>운영 사이트 <i aria-hidden="true">↗</i></b></div></a>`).join("");
+const renderHomeWorkPreview = () => publicProjects.slice(0, 2).map((project, index) => `
+  <article class="editorial-project reveal">
+    <a class="browser-frame work-browser" data-project-visual href="${escapeHtml(safeHttpUrl(project.url) || `work/${project.id}.html`)}" target="_blank" rel="noopener noreferrer">
+      <span class="browser-bar"><i></i><i></i><i></i><b>${escapeHtml(project.title)}</b></span>
+      <figure>${renderImage(project, { priority: index === 0 })}</figure>
+    </a>
+    <div class="project-note glass-panel"><span>${escapeHtml(project.category)}</span><h3>${escapeHtml(project.title)}</h3><p>${escapeHtml(project.summary)}</p><a href="work/${escapeHtml(project.id)}.html">구축 내용 보기 <i aria-hidden="true">↗</i></a></div>
+  </article>`).join("");
 
-const renderWorkList = () => publicProjects.map((project, index) => `<article class="reveal"><figure>${renderImage(project, { priority: index === 0 })}<figcaption>운영 중 ${String(index + 1).padStart(2, "0")}</figcaption></figure><div><span>${String(index + 1).padStart(2, "0")} / ${escapeHtml(project.category)}</span><h2>${escapeHtml(project.title)}</h2><p>${escapeHtml(project.summary)}</p><ul>${project.features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}</ul><a href="${escapeHtml(safeHttpUrl(project.url) || `work/${project.id}.html`)}" target="_blank" rel="noopener noreferrer">운영 사이트 보기 <i aria-hidden="true">↗</i></a></div></article>`).join("");
+const renderHomeContactBackdrop = () => {
+  return '<img src="assets/sky-glass.webp" alt="" loading="lazy" decoding="async">';
+};
+
+const renderWorkList = () => publicProjects.map((project, index) => `<article class="work-entry reveal"><figure class="browser-frame work-browser" data-project-visual><span class="browser-bar"><i></i><i></i><i></i><b>${escapeHtml(project.title)}</b></span>${renderImage(project, { priority: index === 0 })}<figcaption>실제 운영 화면</figcaption></figure><div class="work-entry-copy"><span>${escapeHtml(project.category)}</span><h2>${escapeHtml(project.title)}</h2><p>${escapeHtml(project.summary)}</p><ul>${project.features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}</ul><a href="${escapeHtml(safeHttpUrl(project.url) || `work/${project.id}.html`)}" target="_blank" rel="noopener noreferrer">운영 사이트 보기 <i aria-hidden="true">↗</i></a></div></article>`).join("");
 
 const renderServiceChapters = () => data.services.map((service) => `
   <article class="reveal" id="${escapeHtml(service.id)}">
     <header><span>${escapeHtml(service.number)}</span><div><h2>${escapeHtml(service.title)}</h2><p>${escapeHtml(service.subtitle)}</p></div></header>
-    <div class="service-columns"><div><h3>핵심 구축</h3><ul>${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div><div><h3>고급 기능</h3><ul>${(service.advanced || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div><div><h3>운영과 인프라</h3><ul>${(service.operations || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div><a href="contact/?type=${escapeHtml(service.id)}">이 범위로 문의하기 <i aria-hidden="true">↗</i></a></div>
+    <div class="service-columns"><div class="glass-panel"><h3>핵심 구축</h3><ul>${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div><div class="glass-panel"><h3>고급 기능</h3><ul>${(service.advanced || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div><div class="glass-panel"><h3>운영과 인프라</h3><ul>${(service.operations || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div><a href="contact/?type=${escapeHtml(service.id)}">이 범위로 문의하기 <i aria-hidden="true">↗</i></a></div>
   </article>`).join("");
 
 const renderCapabilityGrid = () => data.capabilityGroups.map((item) => `
-  <article><span>${escapeHtml(item.code)}</span><p>${escapeHtml(item.tech)}</p><h3>${escapeHtml(item.title)}</h3><b>${escapeHtml(item.description)}</b></article>`).join("");
+  <article class="capability-item"><span>${escapeHtml(item.code)}</span><p>${escapeHtml(item.tech)}</p><h3>${escapeHtml(item.title)}</h3><b>${escapeHtml(item.description)}</b></article>`).join("");
 
 const renderTechnologyRail = () => data.technology.map((item) => `<span>${escapeHtml(item)}</span>`).join("");
 
@@ -134,7 +139,7 @@ const renderPlannerFeatures = () => data.capabilities.map((item) => `
   <button type="button" aria-pressed="false" data-scope-choice data-scope-group="필요 기능" data-scope-value="${escapeHtml(item)}">${escapeHtml(item)}</button>`).join("");
 
 const processOutput = ["서비스 종류, 참고 주소, 희망 일정", "확정된 기능 목록과 진행 일정", "첫 화면, 주요 동선, 모바일 화면", "실제 데이터와 운영 기능", "최종 사이트, 관리 방법, 인계 자료"];
-const renderProcess = () => data.process.map((item, index) => `<article class="reveal"><span>${escapeHtml(item.number)}</span><div><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description.replace(/[.]$/, ""))}</p></div><aside><b>확인 내용</b><p>${escapeHtml(processOutput[index] || "진행 범위와 결과물")}</p></aside></article>`).join("");
+const renderProcess = () => data.process.map((item, index) => `<article class="process-step reveal"><span>${escapeHtml(item.number)}</span><div><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description.replace(/[.]$/, ""))}</p></div><aside class="glass-panel"><b>확인 내용</b><p>${escapeHtml(processOutput[index] || "진행 범위와 결과물")}</p></aside></article>`).join("");
 
 const renderFaq = () => data.faq.map((item) => `
   <details class="faq-item reveal"><summary><span>${escapeHtml(item.question)}</span><i aria-hidden="true"></i></summary><p>${escapeHtml(item.answer)}</p></details>`).join("");
@@ -204,8 +209,9 @@ await writePage("index.template.html", "index.html", {
   HOME_SERVICE_CARDS: renderHomeServiceCards(),
   HOME_WORK_PREVIEW: renderHomeWorkPreview(),
   HERO_STAGE: renderHeroStage(),
+  HOME_CONTACT_IMAGE: renderHomeContactBackdrop(),
   RESPONSE_NOTE: data.contact.responseNote
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_SERVICE_CARDS", "HOME_WORK_PREVIEW", "HERO_STAGE"]);
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_SERVICE_CARDS", "HOME_WORK_PREVIEW", "HERO_STAGE", "HOME_CONTACT_IMAGE"]);
 
 await writePage("work.template.html", "work/index.html", {
   PAGE_TITLE: `작업 | ${data.brand.name}`,

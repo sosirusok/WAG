@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f3f6f7">
+  <meta name="theme-color" content="#f4f9fc">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -16,7 +16,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/Pretendard-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -26,33 +26,45 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <section class="hero shell">
-      <div class="hero-copy reveal">
-        <div class="hero-brand"><b>SWAG</b><span>SYSTEM WEB APP GAME</span></div>
-        <h1>{{HEADLINE_TOP}}<br>{{HEADLINE_FOCUS}}</h1>
-        <p class="lead">{{HERO_DESCRIPTION}}</p>
-        <div class="actions">
-          <a class="button" href="contact/">프로젝트 문의 <i aria-hidden="true">↗</i></a>
-          <a class="button secondary" href="work/">작업 사례 보기</a>
+    <section class="sky-hero" aria-labelledby="home-title">
+      <picture class="sky-hero-backdrop" data-ambient aria-hidden="true"><img src="assets/sky-hero.webp" alt="" fetchpriority="high" decoding="async"></picture>
+      <div class="sky-hero-inner shell">
+        {{HERO_STAGE}}
+        <div class="sky-hero-panel glass-panel reveal">
+          <span class="brand-expansion">System / Web / App / Game</span>
+          <h1 id="home-title">SWAG</h1>
+          <p>{{HERO_DESCRIPTION}}</p>
+          <ul class="hero-scope" aria-label="주요 제작 분야"><li>웹사이트</li><li>앱과 웹앱</li><li>웹게임</li><li>운영 시스템</li></ul>
+          <div class="actions">
+            <a class="button" href="work/">작업 보기 <i aria-hidden="true">↗</i></a>
+            <a class="button secondary" href="contact/">프로젝트 문의</a>
+          </div>
         </div>
-        <div class="brand-lockup" aria-label="SWAG 영문 의미"><span><b>S</b>System</span><span><b>W</b>Web</span><span><b>A</b>App</span><span><b>G</b>Game</span></div>
       </div>
-      {{HERO_STAGE}}
     </section>
 
-    <section class="home-services shell reveal">
-      <div class="home-section-head"><div><span>01</span><h2>제작 분야</h2></div><a href="services/">전체 범위 보기 <i aria-hidden="true">↗</i></a></div>
-      <div class="service-cards">{{HOME_SERVICE_CARDS}}</div>
-    </section>
-
-    <section class="home-work reveal">
-      <div class="shell">
-        <div class="home-section-head on-color"><div><span>02</span><h2>작업 사례</h2></div><a href="work/">작업 전체 보기 <i aria-hidden="true">↗</i></a></div>
+    <section class="home-work editorial-work">
+      <div class="shell editorial-work-inner">
+        <div class="home-section-head reveal"><div><h2>실제 작업</h2><p>운영 중인 사이트의 화면과 구축 내용을 확인할 수 있습니다</p></div><a href="work/">작업 모두 보기 <i aria-hidden="true">↗</i></a></div>
         <div class="work-preview">{{HOME_WORK_PREVIEW}}</div>
       </div>
     </section>
 
-    <section class="contact-band reveal"><div class="shell"><div><span>상담 안내</span><h2>프로젝트 상담</h2><p>{{RESPONSE_NOTE}}</p></div><div><a class="button light" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 <i aria-hidden="true">↗</i></a><a class="phone-link" href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a></div></div></section>
+    <section class="home-scope-preview shell reveal" aria-labelledby="scope-preview-title">
+      <div class="home-section-head"><div><h2 id="scope-preview-title">제작 범위</h2><p>필요한 부분만 골라 프로젝트에 맞게 구성합니다</p></div><a href="services/">자세히 보기 <i aria-hidden="true">↗</i></a></div>
+      <div class="scope-preview-list">{{HOME_SERVICE_CARDS}}</div>
+    </section>
+
+    <section class="visual-contact reveal" aria-labelledby="home-contact-title">
+      <figure class="contact-backdrop" data-ambient>{{HOME_CONTACT_IMAGE}}</figure>
+      <div class="shell visual-contact-inner">
+        <div class="contact-panel glass-panel">
+          <h2 id="home-contact-title">프로젝트 상담</h2>
+          <p>{{RESPONSE_NOTE}}</p>
+          <div><a class="button" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 <i aria-hidden="true">↗</i></a><a class="phone-link" href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a></div>
+        </div>
+      </div>
+    </section>
   </main>
   {{FOOTER}}
   <script src="app.js" defer></script>
