@@ -415,13 +415,13 @@
   position: absolute;
   z-index: 1;
   top: 50%;
-  right: -6vw;
-  width: min(42vw, 610px);
+  right: 0;
+  width: min(36vw, 520px);
   aspect-ratio: 1;
   translate: 0 -50%;
   border: 1px solid rgba(255,255,255,.21);
   border-radius: 50%;
-  animation: about-orbit 22s linear infinite;
+  animation: about-orbit-breathe 7s ease-in-out infinite alternate;
 }
 
 .about-contact-orbit::before,
@@ -439,6 +439,7 @@
 .about-contact-orbit i:nth-child(3) { bottom: 19%; left: 18%; width: 6px; background: #bce3f6; }
 
 @keyframes about-orbit { to { rotate: 360deg; } }
+@keyframes about-orbit-breathe { to { opacity: .74; } }
 
 @media (max-width: 1080px) {
   .about-hero { grid-template-columns: minmax(330px, .88fr) minmax(390px, 1.12fr); gap: 48px; }
@@ -525,7 +526,7 @@
   .about-contact-inner > span { font-size: 16px; }
   .about-contact-inner > div { align-items: flex-start; flex-direction: column; gap: 20px; }
   .about-contact .about-text-link { margin-top: 0; }
-  .about-contact-orbit { right: -54%; width: 120vw; opacity: .42; }
+  .about-contact-orbit { right: 0; width: 90vw; opacity: .42; }
 }
 
 @media (prefers-reduced-motion: reduce) {
