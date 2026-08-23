@@ -120,6 +120,59 @@
   }, { passive: true });
   window.addEventListener("scroll", requestAmbientPaint, { passive: true });
 
+  const brandHero = document.querySelector("[data-brand-hero]");
+  if (brandHero) {
+    const resetBrandLight = () => {
+      brandHero.style.setProperty("--brand-pointer-x", "72%");
+      brandHero.style.setProperty("--brand-pointer-y", "23%");
+    };
+    resetBrandLight();
+    brandHero.addEventListener("pointermove", (event) => {
+      if (reduceMotion || !finePointerQuery.matches || event.pointerType !== "mouse") return;
+      const rect = brandHero.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const x = Math.max(8, Math.min(92, ((event.clientX - rect.left) / rect.width) * 100));
+      const y = Math.max(8, Math.min(88, ((event.clientY - rect.top) / rect.height) * 100));
+      brandHero.style.setProperty("--brand-pointer-x", `${x.toFixed(1)}%`);
+      brandHero.style.setProperty("--brand-pointer-y", `${y.toFixed(1)}%`);
+    }, { passive: true });
+    brandHero.addEventListener("pointerleave", resetBrandLight, { passive: true });
+    brandHero.addEventListener("pointercancel", resetBrandLight, { passive: true });
+  }
+
+  const processRoot = document.querySelector("[data-process]");
+  const processChapters = processRoot ? [...processRoot.querySelectorAll("[data-process-step]")] : [];
+  const processCurrent = processRoot?.querySelector("[data-process-current]");
+  const processProgress = processRoot?.querySelector("[data-process-progress]");
+  let processActiveIndex = -1;
+  const setProcessStep = (index) => {
+    if (!processChapters.length) return;
+    const nextIndex = Math.max(0, Math.min(index, processChapters.length - 1));
+    if (nextIndex === processActiveIndex) return;
+    processActiveIndex = nextIndex;
+    processChapters.forEach((chapter, chapterIndex) => chapter.classList.toggle("is-current", chapterIndex === nextIndex));
+    if (processCurrent) processCurrent.textContent = processChapters[nextIndex].dataset.processNumber || String(nextIndex + 1).padStart(2, "0");
+    if (processProgress) {
+      const progress = processChapters.length === 1 ? 100 : (nextIndex / (processChapters.length - 1)) * 100;
+      processProgress.style.height = `${progress}%`;
+    }
+  };
+  if (processChapters.length) {
+    setProcessStep(0);
+    if ("IntersectionObserver" in window) {
+      const processObserver = new IntersectionObserver((entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        setProcessStep(processChapters.indexOf(visible.target));
+      }, { rootMargin: "-28% 0px -48%", threshold: [0, .1, .25, .5] });
+      processChapters.forEach((chapter) => processObserver.observe(chapter));
+    } else {
+      processChapters.forEach((chapter) => chapter.classList.add("is-current"));
+    }
+  }
+
   const projectVisuals = [...document.querySelectorAll("[data-project-visual]")];
   const projectStates = projectVisuals.map((visual) => {
     const tiltTarget = visual.querySelector("[data-project-tilt]") || visual;

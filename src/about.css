@@ -4,7 +4,7 @@
   --about-pale: #eaf5fb;
   --about-warm: #fffdf8;
   color: var(--ink);
-  font-family: "SUIT", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Wanted Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .about-page h1,
@@ -41,7 +41,7 @@
 .about-section-label,
 .about-visual-index {
   color: var(--about-blue);
-  font-family: "Mona Sans", "SUIT", sans-serif;
+  font-family: "Mona Sans", "Wanted Sans", sans-serif;
   font-size: 12px;
   font-weight: 620;
   letter-spacing: .1em;
