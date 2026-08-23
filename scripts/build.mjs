@@ -57,53 +57,32 @@ const activeAttr = (active, key) => active === key ? ' aria-current="page"' : ""
 
 const renderHeader = (active = "") => `
   <header class="site-header" data-header>
-    <i class="site-progress" data-site-progress aria-hidden="true"></i>
+    <i class="scroll-progress" data-site-progress aria-hidden="true"></i>
     <div class="header-inner">
-      <a class="wordmark" href="./" aria-label="SWAG 홈">
-        <strong>SWAG</strong><span>System Web App Game</span>
+      <a class="logo" href="./" aria-label="SWAG 홈">
+        <strong>SWAG</strong>
       </a>
-      <nav class="main-nav" aria-label="주요 메뉴">
+      <nav class="desktop-nav" aria-label="주요 메뉴">
         <a href="work/"${activeAttr(active, "work")}>작업</a>
         <a href="services/"${activeAttr(active, "services")}>제작 범위</a>
         <a href="process/"${activeAttr(active, "process")}>진행 방식</a>
         <a href="contact/"${activeAttr(active, "contact")}>문의</a>
       </nav>
-      <a class="header-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">
-        상담 문의 <i aria-hidden="true">↗</i>
+      <a class="header-cta" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">
+        <span>상담 문의</span><i aria-hidden="true">↗</i>
       </a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
-        <span class="menu-label">메뉴</span><i aria-hidden="true"></i>
-      </button>
     </div>
-    <nav class="mobile-nav" id="mobile-menu" aria-label="모바일 메뉴" data-mobile-menu hidden>
-      <a href="./">홈</a>
-      <a href="work/"${activeAttr(active, "work")}>작업</a>
-      <a href="services/"${activeAttr(active, "services")}>제작 범위</a>
-      <a href="process/"${activeAttr(active, "process")}>진행 방식</a>
-      <a href="contact/"${activeAttr(active, "contact")}>문의</a>
-      <a class="mobile-nav-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">상담 문의</a>
-    </nav>
   </header>
   <div class="header-sentinel" data-header-sentinel aria-hidden="true"></div>`;
 
 const renderFooter = (currentUrl = normalizedSiteUrl) => `
-  <a class="mobile-contact-bar" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">
-    <span>제작 문의</span><b>카카오로 상담하기</b>
-  </a>
   <footer class="site-footer">
-    <div class="footer-main">
-      <div class="footer-wordmark"><strong>SWAG</strong></div>
-      <p><b>System Web App Game</b></p>
-      <a class="footer-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a>
+    <div class="footer-top shell">
+      <div class="footer-brand"><strong>SWAG</strong></div>
+      <nav class="footer-links" aria-label="하단 메뉴"><a href="work/">작업</a><a href="services/">제작 범위</a><a href="process/">진행 방식</a><a href="contact/">문의</a></nav>
+      <div class="footer-contact"><span>CONTACT</span><a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a href="tel:${phoneDigits}">${escapeHtml(data.contact.owner)} ${escapeHtml(data.contact.phone)}</a></div>
     </div>
-    <div class="footer-meta">
-      <dl><dt>운영</dt><dd>${escapeHtml(data.contact.owner)}</dd></dl>
-      <dl><dt>전화</dt><dd><a href="tel:${phoneDigits}">${escapeHtml(data.contact.phone)}</a></dd></dl>
-      <nav aria-label="하단 메뉴">
-        <a href="work/">작업</a><a href="services/">제작 범위</a><a href="process/">진행 방식</a><a href="contact/">문의</a><a href="privacy.html">개인정보처리 안내</a>
-      </nav>
-    </div>
-    <div class="footer-bottom"><span>© <b data-year>2026</b> SWAG</span><a href="${escapeHtml(currentUrl)}#top">위로 ↑</a></div>
+    <div class="footer-bottom shell"><span>© <b data-year>2026</b> SWAG</span><a href="privacy.html">개인정보처리 안내</a><a href="${escapeHtml(currentUrl)}#top">위로 ↑</a></div>
   </footer>`;
 
 const renderImage = (project, options = {}) => {
@@ -114,34 +93,39 @@ const renderImage = (project, options = {}) => {
 };
 
 const renderHeroStage = () => {
-  const projects = (featuredProjects.length ? featuredProjects : publicProjects).slice(0, 1);
+  const projects = (featuredProjects.length ? featuredProjects : publicProjects).slice(0, 2);
   if (!projects.length) return "";
   const primary = projects[0];
+  const secondary = projects[1] || primary;
   return `
-    <a class="project-stage reveal" data-hero-stage href="work/${escapeHtml(primary.id)}.html" aria-label="${escapeHtml(primary.title)} 작업 상세 보기">
-      <figure>${renderImage(primary, { priority: true })}</figure>
-      <div class="project-stage-caption"><span>${escapeHtml(primary.category)}</span><b>${escapeHtml(primary.title)}</b><i aria-hidden="true">↗</i></div>
-    </a>`;
+    <div class="hero-stage reveal" data-hero-stage aria-label="실제 작업 사례">
+      <div class="stage-color stage-color-one" aria-hidden="true"></div><div class="stage-color stage-color-two" aria-hidden="true"></div>
+      <a class="stage-main" href="${escapeHtml(safeHttpUrl(primary.url) || `work/${primary.id}.html`)}" target="_blank" rel="noopener noreferrer">
+        <span class="stage-toolbar"><i></i><i></i><i></i><b>운영 사이트 01</b></span>
+        <figure>${renderImage(primary, { priority: true })}</figure>
+        <div class="stage-caption"><span>${escapeHtml(primary.category)}</span><strong>${escapeHtml(primary.title)}</strong><i aria-hidden="true">↗</i></div>
+      </a>
+      <a class="stage-side" href="${escapeHtml(safeHttpUrl(secondary.url) || `work/${secondary.id}.html`)}" target="_blank" rel="noopener noreferrer"><figure>${renderImage(secondary)}</figure><span>운영 중인 프로젝트 02</span></a>
+      <div class="stage-note"><b>${data.services.length}</b><span>제작 분야</span></div>
+    </div>`;
 };
 
-const renderWorkCards = () => publicProjects.map((project, index) => `
-  <a class="work-card reveal" href="work/${escapeHtml(project.id)}.html">
-    <figure>${renderImage(project, { priority: index === 0 })}</figure>
-    <div class="work-card-copy">
-      <p>${String(index + 1).padStart(2, "0")} / ${escapeHtml(project.category)}</p>
-      <h2>${escapeHtml(project.title)}</h2>
-      <div><span>${escapeHtml(project.summary)}</span><i aria-hidden="true">자세히 보기 ↗</i></div>
-    </div>
-  </a>`).join("");
+const renderHomeServiceCards = () => data.services.map((service, index) => `<a href="services/#${escapeHtml(service.id)}"><span>${String(index + 1).padStart(2, "0")}</span><h3>${escapeHtml(service.title)}</h3><p>${escapeHtml(service.subtitle)}</p><ul>${service.items.slice(0, 2).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul><i aria-hidden="true">↗</i></a>`).join("");
+
+const renderHomeWorkPreview = () => publicProjects.map((project, index) => `<a href="${escapeHtml(safeHttpUrl(project.url) || `work/${project.id}.html`)}" target="_blank" rel="noopener noreferrer"><figure>${renderImage(project, { priority: index === 0 })}</figure><div><span>${String(index + 1).padStart(2, "0")} / ${escapeHtml(project.category)}</span><h3>${escapeHtml(project.title)}</h3><p>${escapeHtml(project.summary)}</p><b>운영 사이트 <i aria-hidden="true">↗</i></b></div></a>`).join("");
+
+const renderWorkList = () => publicProjects.map((project, index) => `<article class="reveal"><figure>${renderImage(project, { priority: index === 0 })}<figcaption>운영 중 ${String(index + 1).padStart(2, "0")}</figcaption></figure><div><span>${String(index + 1).padStart(2, "0")} / ${escapeHtml(project.category)}</span><h2>${escapeHtml(project.title)}</h2><p>${escapeHtml(project.summary)}</p><ul>${project.features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}</ul><a href="${escapeHtml(safeHttpUrl(project.url) || `work/${project.id}.html`)}" target="_blank" rel="noopener noreferrer">운영 사이트 보기 <i aria-hidden="true">↗</i></a></div></article>`).join("");
 
 const renderServiceChapters = () => data.services.map((service) => `
-  <article class="service-chapter reveal" id="${escapeHtml(service.id)}">
-    <div class="service-chapter-title"><span>${escapeHtml(service.number)}</span><h2>${escapeHtml(service.title)}</h2><p>${escapeHtml(service.subtitle)}</p></div>
-    <div class="service-chapter-body"><p>${escapeHtml(service.description)}</p><div class="service-scope-columns"><section><h3>핵심 구축</h3><ul>${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section><section><h3>고급 기능</h3><ul>${(service.advanced || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section><section><h3>운영과 인프라</h3><ul>${(service.operations || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section></div><a href="contact/?type=${escapeHtml(service.id)}">이 범위로 문의하기 ↗</a></div>
+  <article class="reveal" id="${escapeHtml(service.id)}">
+    <header><span>${escapeHtml(service.number)}</span><div><h2>${escapeHtml(service.title)}</h2><p>${escapeHtml(service.subtitle)}</p></div></header>
+    <div class="service-columns"><div><h3>핵심 구축</h3><ul>${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div><div><h3>고급 기능</h3><ul>${(service.advanced || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div><div><h3>운영과 인프라</h3><ul>${(service.operations || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div><a href="contact/?type=${escapeHtml(service.id)}">이 범위로 문의하기 <i aria-hidden="true">↗</i></a></div>
   </article>`).join("");
 
 const renderCapabilityGrid = () => data.capabilityGroups.map((item) => `
   <article><span>${escapeHtml(item.code)}</span><p>${escapeHtml(item.tech)}</p><h3>${escapeHtml(item.title)}</h3><b>${escapeHtml(item.description)}</b></article>`).join("");
+
+const renderTechnologyRail = () => data.technology.map((item) => `<span>${escapeHtml(item)}</span>`).join("");
 
 const renderPlannerTypes = () => data.services.map((service) => `
   <button type="button" aria-pressed="false" data-scope-choice data-scope-key="${escapeHtml(service.id)}" data-scope-group="제작 종류" data-scope-value="${escapeHtml(service.title)}">${escapeHtml(service.title)}<small>${escapeHtml(service.subtitle)}</small></button>`).join("");
@@ -149,8 +133,8 @@ const renderPlannerTypes = () => data.services.map((service) => `
 const renderPlannerFeatures = () => data.capabilities.map((item) => `
   <button type="button" aria-pressed="false" data-scope-choice data-scope-group="필요 기능" data-scope-value="${escapeHtml(item)}">${escapeHtml(item)}</button>`).join("");
 
-const renderProcess = () => data.process.map((item) => `
-  <li class="process-item reveal"><span>${escapeHtml(item.number)}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description)}</p></li>`).join("");
+const processOutput = ["서비스 종류, 참고 주소, 희망 일정", "확정된 기능 목록과 진행 일정", "첫 화면, 주요 동선, 모바일 화면", "실제 데이터와 운영 기능", "최종 사이트, 관리 방법, 인계 자료"];
+const renderProcess = () => data.process.map((item, index) => `<article class="reveal"><span>${escapeHtml(item.number)}</span><div><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description.replace(/[.]$/, ""))}</p></div><aside><b>확인 내용</b><p>${escapeHtml(processOutput[index] || "진행 범위와 결과물")}</p></aside></article>`).join("");
 
 const renderFaq = () => data.faq.map((item) => `
   <details class="faq-item reveal"><summary><span>${escapeHtml(item.question)}</span><i aria-hidden="true"></i></summary><p>${escapeHtml(item.answer)}</p></details>`).join("");
@@ -217,10 +201,11 @@ await writePage("index.template.html", "index.html", {
   HERO_DESCRIPTION: data.brand.description,
   PRIMARY_CTA: data.brand.primaryCta,
   SECONDARY_CTA: data.brand.secondaryCta,
-  HOME_WORK: renderWorkCards(),
+  HOME_SERVICE_CARDS: renderHomeServiceCards(),
+  HOME_WORK_PREVIEW: renderHomeWorkPreview(),
   HERO_STAGE: renderHeroStage(),
   RESPONSE_NOTE: data.contact.responseNote
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_WORK", "HERO_STAGE"]);
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_SERVICE_CARDS", "HOME_WORK_PREVIEW", "HERO_STAGE"]);
 
 await writePage("work.template.html", "work/index.html", {
   PAGE_TITLE: `작업 | ${data.brand.name}`,
@@ -228,7 +213,7 @@ await writePage("work.template.html", "work/index.html", {
   CANONICAL_URL: pageUrl("work/"),
   HEADER: renderHeader("work"),
   FOOTER: renderFooter(pageUrl("work/")),
-  WORK_CARDS: renderWorkCards()
+  WORK_CARDS: renderWorkList()
 }, ["STRUCTURED_DATA", "HEADER", "FOOTER", "WORK_CARDS"]);
 
 for (const [index, project] of publicProjects.entries()) {
@@ -263,7 +248,8 @@ await writePage("services.template.html", "services/index.html", {
   FOOTER: renderFooter(pageUrl("services/")),
   SERVICE_CHAPTERS: renderServiceChapters(),
   CAPABILITY_GRID: renderCapabilityGrid(),
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "SERVICE_CHAPTERS", "CAPABILITY_GRID"]);
+  TECHNOLOGY_RAIL: renderTechnologyRail(),
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "SERVICE_CHAPTERS", "CAPABILITY_GRID", "TECHNOLOGY_RAIL"]);
 
 await writePage("process.template.html", "process/index.html", {
   PAGE_TITLE: `진행 방식 | ${data.brand.name}`,
