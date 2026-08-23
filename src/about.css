@@ -111,7 +111,7 @@
 }
 
 .about-hero-visual::before {
-  inset: 5% -5% 3% 9%;
+  inset: 5% 0 3% 9%;
   border: 1px solid rgba(57, 122, 167, .25);
   border-right-color: transparent;
   transform: rotate(3deg);
