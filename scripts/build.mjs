@@ -97,8 +97,10 @@ const renderHeroStage = () => {
     <div class="cloud-stage reveal" data-hero-stage aria-label="실제 운영 화면">
       <div class="ambient-layer" data-ambient aria-hidden="true"><i class="cloud cloud-one"></i><i class="cloud cloud-two"></i></div>
       <a class="browser-frame browser-frame-hero" data-project-visual href="${escapeHtml(safeHttpUrl(primary.url) || `work/${primary.id}.html`)}" target="_blank" rel="noopener noreferrer">
-        <span class="browser-bar"><i></i><i></i><i></i><b>${escapeHtml(primary.title)}</b></span>
-        <figure>${renderImage(primary, { priority: true })}</figure>
+        <span class="browser-surface" data-project-tilt>
+          <span class="browser-bar"><i></i><i></i><i></i><b>${escapeHtml(primary.title)}</b></span>
+          <figure>${renderImage(primary, { priority: true })}</figure>
+        </span>
       </a>
       <div class="glass-panel hero-project-card"><span>${escapeHtml(primary.category)}</span><b>${escapeHtml(primary.title)}</b><a href="work/${escapeHtml(primary.id)}.html">구축 내용 보기 <i aria-hidden="true">↗</i></a></div>
     </div>`;
@@ -109,8 +111,10 @@ const renderHomeServiceCards = () => data.services.map((service) => `<a class="s
 const renderHomeWorkPreview = () => publicProjects.slice(0, 2).map((project, index) => `
   <article class="editorial-project reveal">
     <a class="browser-frame work-browser" data-project-visual href="${escapeHtml(safeHttpUrl(project.url) || `work/${project.id}.html`)}" target="_blank" rel="noopener noreferrer">
-      <span class="browser-bar"><i></i><i></i><i></i><b>${escapeHtml(project.title)}</b></span>
-      <figure>${renderImage(project, { priority: index === 0 })}</figure>
+      <span class="browser-surface" data-project-tilt>
+        <span class="browser-bar"><i></i><i></i><i></i><b>${escapeHtml(project.title)}</b></span>
+        <figure>${renderImage(project, { priority: index === 0 })}</figure>
+      </span>
     </a>
     <div class="project-note glass-panel"><span>${escapeHtml(project.category)}</span><h3>${escapeHtml(project.title)}</h3><p>${escapeHtml(project.summary)}</p><a href="work/${escapeHtml(project.id)}.html">구축 내용 보기 <i aria-hidden="true">↗</i></a></div>
   </article>`).join("");
@@ -119,7 +123,7 @@ const renderHomeContactBackdrop = () => {
   return '<img src="assets/sky-glass.webp" alt="" loading="lazy" decoding="async">';
 };
 
-const renderWorkList = () => publicProjects.map((project, index) => `<article class="work-entry reveal"><figure class="browser-frame work-browser" data-project-visual><span class="browser-bar"><i></i><i></i><i></i><b>${escapeHtml(project.title)}</b></span>${renderImage(project, { priority: index === 0 })}<figcaption>실제 운영 화면</figcaption></figure><div class="work-entry-copy"><span>${escapeHtml(project.category)}</span><h2>${escapeHtml(project.title)}</h2><p>${escapeHtml(project.summary)}</p><ul>${project.features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}</ul><a href="${escapeHtml(safeHttpUrl(project.url) || `work/${project.id}.html`)}" target="_blank" rel="noopener noreferrer">운영 사이트 보기 <i aria-hidden="true">↗</i></a></div></article>`).join("");
+const renderWorkList = () => publicProjects.map((project, index) => `<article class="work-entry reveal"><figure class="browser-frame work-browser" data-project-visual><span class="browser-surface" data-project-tilt><span class="browser-bar"><i></i><i></i><i></i><b>${escapeHtml(project.title)}</b></span>${renderImage(project, { priority: index === 0 })}</span><figcaption>실제 운영 화면</figcaption></figure><div class="work-entry-copy"><span>${escapeHtml(project.category)}</span><h2>${escapeHtml(project.title)}</h2><p>${escapeHtml(project.summary)}</p><ul>${project.features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}</ul><a href="${escapeHtml(safeHttpUrl(project.url) || `work/${project.id}.html`)}" target="_blank" rel="noopener noreferrer">운영 사이트 보기 <i aria-hidden="true">↗</i></a></div></article>`).join("");
 
 const renderServiceChapters = () => data.services.map((service) => `
   <article class="reveal" id="${escapeHtml(service.id)}">
@@ -201,11 +205,7 @@ await writePage("index.template.html", "index.html", {
   CANONICAL_URL: normalizedSiteUrl,
   HEADER: renderHeader("home"),
   FOOTER: renderFooter(normalizedSiteUrl),
-  HEADLINE_TOP: data.brand.headlineTop,
-  HEADLINE_FOCUS: data.brand.headlineFocus,
   HERO_DESCRIPTION: data.brand.description,
-  PRIMARY_CTA: data.brand.primaryCta,
-  SECONDARY_CTA: data.brand.secondaryCta,
   HOME_SERVICE_CARDS: renderHomeServiceCards(),
   HOME_WORK_PREVIEW: renderHomeWorkPreview(),
   HERO_STAGE: renderHeroStage(),

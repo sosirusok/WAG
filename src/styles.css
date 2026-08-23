@@ -17,7 +17,7 @@
 :root {
   --ink: #152b40;
   --ink-soft: #3c556b;
-  --muted: #60778b;
+  --muted: #526b7f;
   --paper: #fbfaf6;
   --white: #ffffff;
   --sky-50: #f4f9fc;
@@ -26,7 +26,7 @@
   --sky-300: #c7e2f2;
   --sky-500: #6fa7cc;
   --sky-700: #356f98;
-  --sand: #d8ad7f;
+  --sand: #9b6d47;
   --line: rgba(35, 76, 108, .14);
   --line-strong: rgba(35, 76, 108, .23);
   --glass: rgba(255, 255, 255, .72);
@@ -45,7 +45,7 @@
 html { scroll-behavior: smooth; background: var(--paper); }
 body {
   margin: 0;
-  min-width: 320px;
+  min-width: 0;
   overflow-x: clip;
   color: var(--ink);
   background:
@@ -191,10 +191,17 @@ main { min-height: 65vh; }
   background: #fff;
   box-shadow: var(--shadow-lg), 0 1px 0 rgba(255,255,255,.9) inset;
   transform-style: preserve-3d;
-  transition: transform .35s var(--ease), box-shadow .35s ease;
+  transition: box-shadow .35s ease;
   will-change: transform;
 }
 .browser-frame:hover { box-shadow: 0 46px 125px rgba(31,69,99,.26); }
+.browser-surface {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
 .browser-bar {
   position: relative;
   z-index: 2;
@@ -215,7 +222,7 @@ main { min-height: 65vh; }
   left: 50%;
   max-width: 58%;
   overflow: hidden;
-  color: #708598;
+  color: #536b7e;
   font-size: 11px;
   font-weight: 400;
   text-overflow: ellipsis;
@@ -640,7 +647,7 @@ main { min-height: 65vh; }
 .work-entry:nth-child(even) > figure { grid-column: 2; grid-row: 1; }
 .work-entry:nth-child(even) > div { grid-column: 1; grid-row: 1; }
 .work-entry > figure { overflow: hidden; }
-.work-entry > figure > img { aspect-ratio: 1.455; border-radius: 0 0 17px 17px; }
+.work-entry .browser-surface > img { width: 100%; height: auto; aspect-ratio: 1.455; object-fit: cover; object-position: top center; border-radius: 0 0 17px 17px; }
 .work-entry figcaption {
   position: absolute;
   right: 12px;
@@ -648,8 +655,8 @@ main { min-height: 65vh; }
   padding: 5px 9px;
   border: 1px solid rgba(255,255,255,.65);
   border-radius: 999px;
-  color: #425c70;
-  background: rgba(255,255,255,.78);
+  color: #2f475b;
+  background: rgba(255,255,255,.9);
   font-size: 10px;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
@@ -974,7 +981,7 @@ main { min-height: 65vh; }
 .project-heading > div > p { max-width: 620px; color: var(--ink-soft); font-size: 18px; }
 .project-heading > div > a { flex: 0 0 auto; padding-bottom: 4px; border-bottom: 1px solid var(--line-strong); font-size: 14px; font-weight: 700; }
 .project-cover { margin-bottom: 100px; overflow: hidden; }
-.project-cover > img { width: 100%; aspect-ratio: 1.455; object-fit: cover; object-position: top center; }
+.project-cover .browser-surface > img { width: 100%; height: auto; aspect-ratio: 1.455; object-fit: cover; object-position: top center; }
 .project-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-bottom: 110px; }
 .project-facts article { padding: 31px 0; border-top: 1px solid var(--line); }
 .project-facts span { color: var(--sky-700); font-size: 12px; }
@@ -987,7 +994,7 @@ main { min-height: 65vh; }
 .project-next { padding-block: 90px 0; }
 .project-next a { display: flex; align-items: center; justify-content: space-between; gap: 30px; border-top: 1px solid var(--line); padding-top: 28px; }
 .project-next span { color: var(--muted); font-size: 12px; }
-.project-next b { font-size: 25px; }
+.project-next b { min-width: 0; overflow-wrap: anywhere; font-size: 25px; }
 .project-next i { font-style: normal; font-size: 22px; }
 
 .policy { padding-block: 100px 140px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
@@ -1019,7 +1026,8 @@ main { min-height: 65vh; }
 @media (max-width: 1080px) {
   .sky-hero-inner { grid-template-columns: minmax(300px, .76fr) minmax(430px, 1.24fr); gap: 26px; }
   .hero-project-card { right: 0; }
-  .editorial-project, .editorial-project:nth-child(even), .work-entry, .work-entry:nth-child(even) { grid-template-columns: minmax(0, 1.26fr) minmax(270px, .74fr); }
+  .editorial-project, .work-entry { grid-template-columns: minmax(0, 1.26fr) minmax(270px, .74fr); }
+  .editorial-project:nth-child(even), .work-entry:nth-child(even) { grid-template-columns: minmax(270px, .74fr) minmax(0, 1.26fr); }
   .service-columns { grid-template-columns: 1fr 1fr; }
   .service-columns > div:last-of-type { grid-column: 1 / -1; min-height: auto; }
   .scope-builder { grid-template-columns: minmax(0, 1.3fr) minmax(280px, .7fr); }
