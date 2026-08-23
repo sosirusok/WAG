@@ -68,38 +68,6 @@
     window.addEventListener("load", revealAboveFold, { once: true });
   }
 
-  const heroStage = document.querySelector(".hero-stage");
-  let stageFrame = 0;
-  let stageX = 0;
-  let stageY = 0;
-
-  const paintStage = () => {
-    stageFrame = 0;
-    if (!heroStage) return;
-    heroStage.style.setProperty("--stage-x", `${stageX.toFixed(2)}px`);
-    heroStage.style.setProperty("--stage-y", `${stageY.toFixed(2)}px`);
-  };
-  const requestStagePaint = () => {
-    if (!stageFrame) stageFrame = window.requestAnimationFrame(paintStage);
-  };
-  const resetStage = () => {
-    stageX = 0;
-    stageY = 0;
-    requestStagePaint();
-  };
-
-  heroStage?.addEventListener("pointermove", (event) => {
-    if (reduceMotion || !finePointerQuery.matches || event.pointerType !== "mouse") return;
-    const rect = heroStage.getBoundingClientRect();
-    if (!rect.width || !rect.height) return;
-    const normalizedX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    const normalizedY = ((event.clientY - rect.top) / rect.height) * 2 - 1;
-    stageX = Math.max(-1, Math.min(1, normalizedX)) * 8;
-    stageY = Math.max(-1, Math.min(1, normalizedY)) * 6;
-    requestStagePaint();
-  }, { passive: true });
-  heroStage?.addEventListener("pointerleave", resetStage, { passive: true });
-
   const ambientElements = [...document.querySelectorAll("[data-ambient]")];
   const ambientInlineTranslate = new Map(ambientElements.map((element) => [
     element,
@@ -230,7 +198,6 @@
     if (reduceMotion) {
       revealObserver?.disconnect();
       revealAll();
-      resetStage();
       restoreAmbient();
       resetProjects();
     } else {
@@ -240,7 +207,6 @@
   motionQuery.addEventListener?.("change", handleMotionChange);
   finePointerQuery.addEventListener?.("change", (event) => {
     if (!event.matches) {
-      resetStage();
       restoreAmbient();
       resetProjects();
     } else if (!reduceMotion) {
