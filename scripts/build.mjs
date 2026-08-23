@@ -46,7 +46,7 @@ const normalizedSiteUrl = (() => {
 const pageUrl = (relative = "") => new URL(relative, normalizedSiteUrl).href;
 const kakaoUrl = safeHttpUrl(data.contact.kakao);
 const phoneDigits = data.contact.phone.replace(/\D/g, "");
-const ogUrl = pageUrl("assets/cover-horizon.jpg");
+const ogUrl = pageUrl("assets/about-duo-v1.webp");
 
 const publicProjects = data.projects
   .filter((project) => project.published)
@@ -63,6 +63,7 @@ const renderHeader = (active = "") => `
       </a>
       <nav class="desktop-nav top-nav" aria-label="주요 메뉴">
         <a href="work/"${activeAttr(active, "work")}>작업</a>
+        <a href="about/"${activeAttr(active, "about")}>소개</a>
         <a href="services/"${activeAttr(active, "services")}>제작 범위</a>
         <a href="process/"${activeAttr(active, "process")}>진행 방식</a>
         <a href="contact/"${activeAttr(active, "contact")}>문의</a>
@@ -75,7 +76,7 @@ const renderFooter = (currentUrl = normalizedSiteUrl) => `
   <footer class="site-footer">
     <div class="footer-top shell">
       <div class="footer-brand"><strong>SWAG</strong></div>
-      <nav class="footer-links" aria-label="하단 메뉴"><a href="work/">작업</a><a href="services/">제작 범위</a><a href="process/">진행 방식</a><a href="contact/">문의</a></nav>
+      <nav class="footer-links" aria-label="하단 메뉴"><a href="work/">작업</a><a href="about/">소개</a><a href="services/">제작 범위</a><a href="process/">진행 방식</a><a href="contact/">문의</a></nav>
       <div class="footer-contact"><span>문의</span><a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a href="tel:${phoneDigits}">${escapeHtml(data.contact.owner)} ${escapeHtml(data.contact.phone)}</a></div>
     </div>
     <div class="footer-bottom shell"><span>© <b data-year>2026</b> SWAG</span><a href="privacy.html">개인정보처리 안내</a><a href="${escapeHtml(currentUrl)}#top">위로 ↑</a></div>
@@ -160,6 +161,7 @@ const writePage = async (templateName, outputPath, tokens, rawKeys = []) => {
   const target = path.join(output, outputPath);
   const html = fillTemplate(template, { ...commonTokens, ...tokens }, new Set(rawKeys))
     .replaceAll('href="styles.css"', `href="styles.css?v=${assetRevision}"`)
+    .replaceAll('href="about.css"', `href="about.css?v=${assetRevision}"`)
     .replaceAll('src="app.js"', `src="app.js?v=${assetRevision}"`);
   const unresolved = html.match(/{{[A-Z0-9_]+}}/g);
   if (unresolved) throw new Error(`${outputPath} has unresolved template tokens: ${[...new Set(unresolved)].join(", ")}`);
@@ -181,6 +183,14 @@ await writePage("index.template.html", "index.html", {
   HOME_CONTACT_IMAGE: renderHomeContactBackdrop(),
   RESPONSE_NOTE: data.contact.responseNote
 }, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_SERVICE_CARDS", "HOME_CONTACT_IMAGE"]);
+
+await writePage("about.template.html", "about/index.html", {
+  PAGE_TITLE: `소개 | ${data.brand.name}`,
+  PAGE_DESCRIPTION: "기획과 디자인, 개발과 운영 시스템을 두 사람이 직접 만드는 SWAG 소개",
+  CANONICAL_URL: pageUrl("about/"),
+  HEADER: renderHeader("about"),
+  FOOTER: renderFooter(pageUrl("about/"))
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER"]);
 
 await writePage("work.template.html", "work/index.html", {
   PAGE_TITLE: `작업 | ${data.brand.name}`,
@@ -262,6 +272,7 @@ await writePage("404.template.html", "404.html", {
 }, ["HEADER", "FOOTER"]);
 
 await cp(path.join(source, "styles.css"), path.join(output, "styles.css"));
+await cp(path.join(source, "about.css"), path.join(output, "about.css"));
 await cp(path.join(source, "app.js"), path.join(output, "app.js"));
 await cp(path.join(source, "assets"), path.join(output, "assets"), { recursive: true });
 await cp(path.join(root, "assets"), path.join(output, "assets"), { recursive: true }).catch((error) => {
@@ -276,7 +287,7 @@ await writeFile(path.join(output, "version.json"), JSON.stringify(version, null,
 await writeFile(path.join(output, ".nojekyll"), "");
 await writeFile(path.join(output, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${pageUrl("sitemap.xml")}\n`);
 
-const sitemapEntries = ["", "services/", "process/", "work/", ...publicProjects.map((project) => `work/${project.id}.html`), "contact/", "privacy.html"];
+const sitemapEntries = ["", "about/", "services/", "process/", "work/", ...publicProjects.map((project) => `work/${project.id}.html`), "contact/", "privacy.html"];
 await writeFile(path.join(output, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${sitemapEntries.map((entry) => `<url><loc>${escapeHtml(pageUrl(entry))}</loc></url>`).join("")}</urlset>\n`);
 
 console.log(`Built SWAG to ${output}`);

@@ -1,9 +1,9 @@
 {
   "meta": {
-    "version": 9,
+    "version": 10,
     "updatedAt": "2026-08-23T21:00:00+09:00",
     "title": "SWAG | 웹, 앱, 게임, 시스템 제작",
-    "description": "웹사이트, 앱, 웹게임과 예약, 결제, 데이터베이스, 관리자 시스템 제작"
+    "description": "웹사이트, 앱, 웹게임과 예약, 결제, 데이터베이스, 관리자 시스템을 두 사람이 직접 설계하고 구축하는 SWAG"
   },
   "brand": {
     "name": "SWAG",
@@ -13,7 +13,7 @@
     "headlineTop": "웹, 앱, 게임",
     "headlineFocus": "운영 시스템 제작",
     "headlineBottom": "",
-    "description": "웹사이트와 앱부터 예약, 결제, 데이터베이스, 관리자 기능까지 프로젝트에 필요한 범위를 설계하고 구축합니다",
+    "description": "웹사이트와 앱, 웹게임부터 예약·결제·데이터베이스·관리자 기능까지 두 사람이 실제 운영 방식에 맞춰 설계하고 구축합니다",
     "primaryCta": "작업 보기",
     "secondaryCta": "프로젝트 문의"
   },
