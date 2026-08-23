@@ -8,6 +8,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const source = path.join(root, "src");
 const output = path.join(root, "dist");
 const data = JSON.parse(await readFile(path.join(root, "data/site.json"), "utf8"));
+const assetRevision = encodeURIComponent(String(data.meta.version ?? data.meta.updatedAt ?? "1"));
 
 const escapeHtml = (value = "") => String(value)
   .replaceAll("&", "&amp;")
@@ -193,7 +194,9 @@ const getTemplate = async (name) => {
 const writePage = async (templateName, outputPath, tokens, rawKeys = []) => {
   const template = await getTemplate(templateName);
   const target = path.join(output, outputPath);
-  const html = fillTemplate(template, { ...commonTokens, ...tokens }, new Set(rawKeys));
+  const html = fillTemplate(template, { ...commonTokens, ...tokens }, new Set(rawKeys))
+    .replaceAll('href="styles.css"', `href="styles.css?v=${assetRevision}"`)
+    .replaceAll('src="app.js"', `src="app.js?v=${assetRevision}"`);
   const unresolved = html.match(/{{[A-Z0-9_]+}}/g);
   if (unresolved) throw new Error(`${outputPath} has unresolved template tokens: ${[...new Set(unresolved)].join(", ")}`);
   await mkdir(path.dirname(target), { recursive: true });
