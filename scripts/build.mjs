@@ -115,7 +115,7 @@ const renderPlannerFeatures = () => data.capabilities.map((item) => `
   <button type="button" aria-pressed="false" data-scope-choice data-scope-group="필요 기능" data-scope-value="${escapeHtml(item)}">${escapeHtml(item)}</button>`).join("");
 
 const processOutput = ["목표 · 사용자 · 참고 자료", "사이트맵 · 기능 명세 · 일정", "디자인 시스템 · 주요 화면 · 프로토타입", "동작하는 서비스 · 관리 환경", "운영 주소 · 인계 자료 · 점검 내역"];
-const renderProcess = () => data.process.map((item, index) => `<article class="process-chapter reveal" data-process-step data-process-number="${escapeHtml(item.number)}"><span class="process-chapter-number">${escapeHtml(item.number)}</span><div class="process-chapter-copy"><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description.replace(/[.]$/, ""))}</p></div><dl><dt>완료 기준</dt><dd>${escapeHtml(processOutput[index] || "진행 범위와 결과물")}</dd></dl></article>`).join("");
+const renderProcess = () => data.process.map((item, index) => `<article class="process-chapter reveal" id="process-step-${index + 1}" data-process-step data-process-number="${escapeHtml(item.number)}"><span class="process-chapter-number">${escapeHtml(item.number)}</span><div class="process-chapter-copy"><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description.replace(/[.]$/, ""))}</p></div><dl><dt>완료 기준</dt><dd>${escapeHtml(processOutput[index] || "진행 범위와 결과물")}</dd></dl></article>`).join("");
 
 const renderFaq = () => data.faq.map((item) => `
   <details class="faq-item reveal"><summary><span>${escapeHtml(item.question)}</span><i aria-hidden="true"></i></summary><p>${escapeHtml(item.answer)}</p></details>`).join("");
