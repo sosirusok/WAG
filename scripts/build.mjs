@@ -46,12 +46,11 @@ const normalizedSiteUrl = (() => {
 const pageUrl = (relative = "") => new URL(relative, normalizedSiteUrl).href;
 const kakaoUrl = safeHttpUrl(data.contact.kakao);
 const phoneDigits = data.contact.phone.replace(/\D/g, "");
-const ogUrl = pageUrl("assets/case-catharsis.jpg");
+const ogUrl = pageUrl("assets/cover-horizon.jpg");
 
 const publicProjects = data.projects
   .filter((project) => project.published)
   .sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
-const featuredProjects = publicProjects.filter((project) => project.featured);
 
 const activeAttr = (active, key) => active === key ? ' aria-current="page"' : "";
 
@@ -89,35 +88,7 @@ const renderImage = (project, options = {}) => {
   return `<img src="${escapeHtml(image)}" alt="${escapeHtml(project.imageAlt || project.title)}" decoding="async"${priority}>`;
 };
 
-const renderHeroStage = () => {
-  const projects = (featuredProjects.length ? featuredProjects : publicProjects).slice(0, 1);
-  if (!projects.length) return "";
-  const primary = projects[0];
-  return `
-    <div class="cloud-stage reveal" data-hero-stage aria-label="실제 운영 화면">
-      <div class="ambient-layer" data-ambient aria-hidden="true"><i class="cloud cloud-one"></i><i class="cloud cloud-two"></i></div>
-      <a class="browser-frame browser-frame-hero" data-project-visual href="${escapeHtml(safeHttpUrl(primary.url) || `work/${primary.id}.html`)}" target="_blank" rel="noopener noreferrer">
-        <span class="browser-surface" data-project-tilt>
-          <span class="browser-bar"><i></i><i></i><i></i><b>${escapeHtml(primary.title)}</b></span>
-          <figure>${renderImage(primary, { priority: true })}</figure>
-        </span>
-      </a>
-      <div class="glass-panel hero-project-card"><span>${escapeHtml(primary.category)}</span><b>${escapeHtml(primary.title)}</b><a href="work/${escapeHtml(primary.id)}.html">구축 내용 보기 <i aria-hidden="true">↗</i></a></div>
-    </div>`;
-};
-
 const renderHomeServiceCards = () => data.services.map((service) => `<a class="scope-preview-item" href="services/#${escapeHtml(service.id)}"><h3>${escapeHtml(service.title)}</h3><p>${escapeHtml(service.subtitle)}</p><i aria-hidden="true">↗</i></a>`).join("");
-
-const renderHomeWorkPreview = () => publicProjects.slice(0, 2).map((project, index) => `
-  <article class="editorial-project reveal">
-    <a class="browser-frame work-browser" data-project-visual href="${escapeHtml(safeHttpUrl(project.url) || `work/${project.id}.html`)}" target="_blank" rel="noopener noreferrer">
-      <span class="browser-surface" data-project-tilt>
-        <span class="browser-bar"><i></i><i></i><i></i><b>${escapeHtml(project.title)}</b></span>
-        <figure>${renderImage(project, { priority: index === 0 })}</figure>
-      </span>
-    </a>
-    <div class="project-note glass-panel"><span>${escapeHtml(project.category)}</span><h3>${escapeHtml(project.title)}</h3><p>${escapeHtml(project.summary)}</p><a href="work/${escapeHtml(project.id)}.html">구축 내용 보기 <i aria-hidden="true">↗</i></a></div>
-  </article>`).join("");
 
 const renderHomeContactBackdrop = () => {
   return '<img src="assets/sky-glass.webp" alt="" loading="lazy" decoding="async">';
@@ -207,11 +178,9 @@ await writePage("index.template.html", "index.html", {
   FOOTER: renderFooter(normalizedSiteUrl),
   HERO_DESCRIPTION: data.brand.description,
   HOME_SERVICE_CARDS: renderHomeServiceCards(),
-  HOME_WORK_PREVIEW: renderHomeWorkPreview(),
-  HERO_STAGE: renderHeroStage(),
   HOME_CONTACT_IMAGE: renderHomeContactBackdrop(),
   RESPONSE_NOTE: data.contact.responseNote
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_SERVICE_CARDS", "HOME_WORK_PREVIEW", "HERO_STAGE", "HOME_CONTACT_IMAGE"]);
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_SERVICE_CARDS", "HOME_CONTACT_IMAGE"]);
 
 await writePage("work.template.html", "work/index.html", {
   PAGE_TITLE: `작업 | ${data.brand.name}`,

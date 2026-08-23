@@ -16,7 +16,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/Pretendard-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -26,27 +26,29 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <section class="sky-hero" aria-labelledby="home-title">
-      <picture class="sky-hero-backdrop" data-ambient aria-hidden="true"><img src="assets/sky-hero.webp" alt="" fetchpriority="high" decoding="async"></picture>
-      <div class="sky-hero-inner shell">
-        <div class="sky-hero-panel glass-panel reveal">
-          <span class="brand-expansion">System / Web / App / Game</span>
+    <section class="editorial-hero" aria-labelledby="home-title">
+      <picture class="editorial-hero-backdrop" data-ambient aria-hidden="true"><img src="assets/cover-horizon.svg" alt="" fetchpriority="high" decoding="async"></picture>
+      <i class="editorial-hero-sweep" aria-hidden="true"></i>
+      <div class="editorial-hero-inner shell">
+        <div class="editorial-hero-copy reveal">
+          <span class="editorial-hero-kicker">System / Web / App / Game</span>
           <h1 id="home-title">SWAG</h1>
           <p>{{HERO_DESCRIPTION}}</p>
-          <ul class="hero-scope" aria-label="주요 제작 분야"><li>웹사이트</li><li>앱과 웹앱</li><li>웹게임</li><li>운영 시스템</li></ul>
-          <div class="actions">
-            <a class="button" href="work/">작업 보기 <i aria-hidden="true">↗</i></a>
-            <a class="button secondary" href="contact/">프로젝트 문의</a>
+          <div class="editorial-hero-links">
+            <a href="services/"><span>제작 범위</span><i aria-hidden="true">↗</i></a>
+            <a href="contact/"><span>프로젝트 문의</span><i aria-hidden="true">↗</i></a>
           </div>
         </div>
-        {{HERO_STAGE}}
-      </div>
-    </section>
-
-    <section class="home-work editorial-work">
-      <div class="shell editorial-work-inner">
-        <div class="home-section-head reveal"><div><h2>실제 작업</h2><p>운영 중인 사이트의 화면과 구축 내용을 확인할 수 있습니다</p></div><a href="work/">작업 모두 보기 <i aria-hidden="true">↗</i></a></div>
-        <div class="work-preview">{{HOME_WORK_PREVIEW}}</div>
+        <div class="editorial-hero-signature" aria-hidden="true">
+          <span>System Web App Game</span>
+          <i></i>
+        </div>
+        <nav class="editorial-hero-services reveal" aria-label="제작 분야 바로가기">
+          <a href="services/#web"><small>01</small><span>웹사이트</span></a>
+          <a href="services/#app"><small>02</small><span>앱 · 웹앱</span></a>
+          <a href="services/#game"><small>03</small><span>웹게임</span></a>
+          <a href="services/#system"><small>04</small><span>운영 시스템</span></a>
+        </nav>
       </div>
     </section>
 
