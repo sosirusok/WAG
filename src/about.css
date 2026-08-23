@@ -384,6 +384,7 @@
   display: flex;
   align-items: center;
   overflow: hidden;
+  contain: paint;
   color: white;
   background:
     radial-gradient(circle at 76% 32%, rgba(138, 197, 232, .5), transparent 30%),
