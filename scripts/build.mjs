@@ -89,7 +89,7 @@ const renderImage = (project, options = {}) => {
   return `<img src="${escapeHtml(image)}" alt="${escapeHtml(project.imageAlt || project.title)}" decoding="async"${priority}>`;
 };
 
-const renderHomeServiceCards = () => data.services.map((service) => `<a class="scope-preview-item" href="services/#${escapeHtml(service.id)}"><h3>${escapeHtml(service.title)}</h3><p>${escapeHtml(service.subtitle)}</p><i aria-hidden="true">↗</i></a>`).join("");
+const renderHomeServiceCards = () => data.services.map((service) => `<a class="scope-ledger-item reveal" href="services/#${escapeHtml(service.id)}"><span>${escapeHtml(service.number)}</span><h3>${escapeHtml(service.title)}</h3><p>${escapeHtml(service.subtitle)}</p><i aria-hidden="true">↗</i></a>`).join("");
 
 const renderHomeContactBackdrop = () => {
   return '<img src="assets/sky-glass.webp" alt="" loading="lazy" decoding="async">';
@@ -114,8 +114,8 @@ const renderPlannerTypes = () => data.services.map((service) => `
 const renderPlannerFeatures = () => data.capabilities.map((item) => `
   <button type="button" aria-pressed="false" data-scope-choice data-scope-group="필요 기능" data-scope-value="${escapeHtml(item)}">${escapeHtml(item)}</button>`).join("");
 
-const processOutput = ["서비스 종류, 참고 주소, 희망 일정", "확정된 기능 목록과 진행 일정", "첫 화면, 주요 동선, 모바일 화면", "실제 데이터와 운영 기능", "최종 사이트, 관리 방법, 인계 자료"];
-const renderProcess = () => data.process.map((item, index) => `<article class="process-step reveal"><span>${escapeHtml(item.number)}</span><div><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description.replace(/[.]$/, ""))}</p></div><aside class="glass-panel"><b>확인 내용</b><p>${escapeHtml(processOutput[index] || "진행 범위와 결과물")}</p></aside></article>`).join("");
+const processOutput = ["목표 · 사용자 · 참고 자료", "사이트맵 · 기능 명세 · 일정", "디자인 시스템 · 주요 화면 · 프로토타입", "동작하는 서비스 · 관리 환경", "운영 주소 · 인계 자료 · 점검 내역"];
+const renderProcess = () => data.process.map((item, index) => `<article class="process-chapter reveal" data-process-step data-process-number="${escapeHtml(item.number)}"><span class="process-chapter-number">${escapeHtml(item.number)}</span><div class="process-chapter-copy"><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description.replace(/[.]$/, ""))}</p></div><dl><dt>완료 기준</dt><dd>${escapeHtml(processOutput[index] || "진행 범위와 결과물")}</dd></dl></article>`).join("");
 
 const renderFaq = () => data.faq.map((item) => `
   <details class="faq-item reveal"><summary><span>${escapeHtml(item.question)}</span><i aria-hidden="true"></i></summary><p>${escapeHtml(item.answer)}</p></details>`).join("");
@@ -129,7 +129,7 @@ const structuredData = JSON.stringify({
   telephone: data.contact.phone,
   founder: { "@type": "Person", name: data.contact.owner },
   areaServed: { "@type": "Country", name: "대한민국" },
-  serviceType: ["웹사이트 제작", "앱 개발", "웹 게임 개발", "예약, 결제, 관리자 시스템 구축"]
+  serviceType: ["웹사이트 제작", "앱과 모바일 서비스 개발", "게임 개발", "커머스, 플랫폼, 업무 시스템 구축"]
 }).replaceAll("<", "\\u003c");
 
 const commonTokens = {
@@ -186,7 +186,7 @@ await writePage("index.template.html", "index.html", {
 
 await writePage("about.template.html", "about/index.html", {
   PAGE_TITLE: `소개 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "기획과 디자인, 개발과 운영 시스템을 두 사람이 직접 만드는 SWAG 소개",
+  PAGE_DESCRIPTION: "웹사이트, 앱·어플, 게임과 비즈니스 시스템을 기획·디자인·개발하는 SWAG 소개",
   CANONICAL_URL: pageUrl("about/"),
   HEADER: renderHeader("about"),
   FOOTER: renderFooter(pageUrl("about/"))
@@ -227,7 +227,7 @@ for (const [index, project] of publicProjects.entries()) {
 
 await writePage("services.template.html", "services/index.html", {
   PAGE_TITLE: `제작 범위 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "웹사이트, 앱, 웹게임, 예약, 결제, 데이터베이스와 관리자 도구까지 SWAG의 제작 범위",
+  PAGE_DESCRIPTION: "웹사이트, 앱·어플, 게임, 커머스, 데이터 연동과 업무 시스템까지 SWAG의 제작 범위",
   CANONICAL_URL: pageUrl("services/"),
   HEADER: renderHeader("services"),
   FOOTER: renderFooter(pageUrl("services/")),
@@ -238,7 +238,7 @@ await writePage("services.template.html", "services/index.html", {
 
 await writePage("process.template.html", "process/index.html", {
   PAGE_TITLE: `진행 방식 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "상담부터 화면 확인, 기능 연결, 검수와 배포까지 SWAG의 제작 과정",
+  PAGE_DESCRIPTION: "목표 정리부터 디자인, 개발, 검수와 출시까지 SWAG의 프로젝트 진행 과정",
   CANONICAL_URL: pageUrl("process/"),
   HEADER: renderHeader("process"),
   FOOTER: renderFooter(pageUrl("process/")),

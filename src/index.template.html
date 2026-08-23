@@ -16,7 +16,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/MonaSansVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
@@ -27,45 +27,44 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <section class="atelier-hero" aria-labelledby="home-title">
-      <i class="atelier-grain" aria-hidden="true"></i>
-      <div class="atelier-hero-inner shell">
-        <div class="atelier-copy reveal">
-          <span class="atelier-kicker"><i aria-hidden="true"></i>2인 프리랜서 제작팀</span>
-          <h1 id="home-title">기획부터 배포까지<br><em>두 사람이 직접 만듭니다</em></h1>
-          <p>{{HERO_DESCRIPTION}}</p>
-          <div class="atelier-links">
-            <a href="about/"><span>스튜디오 소개</span><i aria-hidden="true">↗</i></a>
+    <section class="brand-hero" aria-labelledby="home-title" data-brand-hero>
+      <i class="brand-hero-grain" aria-hidden="true"></i>
+      <i class="brand-hero-glow" aria-hidden="true"></i>
+      <div class="brand-hero-inner shell">
+        <div class="brand-hero-copy">
+          <p class="brand-hero-kicker reveal">DIGITAL PRODUCT STUDIO</p>
+          <h1 id="home-title" class="brand-wordmark" aria-label="SWAG">
+            <span class="brand-wordmark-echo brand-wordmark-echo-far" aria-hidden="true">SWAG</span>
+            <span class="brand-wordmark-echo brand-wordmark-echo-near" aria-hidden="true">SWAG</span>
+            <span class="brand-wordmark-core">SWAG</span>
+          </h1>
+          <p class="brand-expansion reveal" aria-label="System Web App Game"><span>System</span><i></i><span>Web</span><i></i><span>App</span><i></i><span>Game</span></p>
+          <p class="brand-hero-description reveal">{{HERO_DESCRIPTION}}</p>
+          <div class="brand-hero-links reveal">
+            <a href="work/"><span>작업 보기</span><i aria-hidden="true">↗</i></a>
             <a href="contact/"><span>프로젝트 문의</span><i aria-hidden="true">↗</i></a>
           </div>
         </div>
 
-        <div class="atelier-stage" aria-label="서로 다른 재료가 하나의 구조로 연결된 SWAG의 제작 방식을 표현한 조형물">
-          <i class="atelier-halo" data-ambient data-ambient-depth="0.22" aria-hidden="true"></i>
-          <figure class="atelier-object atelier-object-main" data-ambient data-ambient-depth="0.55">
-            <img src="assets/hero-atelier-v2.webp" alt="푸른 금속 리본과 반투명 막이 연결된 조형물" fetchpriority="high" decoding="async">
-          </figure>
-          <img class="atelier-object atelier-ribbon" src="assets/hero-ribbon-v2.webp" alt="" data-ambient data-ambient-depth="0.86" aria-hidden="true" fetchpriority="high" decoding="async">
-          <img class="atelier-object atelier-materials" src="assets/hero-materials-v2.webp" alt="" data-ambient data-ambient-depth="1.16" aria-hidden="true" decoding="async">
-          <i class="atelier-light" aria-hidden="true"></i>
-          <div class="atelier-coordinates" aria-hidden="true">
-            <span class="coordinate-web">WEB</span>
-            <span class="coordinate-app">APP</span>
-            <span class="coordinate-game">GAME</span>
-            <span class="coordinate-system">SYSTEM</span>
-            <svg viewBox="0 0 760 520" preserveAspectRatio="none"><path d="M36 126 C188 74 302 178 398 142 S574 54 724 108"/><path d="M92 408 C230 332 290 414 446 348 S616 270 708 326"/><circle cx="398" cy="142" r="4"/><circle cx="446" cy="348" r="4"/></svg>
-          </div>
+        <div class="brand-scene" aria-label="유리와 금속, 종이 소재로 구성한 SWAG의 디지털 제작 조형물">
+          <i class="brand-scene-line brand-scene-line-a" aria-hidden="true"></i>
+          <i class="brand-scene-line brand-scene-line-b" aria-hidden="true"></i>
+          <img class="brand-scene-optics" src="assets/hero-optics-v3.webp" alt="" data-ambient data-ambient-depth="0.72" aria-hidden="true" fetchpriority="high" decoding="async">
+          <img class="brand-scene-portal" src="assets/hero-portal-v3.webp" alt="유리와 금속을 정교하게 결합한 푸른 조형물" data-ambient data-ambient-depth="0.45" fetchpriority="high" decoding="async">
+          <img class="brand-scene-materials" src="assets/hero-materials-v3.webp" alt="" data-ambient data-ambient-depth="1.12" aria-hidden="true" decoding="async">
+          <i class="brand-scene-flare" aria-hidden="true"></i>
         </div>
 
-        <div class="atelier-index reveal" aria-label="SWAG 제작 분야">
-          <span>System</span><i></i><span>Web</span><i></i><span>App</span><i></i><span>Game</span>
+        <div class="brand-hero-foot reveal">
+          <span>DESIGN</span><span>DEVELOPMENT</span><span>DEPLOYMENT</span>
+          <a href="about/">SWAG 소개 <i aria-hidden="true">↗</i></a>
         </div>
       </div>
     </section>
 
-    <section class="home-scope-preview shell reveal" aria-labelledby="scope-preview-title">
-      <div class="home-section-head"><div><h2 id="scope-preview-title">제작 범위</h2><p>필요한 부분만 골라 프로젝트에 맞게 구성합니다</p></div><a href="services/">자세히 보기 <i aria-hidden="true">↗</i></a></div>
-      <div class="scope-preview-list">{{HOME_SERVICE_CARDS}}</div>
+    <section class="scope-ledger shell" aria-labelledby="scope-preview-title">
+      <header class="scope-ledger-head reveal"><p>WHAT WE BUILD</p><div><h2 id="scope-preview-title">제작 범위</h2><span>브랜드 화면부터 서비스 기능과 운영 도구까지 필요한 범위를 설계합니다</span></div><a href="services/">전체 범위 확인 <i aria-hidden="true">↗</i></a></header>
+      <div class="scope-ledger-list">{{HOME_SERVICE_CARDS}}</div>
     </section>
 
     <section class="visual-contact reveal" aria-labelledby="home-contact-title">
