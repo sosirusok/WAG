@@ -100,17 +100,152 @@
   }, { passive: true });
   heroStage?.addEventListener("pointerleave", resetStage, { passive: true });
 
+  const ambientElements = [...document.querySelectorAll("[data-ambient]")];
+  const ambientInlineTranslate = new Map(ambientElements.map((element) => [
+    element,
+    element.style.getPropertyValue("translate")
+  ]));
+  let ambientFrame = 0;
+  let ambientPointerX = 0;
+  let ambientPointerY = 0;
+
+  const restoreAmbient = () => {
+    if (ambientFrame) {
+      window.cancelAnimationFrame(ambientFrame);
+      ambientFrame = 0;
+    }
+    ambientElements.forEach((element) => {
+      const initialTranslate = ambientInlineTranslate.get(element);
+      if (initialTranslate) element.style.setProperty("translate", initialTranslate);
+      else element.style.removeProperty("translate");
+    });
+  };
+  const paintAmbient = () => {
+    ambientFrame = 0;
+    if (reduceMotion || !finePointerQuery.matches) {
+      restoreAmbient();
+      return;
+    }
+    const scrollOffset = Math.max(-3, Math.min(3, window.scrollY * -0.004));
+    ambientElements.forEach((element) => {
+      element.style.setProperty(
+        "translate",
+        `${ambientPointerX.toFixed(2)}px ${(ambientPointerY + scrollOffset).toFixed(2)}px`
+      );
+    });
+  };
+  const requestAmbientPaint = () => {
+    if (ambientElements.length && !ambientFrame) {
+      ambientFrame = window.requestAnimationFrame(paintAmbient);
+    }
+  };
+
+  window.addEventListener("pointermove", (event) => {
+    if (reduceMotion || !finePointerQuery.matches || event.pointerType !== "mouse") return;
+    const width = Math.max(window.innerWidth, 1);
+    const height = Math.max(window.innerHeight, 1);
+    ambientPointerX = Math.max(-1, Math.min(1, (event.clientX / width) * 2 - 1)) * 6;
+    ambientPointerY = Math.max(-1, Math.min(1, (event.clientY / height) * 2 - 1)) * 6;
+    requestAmbientPaint();
+  }, { passive: true });
+  window.addEventListener("scroll", requestAmbientPaint, { passive: true });
+
+  const projectVisuals = [...document.querySelectorAll("[data-project-visual]")];
+  const projectStates = projectVisuals.map((visual) => {
+    const tiltTarget = visual.querySelector("[data-project-tilt]") || visual;
+    const media = visual.matches("img, video") ? visual : visual.querySelector("img, video");
+    return {
+      visual,
+      tiltTarget,
+      media,
+      initialTransform: tiltTarget.style.getPropertyValue("transform"),
+      initialScale: media?.style.getPropertyValue("scale") || "",
+      rotateX: 0,
+      rotateY: 0,
+      active: false
+    };
+  });
+  let projectFrame = 0;
+
+  const restoreProjectState = (state) => {
+    if (state.initialTransform) state.tiltTarget.style.setProperty("transform", state.initialTransform);
+    else state.tiltTarget.style.removeProperty("transform");
+    if (!state.media) return;
+    if (state.initialScale) state.media.style.setProperty("scale", state.initialScale);
+    else state.media.style.removeProperty("scale");
+  };
+  const paintProjects = () => {
+    projectFrame = 0;
+    projectStates.forEach((state) => {
+      if (reduceMotion || !finePointerQuery.matches || !state.active) {
+        restoreProjectState(state);
+        return;
+      }
+      const baseTransform = state.initialTransform ? `${state.initialTransform} ` : "";
+      state.tiltTarget.style.setProperty(
+        "transform",
+        `${baseTransform}perspective(1100px) rotateX(${state.rotateX.toFixed(3)}deg) rotateY(${state.rotateY.toFixed(3)}deg)`
+      );
+      state.media?.style.setProperty("scale", "1.01");
+    });
+  };
+  const requestProjectPaint = () => {
+    if (projectStates.length && !projectFrame) {
+      projectFrame = window.requestAnimationFrame(paintProjects);
+    }
+  };
+  const resetProjects = () => {
+    projectStates.forEach((state) => {
+      state.active = false;
+      state.rotateX = 0;
+      state.rotateY = 0;
+    });
+    requestProjectPaint();
+  };
+
+  projectStates.forEach((state) => {
+    state.visual.addEventListener("pointermove", (event) => {
+      if (reduceMotion || !finePointerQuery.matches || event.pointerType !== "mouse") return;
+      const rect = state.visual.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const normalizedX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width) * 2 - 1));
+      const normalizedY = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height) * 2 - 1));
+      state.rotateX = normalizedY * -1.2;
+      state.rotateY = normalizedX * 1.2;
+      state.active = true;
+      requestProjectPaint();
+    }, { passive: true });
+    const resetProject = () => {
+      state.active = false;
+      state.rotateX = 0;
+      state.rotateY = 0;
+      requestProjectPaint();
+    };
+    state.visual.addEventListener("pointerleave", resetProject, { passive: true });
+    state.visual.addEventListener("pointercancel", resetProject, { passive: true });
+  });
+
   const handleMotionChange = (event) => {
     reduceMotion = event.matches;
     if (reduceMotion) {
       revealObserver?.disconnect();
       revealAll();
       resetStage();
+      restoreAmbient();
+      resetProjects();
+    } else {
+      requestAmbientPaint();
     }
   };
   motionQuery.addEventListener?.("change", handleMotionChange);
   finePointerQuery.addEventListener?.("change", (event) => {
-    if (!event.matches) resetStage();
+    if (!event.matches) {
+      resetStage();
+      restoreAmbient();
+      resetProjects();
+    } else if (!reduceMotion) {
+      requestAmbientPaint();
+    }
   });
 
   document.querySelectorAll(".faq-item").forEach((item) => {

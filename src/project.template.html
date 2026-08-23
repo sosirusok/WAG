@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#fafafa">
+  <meta name="theme-color" content="#f4f9fc">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="article">
@@ -15,7 +15,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/Pretendard-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -26,7 +26,7 @@
   {{HEADER}}
   <main id="main">
     <article class="project-page">
-      <header class="project-hero shell reveal">
+      <header class="project-hero route-hero shell reveal">
         <a class="breadcrumb" href="work/">← 작업 목록</a>
         <div class="project-heading">
           <p>{{PROJECT_CATEGORY}} / {{PROJECT_YEAR}}</p>
@@ -34,7 +34,7 @@
           <div><p>{{PROJECT_SUMMARY}}</p>{{PROJECT_EXTERNAL}}</div>
         </div>
       </header>
-      <figure class="project-cover shell reveal">{{PROJECT_IMAGE}}</figure>
+      <figure class="project-cover browser-frame shell reveal" data-project-visual><span class="browser-bar"><i></i><i></i><i></i><b>{{PROJECT_TITLE}}</b></span>{{PROJECT_IMAGE}}</figure>
       <section class="project-facts shell" aria-label="프로젝트 구축 내용">
         <article class="reveal"><span>프로젝트 목적</span><p>{{PROJECT_PROBLEM}}</p></article>
         <article class="reveal"><span>구축한 기능</span><p>{{PROJECT_SOLUTION}}</p></article>
