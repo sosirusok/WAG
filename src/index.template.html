@@ -16,8 +16,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/MonaSansVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/SWAGSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -30,6 +29,7 @@
     <section class="home-hero" aria-labelledby="home-title" data-home-hero>
       <div class="home-hero-art" aria-hidden="true" data-home-art>
         <img src="assets/swag-hero-atmosphere.webp" alt="" fetchpriority="high" decoding="async">
+        <img class="home-hero-motion-art" src="assets/swag-hero-motion-v22.webp" alt="" fetchpriority="high" decoding="async" data-home-motion-art>
         <img class="home-hero-trails" src="assets/swag-light-trails.webp" alt="" fetchpriority="high" decoding="async">
         <i class="home-hero-light"></i>
         <i class="home-hero-noise"></i>
@@ -37,42 +37,31 @@
       <canvas class="home-hero-canvas" data-home-canvas aria-hidden="true"></canvas>
 
       <div class="home-hero-frame shell">
-        <div class="home-hero-topline" aria-hidden="true">
-          <span>SWAG®</span>
-          <span>DESIGN / DEVELOPMENT / DEPLOYMENT</span>
-          <span>2026</span>
-        </div>
-
         <div class="home-hero-main">
           <div class="home-hero-copy">
-            <p class="home-hero-kicker reveal">DIGITAL PRODUCT STUDIO</p>
-            <h1 id="home-title" class="home-wordmark" aria-label="SWAG">
-              <span style="--letter:0">S</span><span style="--letter:1">W</span><span style="--letter:2">A</span><span class="home-wordmark-outline" style="--letter:3">G</span>
-            </h1>
-            <p class="home-hero-expansion reveal">SYSTEM <i></i> WEB <i></i> APP <i></i> GAME</p>
-            <p class="home-hero-lead reveal">웹사이트, 앱, 게임과 운영 시스템을<br>설계하고 개발합니다</p>
+            <p class="home-hero-kicker reveal">SYSTEM <i></i> WEB <i></i> APP <i></i> GAME</p>
+            <div class="home-wordmark-stage reveal" data-home-wordmark>
+              <img class="home-wordmark-energy" src="assets/swag-wordmark-energy-v22.webp" alt="" aria-hidden="true" decoding="async">
+              <h1 id="home-title" class="home-wordmark" data-mark="SWAG" aria-label="SWAG"><span>SWAG</span></h1>
+              <i class="home-wordmark-flare" aria-hidden="true"></i>
+            </div>
+            <p class="home-hero-lead reveal">웹사이트 · 앱과 어플 · 게임 · 운영 시스템</p>
             <p class="home-hero-description reveal">{{HERO_DESCRIPTION}}</p>
             <div class="home-hero-actions reveal">
               <a class="home-action-primary" href="work/">작업 보기 <i aria-hidden="true">↗</i></a>
               <a class="home-action-secondary" href="contact/">프로젝트 문의 <i aria-hidden="true">↗</i></a>
             </div>
           </div>
-
-          <aside class="home-hero-index reveal" aria-label="주요 제작 분야">
-            <p><span>01</span><b>WEB</b><em>브랜드 / 커머스 / 콘텐츠</em></p>
-            <p><span>02</span><b>APP</b><em>iOS / Android / PWA</em></p>
-            <p><span>03</span><b>GAME</b><em>2D / 3D / 실시간 콘텐츠</em></p>
-            <p><span>04</span><b>SYSTEM</b><em>관리 / 데이터 / 자동화</em></p>
-          </aside>
+          <figure class="home-sculpture-stage" aria-hidden="true" data-home-sculpture-stage>
+            <i class="home-sculpture-aura"></i>
+            <i class="home-sculpture-orbit home-sculpture-orbit-a"></i>
+            <i class="home-sculpture-orbit home-sculpture-orbit-b"></i>
+            <img class="home-sculpture" src="assets/hero-portal-v3.webp" alt="" fetchpriority="high" decoding="async" data-home-sculpture>
+            <span class="home-sculpture-reflection"></span>
+          </figure>
         </div>
 
-        <div class="home-hero-motion" aria-hidden="true">
-          <svg viewBox="0 0 1200 78" preserveAspectRatio="none">
-            <path d="M0 51 C180 51 214 14 392 30 S650 76 832 37 S1040 8 1200 25" pathLength="1"></path>
-            <circle cx="0" cy="0" r="4"></circle>
-          </svg>
-          <span>SCROLL TO EXPLORE</span>
-        </div>
+        <div class="home-hero-scroll" aria-hidden="true"><i></i><span>SCROLL</span></div>
       </div>
 
       <div class="home-hero-marquee" aria-hidden="true">
@@ -80,20 +69,24 @@
       </div>
     </section>
 
-    <section class="scope-ledger shell" aria-labelledby="scope-preview-title">
-      <header class="scope-ledger-head reveal"><p>WHAT WE BUILD</p><div><h2 id="scope-preview-title">필요한 제품을<br>한 흐름으로 구축합니다</h2><span>화면 설계와 개발, 데이터 연결, 결제와 광고, 관리자 기능과 배포까지 프로젝트에 필요한 범위를 구성합니다</span></div><a href="services/">전체 범위 확인 <i aria-hidden="true">↗</i></a></header>
-      <div class="scope-ledger-list">{{HOME_SERVICE_CARDS}}</div>
+    <section class="home-offerings shell" aria-labelledby="scope-preview-title">
+      <header class="home-offerings-head reveal"><p>제작 분야</p><div><h2 id="scope-preview-title">웹사이트 · 앱 · 게임 · 시스템</h2><span>브랜드와 커머스, 모바일 서비스, 2D·3D 콘텐츠, 플랫폼과 관리자 도구까지 목적에 맞는 구조로 설계하고 개발합니다</span></div><a href="services/">제작 범위 전체 보기 <i aria-hidden="true">↗</i></a></header>
+      <div class="home-offerings-grid" data-home-offerings>{{HOME_SERVICE_CARDS}}</div>
     </section>
 
-    <section class="home-design-band" aria-label="SWAG 제작 역량">
-      <img src="assets/swag-light-trails.webp" alt="" loading="lazy" decoding="async" aria-hidden="true">
-      <div class="home-design-band-shade" aria-hidden="true"></div>
-      <div class="home-design-band-inner shell reveal">
-        <p>CAPABILITIES</p>
-        <h2>화면만 만드는 데서<br>끝내지 않습니다</h2>
-        <div class="home-design-band-copy">
-          <p>회원과 권한, 예약과 주문, 결제, 광고 운영, 데이터베이스, 관리자 도구, 외부 서비스 연동과 자동화까지 실제 운영에 필요한 기능을 구현합니다</p>
+    <section class="home-capability-stage" aria-labelledby="home-capability-title">
+      <img class="home-capability-art" src="assets/swag-hero-motion-v22.webp" alt="" loading="lazy" decoding="async" aria-hidden="true">
+      <div class="home-capability-inner shell">
+        <div class="home-capability-copy reveal">
+          <p>구축 역량</p>
+          <h2 id="home-capability-title">기획 · UX/UI · 개발 · 데이터 · 배포 · 운영</h2>
+          <span>회원과 권한, 예약과 주문, 결제와 구독, 광고 운영, 데이터베이스, 관리자 기능, 외부 서비스 연동, 실시간 처리와 자동화까지 필요한 범위를 연결합니다</span>
           <a href="services/">구축 범위 자세히 보기 <i aria-hidden="true">↗</i></a>
+        </div>
+        <div class="home-capability-stream" aria-hidden="true">
+          <div><span>UX/UI</span><i></i><span>FRONTEND</span><i></i><span>BACKEND</span><i></i><span>DATABASE</span><i></i><span>UX/UI</span><i></i><span>FRONTEND</span><i></i><span>BACKEND</span><i></i><span>DATABASE</span></div>
+          <div><span>PAYMENT</span><i></i><span>COMMERCE</span><i></i><span>REALTIME</span><i></i><span>AUTOMATION</span><i></i><span>PAYMENT</span><i></i><span>COMMERCE</span><i></i><span>REALTIME</span><i></i><span>AUTOMATION</span></div>
+          <div><span>ADMIN</span><i></i><span>ANALYTICS</span><i></i><span>DEPLOYMENT</span><i></i><span>OPERATIONS</span><i></i><span>ADMIN</span><i></i><span>ANALYTICS</span><i></i><span>DEPLOYMENT</span><i></i><span>OPERATIONS</span></div>
         </div>
       </div>
     </section>
