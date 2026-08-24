@@ -10,6 +10,12 @@ const capabilities = Array.isArray(data.capabilities) ? data.capabilities : [];
 const capabilityGroups = Array.isArray(data.capabilityGroups) ? data.capabilityGroups : [];
 const processSteps = Array.isArray(data.process) ? data.process : [];
 const faqItems = Array.isArray(data.faq) ? data.faq : [];
+const requiredAccentAssets = [
+  "accent-red-rip.webp",
+  "accent-black-burst.webp",
+  "accent-white-tape.webp",
+  "accent-red-stamp.webp"
+];
 
 const required = (value, path) => {
   if (typeof value !== "string" || !value.trim()) errors.push(`${path} is required`);
@@ -125,6 +131,10 @@ faqItems.forEach((item, index) => {
   required(item.answer, `faq[${index}].answer`);
 });
 
+for (const asset of requiredAccentAssets) {
+  if (!await fileExists(new URL(`src/assets/${asset}`, root))) errors.push(`missing kinetic accent asset: ${asset}`);
+}
+
 const sourceFiles = [
   "data/site.json",
   "src/index.template.html",
@@ -154,6 +164,10 @@ const bannedPatterns = [
   [/직접 수정하고 관리할 수 있게 인계/g, "rejected handoff phrasing"],
   [/기획부터 출시까지/g, "rejected production phrasing"],
   [/SUIT|MonaSans|Pretendard|Wanted Sans/gi, "rejected font reference"],
+  [/Plex KR|IBMPlexSansKR/gi, "removed bundled font reference"],
+  [/hero-kinetic|studio-grid|game-impact|system-field/gi, "removed full-background asset reference"],
+  [/<canvas\b/gi, "decorative canvas markup"],
+  [/var\(--blue|var\(--orange/gi, "rejected blue/orange palette token"],
   [/>\s*0[1-9]\s*</g, "visible arbitrary index"],
   [/01\s*[—~-]\s*0[2-9]/g, "visible numbered range"]
 ];
@@ -161,6 +175,9 @@ const bannedPatterns = [
 for (const [pattern, label] of bannedPatterns) {
   if (pattern.test(sourceText)) errors.push(`banned ${label} found`);
 }
+
+const autoMotionCount = (sourceText.match(/data-auto-motion/g) || []).length;
+if (autoMotionCount < 8) errors.push(`automatic motion coverage is too low: ${autoMotionCount}`);
 
 const dataKeys = [];
 const collectKeys = (value) => {

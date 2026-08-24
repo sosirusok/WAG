@@ -36,6 +36,43 @@
   root.classList.add("motion-ready");
   window.setTimeout(() => revealItems.forEach((item) => item.classList.add("is-visible")), 4000);
 
+  const autoMotionItems = [...doc.querySelectorAll("[data-auto-motion]")];
+  if (reduceMotion) {
+    autoMotionItems.forEach((item) => item.classList.add("is-static"));
+  } else if ("IntersectionObserver" in window) {
+    const autoMotionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => entry.target.classList.toggle("is-running", entry.isIntersecting && !doc.hidden));
+    }, { rootMargin: "120px 0px", threshold: .02 });
+    autoMotionItems.forEach((item) => autoMotionObserver.observe(item));
+    doc.addEventListener("visibilitychange", () => {
+      if (doc.hidden) autoMotionItems.forEach((item) => item.classList.remove("is-running"));
+      else autoMotionItems.forEach((item) => {
+        const rect = item.getBoundingClientRect();
+        item.classList.toggle("is-running", rect.bottom > -120 && rect.top < window.innerHeight + 120);
+      });
+    });
+  } else {
+    autoMotionItems.forEach((item) => item.classList.add("is-running"));
+  }
+
+  const autoScene = doc.querySelector("[data-auto-scene]");
+  let autoSceneTimer = 0;
+  const stopAutoScene = () => {
+    if (autoSceneTimer) window.clearTimeout(autoSceneTimer);
+    autoSceneTimer = 0;
+  };
+  const queueAutoScene = () => {
+    stopAutoScene();
+    if (!autoScene || reduceMotion || doc.hidden) return;
+    autoSceneTimer = window.setTimeout(() => {
+      if (autoScene.classList.contains("is-running")) autoScene.classList.toggle("is-inverted");
+      queueAutoScene();
+    }, 4600);
+  };
+  queueAutoScene();
+  doc.addEventListener("visibilitychange", () => doc.hidden ? stopAutoScene() : queueAutoScene());
+  window.addEventListener("pagehide", stopAutoScene);
+
   const header = doc.querySelector("[data-header]");
   let headerTicking = false;
   const updateHeader = () => {
@@ -108,6 +145,7 @@
     body.classList.remove("is-leaving");
     if (event.persisted) body.classList.add("is-restored");
     closeMenu();
+    queueAutoScene();
   });
 
   doc.querySelectorAll("a[href]").forEach((link) => {
@@ -225,166 +263,6 @@
     });
   }
 
-  const createSignalField = (canvas, options = {}) => {
-    if (!canvas || reduceMotion || saveData) return;
-    const context = canvas.getContext("2d", { alpha: true });
-    if (!context) return;
-
-    let width = 0;
-    let height = 0;
-    let frame = 0;
-    let lastDraw = 0;
-    let isIntersecting = !("IntersectionObserver" in window);
-    let pointerX = .72;
-    let pointerY = .48;
-    let pointerActive = false;
-    const lowPower = !finePointer;
-    const count = Math.min(options.count || 58, lowPower ? 28 : 80);
-    const particles = Array.from({ length: count }, (_, index) => ({
-      x: Math.random(),
-      y: Math.random(),
-      vx: (Math.random() - .5) * (.0007 + (index % 4) * .00008),
-      vy: (Math.random() - .5) * .00055,
-      size: 1 + Math.random() * 1.7,
-      warm: index % 13 === 0
-    }));
-    const pulses = [];
-
-    const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.6);
-      width = Math.max(1, rect.width);
-      height = Math.max(1, rect.height);
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      context.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-
-    const stop = () => {
-      if (frame) cancelAnimationFrame(frame);
-      frame = 0;
-    };
-
-    const schedule = () => {
-      if (frame || !isIntersecting || doc.hidden) return;
-      frame = requestAnimationFrame(draw);
-    };
-
-    function draw(time = 0) {
-      frame = 0;
-      if (!isIntersecting || doc.hidden) return;
-      if (lowPower && time - lastDraw < 32) {
-        schedule();
-        return;
-      }
-      lastDraw = time;
-      context.clearRect(0, 0, width, height);
-
-      particles.forEach((particle) => {
-        if (!reduceMotion) {
-          const dx = pointerX - particle.x;
-          const dy = pointerY - particle.y;
-          const distance = Math.hypot(dx * width, dy * height);
-          if (pointerActive && distance < 220) {
-            particle.vx -= dx * .0000028;
-            particle.vy -= dy * .0000028;
-          }
-          particle.x += particle.vx;
-          particle.y += particle.vy;
-          if (particle.x < -.04) particle.x = 1.04;
-          if (particle.x > 1.04) particle.x = -.04;
-          if (particle.y < -.05) particle.y = 1.05;
-          if (particle.y > 1.05) particle.y = -.05;
-        }
-      });
-
-      for (let first = 0; first < particles.length; first += 1) {
-        const a = particles[first];
-        for (let second = first + 1; second < particles.length; second += 1) {
-          const b = particles[second];
-          const dx = (a.x - b.x) * width;
-          const dy = (a.y - b.y) * height;
-          const distance = Math.hypot(dx, dy);
-          if (distance > 128) continue;
-          const alpha = (1 - distance / 128) * .2;
-          context.beginPath();
-          context.moveTo(a.x * width, a.y * height);
-          context.lineTo(b.x * width, b.y * height);
-          context.strokeStyle = `rgba(210,225,255,${alpha})`;
-          context.lineWidth = .7;
-          context.stroke();
-        }
-      }
-
-      particles.forEach((particle) => {
-        context.beginPath();
-        context.arc(particle.x * width, particle.y * height, particle.size, 0, Math.PI * 2);
-        context.fillStyle = particle.warm ? "rgba(255,91,34,.82)" : "rgba(225,235,255,.72)";
-        context.fill();
-      });
-
-      if (pointerActive) {
-        const pulse = 18 + Math.sin(time * .004) * 5;
-        context.beginPath();
-        context.arc(pointerX * width, pointerY * height, pulse, 0, Math.PI * 2);
-        context.strokeStyle = "rgba(255,91,34,.66)";
-        context.lineWidth = 1.4;
-        context.stroke();
-      }
-
-      for (let index = pulses.length - 1; index >= 0; index -= 1) {
-        const pulse = pulses[index];
-        pulse.radius += 3.6;
-        pulse.alpha *= .93;
-        context.beginPath();
-        context.arc(pulse.x, pulse.y, pulse.radius, 0, Math.PI * 2);
-        context.strokeStyle = `rgba(22,76,255,${pulse.alpha})`;
-        context.lineWidth = 2;
-        context.stroke();
-        if (pulse.alpha < .03) pulses.splice(index, 1);
-      }
-
-      schedule();
-    }
-
-    const setPointer = (event) => {
-      const rect = canvas.getBoundingClientRect();
-      pointerX = (event.clientX - rect.left) / rect.width;
-      pointerY = (event.clientY - rect.top) / rect.height;
-      pointerActive = true;
-    };
-
-    canvas.parentElement?.addEventListener("pointermove", setPointer, { passive: true });
-    canvas.parentElement?.addEventListener("pointerleave", () => { pointerActive = false; });
-    canvas.parentElement?.addEventListener("pointerup", () => { pointerActive = false; }, { passive: true });
-    canvas.parentElement?.addEventListener("pointercancel", () => { pointerActive = false; }, { passive: true });
-    canvas.parentElement?.addEventListener("pointerdown", (event) => {
-      const rect = canvas.getBoundingClientRect();
-      pulses.push({ x: event.clientX - rect.left, y: event.clientY - rect.top, radius: 4, alpha: .72 });
-    }, { passive: true });
-
-    const resizeObserver = "ResizeObserver" in window ? new ResizeObserver(resize) : null;
-    resizeObserver?.observe(canvas);
-    const visibilityObserver = "IntersectionObserver" in window
-      ? new IntersectionObserver(([entry]) => {
-        isIntersecting = Boolean(entry?.isIntersecting);
-        isIntersecting ? schedule() : stop();
-      }, { rootMargin: "180px 0px", threshold: 0 })
-      : null;
-    visibilityObserver?.observe(canvas);
-    resize();
-    schedule();
-
-    doc.addEventListener("visibilitychange", () => doc.hidden ? stop() : schedule());
-    window.addEventListener("pagehide", stop);
-    window.addEventListener("pageshow", () => {
-      resize();
-      schedule();
-    });
-  };
-
-  createSignalField(doc.querySelector("[data-impact-canvas]"), { count: 72 });
-  createSignalField(doc.querySelector("[data-process-canvas]"), { count: 46 });
 
   const motionStage = doc.querySelector("[data-motion-stage]");
   if (motionStage && !reduceMotion) {

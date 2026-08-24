@@ -1,7 +1,7 @@
 {
   "meta": {
-    "version": 29,
-    "updatedAt": "2026-08-24T18:20:00+09:00",
+    "version": 30,
+    "updatedAt": "2026-08-24T21:30:00+09:00",
     "title": "SWAG | 웹, 앱, 게임 개발 스튜디오",
     "description": "SWAG는 브랜드 웹사이트, 모바일 앱, 게임과 디지털 서비스를 디자인하고 개발합니다."
   },
@@ -58,8 +58,8 @@
       "title": "웹사이트",
       "short": "브랜드와 정보를 선명하게 보여주는 웹",
       "description": "기업 홈페이지, 브랜드 사이트, 캠페인과 콘텐츠 서비스를 만듭니다. 휴대폰부터 큰 화면까지 같은 인상으로 보이도록 디자인합니다.",
-      "image": "assets/studio-grid.webp",
-      "imageAlt": "코발트와 주황의 편집 그래픽",
+      "image": "assets/accent-red-rip.webp",
+      "imageAlt": "찢어진 빨간 인쇄 테이프 요소",
       "items": [
         "기업과 브랜드 사이트",
         "제품과 캠페인 페이지",
@@ -74,8 +74,8 @@
       "title": "모바일 앱",
       "short": "iOS와 Android에서 쓰는 모바일 앱",
       "description": "iOS와 Android 앱, 설치 없이 쓸 수 있는 PWA를 만듭니다. 로그인, 알림, 위치와 파일 기능도 필요한 만큼 붙입니다.",
-      "image": "assets/hero-kinetic.webp",
-      "imageAlt": "검정과 코발트의 역동적인 편집 그래픽",
+      "image": "assets/accent-white-tape.webp",
+      "imageAlt": "거친 가장자리의 흰색 종이 테이프 요소",
       "items": [
         "iOS와 Android 앱",
         "PWA와 모바일 웹서비스",
@@ -90,8 +90,8 @@
       "title": "게임",
       "short": "브라우저와 모바일에서 바로 실행되는 게임",
       "description": "브라우저와 모바일에서 실행되는 게임을 만듭니다. 짧게 즐기는 캐주얼 게임부터 홍보, 행사와 교육용 콘텐츠까지 가능합니다.",
-      "image": "assets/game-impact.webp",
-      "imageAlt": "파란 궤적과 주황빛이 교차하는 게임 그래픽",
+      "image": "assets/accent-black-burst.webp",
+      "imageAlt": "검정 제록스 하프톤 임팩트 요소",
       "items": [
         "웹과 모바일 게임",
         "프로모션과 이벤트 게임",
@@ -106,8 +106,8 @@
       "title": "서비스와 플랫폼",
       "short": "회원, 결제와 관리 기능이 필요한 웹서비스",
       "description": "로그인, 결제, 데이터가 필요한 웹서비스와 운영 도구를 만듭니다. 이미 쓰고 있는 서비스에 새 기능을 더하는 작업도 맡습니다.",
-      "image": "assets/system-field.webp",
-      "imageAlt": "정보 흐름을 표현한 검정 바탕의 편집 그래픽",
+      "image": "assets/accent-red-stamp.webp",
+      "imageAlt": "빨간 오프셋 인쇄 등록 마크 요소",
       "items": [
         "회원과 권한",
         "상품, 주문과 결제",

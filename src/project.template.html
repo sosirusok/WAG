@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#090b11">
+  <meta name="theme-color" content="#050505">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="article">
@@ -15,8 +15,6 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/IBMPlexSansKR-Regular.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/IBMPlexSansKR-Bold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -29,7 +27,11 @@
   {{HEADER}}
   <main id="main">
     <article class="project-page">
-      <header class="project-hero shell">
+      <header class="project-hero shell" data-auto-motion>
+        <div class="kinetic-assembly kinetic-assembly-project" aria-hidden="true">
+          <img class="kinetic-piece kinetic-red-rip" src="assets/accent-red-rip.webp" alt="" decoding="async">
+          <img class="kinetic-piece kinetic-red-stamp" src="assets/accent-red-stamp.webp" alt="" decoding="async">
+        </div>
         <a class="breadcrumb reveal" href="work/">작업으로 돌아가기 <i aria-hidden="true">↖</i></a>
         <div class="project-heading">
           <p class="reveal"><span>{{PROJECT_CATEGORY}}</span><b>{{PROJECT_YEAR}}</b></p>
@@ -38,7 +40,7 @@
         </div>
       </header>
 
-      <figure class="project-cover shell reveal" data-project-visual>
+      <figure class="project-cover shell reveal" data-project-visual data-auto-motion>
         <span class="project-cover-media" data-tilt>{{PROJECT_IMAGE}}</span>
         <i class="project-cover-scan" aria-hidden="true"></i>
       </figure>

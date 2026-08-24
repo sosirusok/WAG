@@ -46,11 +46,18 @@ const normalizedSiteUrl = (() => {
 const pageUrl = (relative = "") => new URL(relative, normalizedSiteUrl).href;
 const kakaoUrl = safeHttpUrl(data.contact.kakao);
 const phoneDigits = data.contact.phone.replace(/\D/g, "");
-const ogUrl = pageUrl("assets/hero-kinetic.webp");
+const ogUrl = pageUrl("assets/accent-red-rip.webp");
 
 const publicProjects = data.projects
   .filter((project) => project.published)
   .sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
+
+const serviceAccents = [
+  "accent-red-rip.webp",
+  "accent-white-tape.webp",
+  "accent-black-burst.webp",
+  "accent-red-stamp.webp"
+];
 
 const activeAttr = (active, key) => active === key ? ' aria-current="page"' : "";
 const navItems = [
@@ -101,16 +108,16 @@ const renderImage = (entry, options = {}) => {
   return `<img src="${escapeHtml(image)}" alt="${escapeHtml(entry.imageAlt || entry.title)}" decoding="async"${priority}>`;
 };
 
-const renderHomeServicePanels = () => data.services.map((service) => `
-  <a class="home-service-panel reveal" href="services/#${escapeHtml(service.id)}" data-tilt>
-    <figure><img src="${escapeHtml(safeImage(service.image))}" alt="" loading="lazy" decoding="async"><i aria-hidden="true"></i></figure>
+const renderHomeServicePanels = () => data.services.map((service, index) => `
+  <a class="home-service-panel reveal" href="services/#${escapeHtml(service.id)}">
+    <figure class="service-symbol" aria-hidden="true"><img src="assets/${serviceAccents[index % serviceAccents.length]}" alt="" loading="lazy" decoding="async"></figure>
     <div><h3>${escapeHtml(service.title)}</h3><p>${escapeHtml(service.short)}</p><span aria-hidden="true">↗</span></div>
   </a>`).join("");
 
 const renderWorkList = () => publicProjects.map((project, index) => {
   const external = safeHttpUrl(project.url);
   return `
-  <article class="work-entry reveal ${index % 2 ? "work-entry-reverse" : ""}">
+  <article class="work-entry reveal ${index % 2 ? "work-entry-reverse" : ""}" data-auto-motion>
     <a class="work-entry-media" href="work/${escapeHtml(project.id)}.html" aria-label="${escapeHtml(project.title)} 자세히 보기" data-project-visual data-tilt>
       <figure>${renderImage(project, { priority: index === 0 })}<i class="work-scan" aria-hidden="true"></i></figure>
     </a>
@@ -127,11 +134,10 @@ const renderWorkList = () => publicProjects.map((project, index) => {
   </article>`;
 }).join("");
 
-const renderServiceChapters = () => data.services.map((service) => `
-  <article class="service-showcase" id="${escapeHtml(service.id)}" data-service-showcase>
-    <figure class="service-showcase-media reveal" data-tilt>
-      <img src="${escapeHtml(safeImage(service.image))}" alt="${escapeHtml(service.imageAlt)}" loading="lazy" decoding="async">
-      <i aria-hidden="true"></i>
+const renderServiceChapters = () => data.services.map((service, index) => `
+  <article class="service-showcase" id="${escapeHtml(service.id)}" data-service-showcase data-auto-motion>
+    <figure class="service-showcase-media reveal" aria-hidden="true">
+      <img src="assets/${serviceAccents[index % serviceAccents.length]}" alt="" loading="lazy" decoding="async">
     </figure>
     <div class="service-showcase-copy reveal">
       <p>${escapeHtml(service.short)}</p>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#090b11">
+  <meta name="theme-color" content="#050505">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -16,9 +16,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/IBMPlexSansKR-Regular.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/IBMPlexSansKR-Bold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/hero-kinetic.webp" as="image" type="image/webp" fetchpriority="high">
+  <link rel="preload" href="assets/accent-red-rip.webp" as="image" type="image/webp" fetchpriority="high">
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -30,20 +28,21 @@
   <div class="cursor-orb" aria-hidden="true"></div>
   {{HEADER}}
   <main id="main">
-    <section class="cinematic-hero" aria-labelledby="home-title" data-cinematic-hero>
-      <figure class="hero-media" aria-hidden="true">
-        <img src="assets/hero-kinetic.webp" alt="" fetchpriority="high" decoding="async">
-        <i class="hero-media-shade"></i>
-        <i class="hero-media-scan"></i>
-        <i class="hero-media-flash"></i>
-      </figure>
-      <canvas class="impact-canvas" data-impact-canvas aria-hidden="true"></canvas>
-      <div class="hero-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <section class="cinematic-hero" aria-labelledby="home-title" data-cinematic-hero data-auto-scene data-auto-motion>
+      <div class="kinetic-assembly kinetic-assembly-hero" aria-hidden="true">
+        <img class="kinetic-piece kinetic-red-rip" src="assets/accent-red-rip.webp" alt="" fetchpriority="high" decoding="async">
+        <img class="kinetic-piece kinetic-black-burst" src="assets/accent-black-burst.webp" alt="" decoding="async">
+        <img class="kinetic-piece kinetic-white-tape" src="assets/accent-white-tape.webp" alt="" decoding="async">
+        <img class="kinetic-piece kinetic-red-stamp" src="assets/accent-red-stamp.webp" alt="" decoding="async">
+        <i class="kinetic-block kinetic-block-red"></i>
+        <i class="kinetic-block kinetic-block-check"></i>
+        <span class="kinetic-proof">MAKE / BREAK / REBUILD</span>
+      </div>
 
       <div class="cinematic-hero-inner shell">
         <p class="hero-expansion reveal">{{BRAND_EXPANSION}}</p>
         <h1 id="home-title">
-          <span class="hero-wordmark" data-glitch="SWAG">SWAG</span>
+          <span class="hero-wordmark-wrap"><i aria-hidden="true"></i><span class="hero-wordmark" data-glitch="SWAG">SWAG</span></span>
           <span class="hero-headline reveal">{{HERO_HEADLINE}}</span>
         </h1>
         <div class="hero-bottom reveal">
@@ -56,9 +55,8 @@
       </div>
 
       <div class="hero-disciplines" aria-hidden="true">
-        <span>WEB</span><span>APP</span><span>GAME</span><span>SYSTEM</span>
+        <div class="hero-disciplines-track"><span>WEB</span><span>APP</span><span>GAME</span><span>SYSTEM</span><span>DESIGN</span><span>DEVELOPMENT</span><span>WEB</span><span>APP</span><span>GAME</span><span>SYSTEM</span><span>DESIGN</span><span>DEVELOPMENT</span></div>
       </div>
-      <a class="hero-scroll" href="{{CANONICAL_URL}}#home-services" aria-label="다음 내용 보기"><span>내려보기</span><i></i></a>
     </section>
 
     <section class="home-services shell" id="home-services" aria-labelledby="home-services-title">
@@ -69,11 +67,15 @@
           <p>웹사이트, 앱, 게임과 서비스 개발을 한곳에서 이어서 만듭니다.</p>
         </div>
       </header>
-      <div class="home-service-list">{{HOME_SERVICE_PANELS}}</div>
+      <div class="home-service-list" data-auto-motion>{{HOME_SERVICE_PANELS}}</div>
     </section>
 
-    <section class="home-manifesto" aria-labelledby="manifesto-title" data-motion-stage>
-      <figure aria-hidden="true"><img src="assets/system-field.webp" alt="" loading="lazy" decoding="async"><i></i></figure>
+    <section class="home-manifesto" aria-labelledby="manifesto-title" data-motion-stage data-auto-motion>
+      <div class="kinetic-assembly kinetic-assembly-manifesto" aria-hidden="true">
+        <img class="kinetic-piece kinetic-black-burst" src="assets/accent-black-burst.webp" alt="" loading="lazy" decoding="async">
+        <img class="kinetic-piece kinetic-red-rip" src="assets/accent-red-rip.webp" alt="" loading="lazy" decoding="async">
+        <img class="kinetic-piece kinetic-red-stamp" src="assets/accent-red-stamp.webp" alt="" loading="lazy" decoding="async">
+      </div>
       <div class="home-manifesto-inner shell">
         <p class="reveal">DESIGN IN MOTION</p>
         <h2 id="manifesto-title" class="reveal">보이는 순간부터 눌러 쓰는 순간까지</h2>
@@ -83,8 +85,9 @@
       <div class="kinetic-type" aria-hidden="true"><span>DESIGN</span><span>MOTION</span><span>CODE</span></div>
     </section>
 
-    <section class="home-contact shell" aria-labelledby="home-contact-title">
-      <div class="home-contact-panel reveal">
+    <section class="home-contact" aria-labelledby="home-contact-title" data-auto-motion>
+      <div class="home-contact-panel shell reveal">
+        <img class="contact-rip" src="assets/accent-white-tape.webp" alt="" loading="lazy" decoding="async" aria-hidden="true">
         <p>새 프로젝트</p>
         <h2 id="home-contact-title">새로 시작할 프로젝트가 있나요?</h2>
         <div>

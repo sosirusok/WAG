@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#090b11">
+  <meta name="theme-color" content="#050505">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -15,8 +15,6 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/IBMPlexSansKR-Regular.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/IBMPlexSansKR-Bold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -28,8 +26,12 @@
   <div class="cursor-orb" aria-hidden="true"></div>
   {{HEADER}}
   <main id="main">
-    <header class="services-hero" aria-labelledby="services-title">
-      <figure aria-hidden="true"><img src="assets/hero-kinetic.webp" alt="" fetchpriority="high" decoding="async"><i></i></figure>
+    <header class="services-hero" aria-labelledby="services-title" data-auto-motion>
+      <div class="kinetic-assembly kinetic-assembly-route kinetic-route-services" aria-hidden="true">
+        <img class="kinetic-piece kinetic-red-rip" src="assets/accent-red-rip.webp" alt="" fetchpriority="high" decoding="async">
+        <img class="kinetic-piece kinetic-black-burst" src="assets/accent-black-burst.webp" alt="" decoding="async">
+        <img class="kinetic-piece kinetic-red-stamp" src="assets/accent-red-stamp.webp" alt="" decoding="async">
+      </div>
       <div class="services-hero-inner shell">
         <p class="route-label reveal">SERVICES</p>
         <h1 id="services-title" class="reveal">웹부터 게임까지</h1>

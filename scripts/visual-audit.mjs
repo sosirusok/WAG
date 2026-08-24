@@ -123,7 +123,7 @@ for (const viewport of viewports) {
         bodyLength: document.body.innerText.trim().length,
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth,
-        fontReady: document.fonts.check('16px "Plex KR"'),
+        fontReady: document.fonts.status === "loaded",
         koreanFont: koreanElement ? getComputedStyle(koreanElement).fontFamily : "",
         clippedText,
         offscreenText,
@@ -140,12 +140,14 @@ for (const viewport of viewports) {
     if (!inspection.h1) errors.push("missing h1");
     if (inspection.bodyLength < 80) errors.push("page content is unexpectedly short");
     if (inspection.scrollWidth > inspection.clientWidth + 1) errors.push(`horizontal overflow: ${inspection.scrollWidth}/${inspection.clientWidth}`);
-    if (!inspection.fontReady || !inspection.koreanFont.includes("Plex KR")) errors.push(`font did not load: ${inspection.koreanFont}`);
+    if (!inspection.fontReady || /Plex KR|IBMPlex/i.test(inspection.koreanFont)) errors.push(`font state is invalid: ${inspection.koreanFont}`);
     if (inspection.clippedText.length) errors.push(`clipped text: ${JSON.stringify(inspection.clippedText.slice(0, 4))}`);
     if (inspection.offscreenText.length) errors.push(`offscreen text: ${JSON.stringify(inspection.offscreenText.slice(0, 4))}`);
     if (inspection.tinyText.length) errors.push(`tiny text: ${JSON.stringify(inspection.tinyText.slice(0, 4))}`);
     if (inspection.brokenImages.length) errors.push(`broken images: ${inspection.brokenImages.join(", ")}`);
     if (inspection.overlaps.length) errors.push(`interactive overlap: ${JSON.stringify(inspection.overlaps.slice(0, 4))}`);
+    if (inspection.activeAnimations < 1) errors.push("automatic motion is not running");
+    if (inspection.canvasCount > 0) errors.push(`decorative canvas remains: ${inspection.canvasCount}`);
 
     const screenshotPath = path.join(auditDir, `${viewport.label}-${safeRouteName(route)}.png`);
     await page.screenshot({ path: screenshotPath, fullPage: true });

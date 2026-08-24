@@ -22,4 +22,8 @@ npm run dev
 
 ## 글꼴
 
-IBM Plex Sans KR의 Regular, SemiBold와 Bold 파일을 저장소에서 직접 제공합니다. 라이선스는 `src/assets/IBMPlex-LICENSE.txt`에 포함되어 있습니다.
+별도 웹폰트를 내려받지 않고 Arial, Apple SD Gothic Neo, 맑은 고딕 순서의 운영체제 기본 산세리프 글꼴을 사용합니다.
+
+## 비주얼과 모션
+
+완성 배경 이미지를 사용하지 않습니다. 투명 WebP로 만든 레드 찢김, 블랙 인쇄 버스트, 오프화이트 테이프와 레드 등록 스탬프를 독립 레이어로 조합하며, 핵심 모션은 호버나 클릭 없이 자동 재생됩니다.

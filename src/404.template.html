@@ -3,13 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#090b11">
+  <meta name="theme-color" content="#050505">
   <meta name="description" content="요청한 페이지를 찾을 수 없습니다. SWAG 메인으로 이동해 주세요.">
   <meta name="robots" content="noindex,follow">
   <base href="{{SITE_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/IBMPlexSansKR-Regular.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/IBMPlexSansKR-Bold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>페이지를 찾을 수 없습니다 | SWAG</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -19,7 +17,11 @@
   <div class="page-wipe" aria-hidden="true"></div>
   {{HEADER}}
   <main id="main" class="not-found">
-    <figure aria-hidden="true"><img src="assets/hero-kinetic.webp" alt=""><i></i></figure>
+    <div class="kinetic-assembly kinetic-assembly-route kinetic-route-not-found" aria-hidden="true" data-auto-motion>
+      <img class="kinetic-piece kinetic-red-rip" src="assets/accent-red-rip.webp" alt="" decoding="async">
+      <img class="kinetic-piece kinetic-white-tape" src="assets/accent-white-tape.webp" alt="" decoding="async">
+      <img class="kinetic-piece kinetic-black-burst" src="assets/accent-black-burst.webp" alt="" decoding="async">
+    </div>
     <div class="not-found-inner shell">
       <p>404</p>
       <h1>이 주소에는 페이지가 없습니다.</h1>
