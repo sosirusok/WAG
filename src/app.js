@@ -148,6 +148,121 @@
     brandHero.addEventListener("pointercancel", resetBrandLight, { passive: true });
   }
 
+  const homeHero = document.querySelector("[data-home-hero]");
+  const homeCanvas = homeHero?.querySelector("[data-home-canvas]");
+  const homeContext = homeCanvas?.getContext("2d", { alpha: true });
+  let homePointerX = .72;
+  let homePointerY = .36;
+  let homeCanvasWidth = 0;
+  let homeCanvasHeight = 0;
+  let homeAnimationFrame = 0;
+  let homeVisible = true;
+
+  const resizeHomeCanvas = () => {
+    if (!homeHero || !homeCanvas || !homeContext) return;
+    const rect = homeHero.getBoundingClientRect();
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.75);
+    homeCanvasWidth = Math.max(1, rect.width);
+    homeCanvasHeight = Math.max(1, rect.height);
+    homeCanvas.width = Math.round(homeCanvasWidth * pixelRatio);
+    homeCanvas.height = Math.round(homeCanvasHeight * pixelRatio);
+    homeCanvas.style.width = `${homeCanvasWidth}px`;
+    homeCanvas.style.height = `${homeCanvasHeight}px`;
+    homeContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+  };
+
+  const drawHomeField = (time = 0) => {
+    if (!homeContext || !homeCanvasWidth || !homeCanvasHeight) return;
+    homeContext.clearRect(0, 0, homeCanvasWidth, homeCanvasHeight);
+    const motionTime = reduceMotion ? 0 : time * .00014;
+    const pointerOffsetX = (homePointerX - .5) * 20;
+    const pointerOffsetY = (homePointerY - .5) * 14;
+
+    for (let line = 0; line < 4; line += 1) {
+      const phase = motionTime + line * .72;
+      const baseY = homeCanvasHeight * (.2 + line * .2);
+      const amplitude = homeCanvasHeight * (.032 + line * .006);
+      const gradient = homeContext.createLinearGradient(0, 0, homeCanvasWidth, 0);
+      gradient.addColorStop(0, "rgba(38,118,165,0)");
+      gradient.addColorStop(.34, `rgba(38,118,165,${.08 + line * .018})`);
+      gradient.addColorStop(.72, `rgba(115,191,226,${.17 + line * .012})`);
+      gradient.addColorStop(1, "rgba(38,118,165,0)");
+      homeContext.beginPath();
+      for (let x = 0; x <= homeCanvasWidth + 12; x += 12) {
+        const ratio = x / homeCanvasWidth;
+        const pointerWeight = Math.exp(-Math.pow((ratio - homePointerX) * 3.2, 2));
+        const y = baseY
+          + Math.sin(ratio * 7.2 + phase) * amplitude
+          + Math.sin(ratio * 2.5 - phase * 1.4) * amplitude * .58
+          + pointerOffsetY * pointerWeight;
+        if (x === 0) homeContext.moveTo(x, y);
+        else homeContext.lineTo(x + pointerOffsetX * pointerWeight, y);
+      }
+      homeContext.strokeStyle = gradient;
+      homeContext.lineWidth = line === 2 ? 1.25 : .75;
+      homeContext.stroke();
+    }
+
+    const pointCount = homeCanvasWidth < 700 ? 15 : 26;
+    for (let point = 0; point < pointCount; point += 1) {
+      const seed = point * 91.73;
+      const x = ((seed * 13.17 + motionTime * 34) % 1000) / 1000 * homeCanvasWidth;
+      const y = ((seed * 7.31) % 1000) / 1000 * homeCanvasHeight;
+      const pulse = .25 + Math.sin(motionTime * 5 + point) * .15;
+      homeContext.beginPath();
+      homeContext.arc(x, y, point % 5 === 0 ? 1.6 : .8, 0, Math.PI * 2);
+      homeContext.fillStyle = `rgba(40,126,176,${Math.max(.08, pulse)})`;
+      homeContext.fill();
+    }
+  };
+
+  const animateHomeField = (time) => {
+    homeAnimationFrame = 0;
+    drawHomeField(time);
+    if (!reduceMotion && homeVisible) homeAnimationFrame = window.requestAnimationFrame(animateHomeField);
+  };
+
+  const requestHomeField = () => {
+    if (!homeAnimationFrame && homeVisible) homeAnimationFrame = window.requestAnimationFrame(animateHomeField);
+  };
+
+  if (homeHero && homeCanvas && homeContext) {
+    resizeHomeCanvas();
+    drawHomeField();
+    requestHomeField();
+    window.addEventListener("resize", () => {
+      resizeHomeCanvas();
+      drawHomeField();
+    }, { passive: true });
+    homeHero.addEventListener("pointermove", (event) => {
+      if (event.pointerType !== "mouse") return;
+      const rect = homeHero.getBoundingClientRect();
+      homePointerX = Math.max(0, Math.min(1, (event.clientX - rect.left) / Math.max(rect.width, 1)));
+      homePointerY = Math.max(0, Math.min(1, (event.clientY - rect.top) / Math.max(rect.height, 1)));
+      if (!reduceMotion) {
+        homeHero.style.setProperty("--hero-x", `${((homePointerX - .5) * -8).toFixed(2)}px`);
+        homeHero.style.setProperty("--hero-y", `${((homePointerY - .5) * -6).toFixed(2)}px`);
+      }
+    }, { passive: true });
+    homeHero.addEventListener("pointerleave", () => {
+      homePointerX = .72;
+      homePointerY = .36;
+      homeHero.style.setProperty("--hero-x", "0px");
+      homeHero.style.setProperty("--hero-y", "0px");
+    }, { passive: true });
+    if ("IntersectionObserver" in window) {
+      const homeObserver = new IntersectionObserver(([entry]) => {
+        homeVisible = entry.isIntersecting;
+        if (homeVisible) requestHomeField();
+        else if (homeAnimationFrame) {
+          window.cancelAnimationFrame(homeAnimationFrame);
+          homeAnimationFrame = 0;
+        }
+      }, { threshold: 0 });
+      homeObserver.observe(homeHero);
+    }
+  }
+
   const processRoot = document.querySelector("[data-process]");
   const processChapters = processRoot ? [...processRoot.querySelectorAll("[data-process-step]")] : [];
   const processCurrent = processRoot?.querySelector("[data-process-current]");
@@ -263,8 +378,16 @@
       revealAll();
       restoreAmbient();
       resetProjects();
+      if (homeAnimationFrame) {
+        window.cancelAnimationFrame(homeAnimationFrame);
+        homeAnimationFrame = 0;
+      }
+      homeHero?.style.setProperty("--hero-x", "0px");
+      homeHero?.style.setProperty("--hero-y", "0px");
+      drawHomeField();
     } else {
       requestAmbientPaint();
+      requestHomeField();
     }
   };
   motionQuery.addEventListener?.("change", handleMotionChange);
