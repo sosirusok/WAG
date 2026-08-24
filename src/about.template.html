@@ -16,7 +16,8 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/Pretendard-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/MonaSansVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="about.css">
@@ -31,10 +32,10 @@
     <header class="about-hero shell" aria-labelledby="about-title">
       <div class="about-hero-copy reveal">
         <p class="about-eyebrow">About SWAG</p>
-        <h1 id="about-title">디자인과 개발을<br>한 흐름으로 진행합니다</h1>
+        <h1 id="about-title">웹사이트, 앱, 게임과<br>운영 시스템을 만듭니다</h1>
         <div class="about-lead">
           <p>SWAG는 기획, 디자인, 개발을 함께 맡는 2인 프리랜서 스튜디오입니다</p>
-          <p>웹사이트, 앱·어플, 게임, 커머스, 콘텐츠 플랫폼과 업무 시스템을 만들며 화면 설계부터 서버, 데이터, 외부 서비스 연동, 배포와 운영 환경까지 프로젝트에 맞게 구성합니다</p>
+          <p>UX/UI와 프론트엔드, 서버 API, 데이터베이스, 결제와 알림, 관리자 화면, 외부 서비스 연동과 배포를 맡습니다</p>
         </div>
         <a class="about-text-link" href="contact/">프로젝트 이야기 나누기 <span aria-hidden="true">↗</span></a>
       </div>
@@ -42,17 +43,17 @@
       <figure class="about-hero-visual reveal" data-ambient data-ambient-depth="0.42">
         <span class="about-visual-index" aria-hidden="true">DESIGN / DEVELOPMENT</span>
         <img src="assets/about-duo-v1.webp" alt="서로 다른 재료가 하나의 구조를 이루는 SWAG 협업 이미지" fetchpriority="high" decoding="async">
-        <figcaption><span>기획 · UX/UI · 개발 · QA</span><span>필요한 과정을 한 팀에서 이어갑니다</span></figcaption>
+        <figcaption><span>UX/UI · FRONTEND · BACKEND · QA</span><span>화면과 기능을 실제 서비스로 연결합니다</span></figcaption>
       </figure>
     </header>
 
     <section class="about-practice" aria-labelledby="practice-title">
       <div class="shell about-section-grid">
-        <div class="about-section-label reveal"><span>01</span><p>전문 분야</p></div>
+        <div class="about-section-label reveal"><p>전문 분야</p></div>
         <div class="about-section-main">
           <header class="about-section-heading reveal">
-            <h2 id="practice-title">웹사이트에서 업무 시스템까지<br>하나의 제품으로 설계하고 개발합니다</h2>
-            <p>목표와 사용자, 콘텐츠, 운영 환경을 먼저 확인하고 화면 구조와 개발 범위를 정합니다 정해진 템플릿보다 프로젝트에 맞는 방식과 기술을 선택합니다</p>
+            <h2 id="practice-title">공개 화면과 관리자 기능을<br>같은 데이터 구조로 설계합니다</h2>
+            <p>사용자가 보는 화면과 관리자가 처리할 업무를 나눈 뒤 콘텐츠 구조, 기능 우선순위, 데이터와 권한을 설계합니다 정해진 템플릿에 내용을 끼워 넣지 않습니다</p>
           </header>
           <div class="about-practice-list">
             <article class="reveal" id="about-web">
@@ -81,39 +82,37 @@
     </section>
 
     <section class="about-duo shell" aria-labelledby="duo-title">
-      <div class="about-section-label reveal"><span>02</span><p>프로젝트 운영</p></div>
+      <div class="about-section-label reveal"><p>프로젝트 운영</p></div>
       <div class="about-duo-statement reveal">
-        <h2 id="duo-title">방향을 정리하고<br>확인 가능한 결과로 공유합니다</h2>
-        <p>상담 내용을 화면 구조와 기능 범위로 정리하고 주요 화면을 먼저 확인한 뒤 디자인과 개발을 이어갑니다 변경 사항과 우선순위는 진행 중 함께 조정합니다</p>
+        <h2 id="duo-title">착수 전에 화면, 기능과<br>완료 기준을 확정합니다</h2>
+        <p>화면 목록, 기능 명세, 일정과 외부 서비스 비용을 먼저 공유하고 주요 화면을 검토한 뒤 전체 제작을 진행합니다 변경 사항은 영향 범위를 확인해 반영합니다</p>
       </div>
       <div class="about-duo-flow reveal" aria-label="SWAG의 협업 방식">
         <article>
           <span>01</span>
-          <h3>목표와 우선순위</h3>
-          <p>서비스의 목적, 대상 사용자, 핵심 기능과 참고 자료를 확인해 먼저 필요한 범위를 구분합니다</p>
+          <h3>요구사항과 견적</h3>
+          <p>필수 기능, 참고 자료, 희망 일정을 기준으로 제작 항목과 별도 비용이 필요한 연동을 구분합니다</p>
         </article>
-        <i aria-hidden="true"></i>
         <article>
           <span>02</span>
-          <h3>화면과 기능 설계</h3>
-          <p>정보 구조, 사용 흐름, 디자인 방향과 데이터 구조를 실제 구현 가능한 수준으로 구체화합니다</p>
+          <h3>화면과 데이터 설계</h3>
+          <p>페이지 구조, 사용자 동선, 권한, 데이터 저장 방식과 오류 상황을 구현 가능한 수준으로 문서화합니다</p>
         </article>
-        <i aria-hidden="true"></i>
         <article>
           <span>03</span>
-          <h3>개발 · 검수 · 출시</h3>
-          <p>주요 기능을 연결하고 기기별 화면, 오류 상황, 성능과 운영 환경을 점검한 뒤 배포합니다</p>
+          <h3>개발과 출시</h3>
+          <p>기기별 화면과 기능을 구현하고 실제 데이터, 권한, 결제 실패, 성능과 배포 설정을 점검합니다</p>
         </article>
       </div>
     </section>
 
     <section class="about-difference" aria-labelledby="difference-title">
       <div class="shell about-section-grid">
-        <div class="about-section-label reveal"><span>03</span><p>작업 기준</p></div>
+        <div class="about-section-label reveal"><p>작업 기준</p></div>
         <div class="about-section-main">
           <header class="about-section-heading reveal">
-            <h2 id="difference-title">AI와 자동화는<br>제작 수단으로만 사용합니다</h2>
-            <p>프로젝트의 기준은 도구가 아니라 실제 사용자와 운영 환경입니다 생성된 결과를 그대로 쓰지 않고 브랜드 맥락, 화면 흐름, 예외 상황, 성능과 관리 방식을 다시 설계하고 검수합니다</p>
+            <h2 id="difference-title">자동 생성 결과를<br>그대로 납품하지 않습니다</h2>
+            <p>정보 구조, 브랜드 요소, 권한, 오류와 복구, 실제 데이터와 성능을 다시 설계합니다 마지막 검수는 데모 화면이 아니라 실제 운영 주소와 기기에서 진행합니다</p>
           </header>
           <div class="about-compare reveal" role="table" aria-label="자동 생성 방식과 SWAG 제작 방식 비교">
             <div class="about-compare-head" role="row">
@@ -130,11 +129,11 @@
     </section>
 
     <section class="about-quality shell" aria-labelledby="quality-title">
-      <div class="about-section-label reveal"><span>04</span><p>완성도 기준</p></div>
+      <div class="about-section-label reveal"><p>완성도 기준</p></div>
       <div class="about-quality-main">
         <div class="about-quality-heading reveal">
           <h2 id="quality-title">출시 전에<br>확인하는 기준</h2>
-          <p>화면이 보이는 데서 끝내지 않고 실제 사용과 운영에 필요한 항목을 점검합니다</p>
+          <p>주요 브라우저와 모바일 화면, 입력 오류, 권한, 성능, 도메인과 배포 설정을 항목별로 점검합니다</p>
         </div>
         <ol class="about-checks">
           <li class="reveal"><span>01</span><p>PC·모바일 화면, 브라우저 호환성과 접근성</p></li>
@@ -148,9 +147,9 @@
 
     <section class="about-fit" aria-labelledby="fit-title">
       <div class="shell about-fit-inner">
-        <div class="about-section-label reveal"><span>05</span><p>잘 맞는 프로젝트</p></div>
+        <div class="about-section-label reveal"><p>의뢰 범위</p></div>
         <div class="about-fit-copy reveal">
-          <h2 id="fit-title">이런 일을 함께하기 좋습니다</h2>
+          <h2 id="fit-title">주요 의뢰 범위</h2>
           <ul>
             <li>브랜드나 회사의 디지털 접점을 새로 만들거나 개편하는 프로젝트</li>
             <li>회원, 콘텐츠, 커뮤니티, 커머스 기능을 갖춘 웹·모바일 서비스</li>
@@ -163,11 +162,10 @@
     </section>
 
     <section class="about-contact" aria-labelledby="about-contact-title">
-      <div class="about-contact-orbit" aria-hidden="true"><i></i><i></i><i></i></div>
       <div class="shell about-contact-inner reveal">
         <p>프로젝트 문의</p>
-        <h2 id="about-contact-title">준비된 내용부터<br>보내주세요</h2>
-        <span>기획서가 없어도 괜찮습니다 서비스 목적, 필요한 기능, 희망 일정과 참고 자료를 바탕으로 가능한 범위와 진행 순서를 정리해드립니다</span>
+        <h2 id="about-contact-title">필요한 기능과<br>희망 기간을 알려주세요</h2>
+        <span>기획서가 없다면 참고 사이트와 필수 기능만 보내도 됩니다 구현 항목, 예상 일정과 외부 서비스 비용을 구분해 안내합니다</span>
         <div>
           <a class="button" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 상담하기 <i aria-hidden="true">↗</i></a>
           <a class="about-text-link" href="services/">제작 범위 살펴보기 <span aria-hidden="true">↗</span></a>
