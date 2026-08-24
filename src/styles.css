@@ -673,6 +673,9 @@ body.is-leaving .page-wipe {
   line-height: .74;
   letter-spacing: -.095em;
   text-shadow: 0 28px 70px rgba(0, 0, 0, .5);
+}
+
+.fonts-ready .hero-wordmark {
   animation: wordmark-impact 1.15s .12s var(--ease-sharp) both;
 }
 
@@ -2611,8 +2614,8 @@ body.is-leaving .page-wipe {
 }
 
 @keyframes wordmark-impact {
-  0% { opacity: 0; transform: translate3d(-10%, 18%, 0) skewX(-12deg); filter: blur(14px); }
-  62% { opacity: 1; transform: translate3d(2%, -1%, 0) skewX(2deg); filter: blur(0); }
+  0% { opacity: 0; transform: translate3d(-10%, 18%, 0) skewX(-12deg); }
+  62% { opacity: 1; transform: translate3d(2%, -1%, 0) skewX(2deg); }
   100% { opacity: 1; transform: none; }
 }
 

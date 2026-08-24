@@ -12,6 +12,12 @@
     item.textContent = String(new Date().getFullYear());
   });
 
+  if (doc.fonts?.ready) {
+    doc.fonts.ready.then(() => root.classList.add("fonts-ready")).catch(() => root.classList.add("fonts-ready"));
+  } else {
+    root.classList.add("fonts-ready");
+  }
+
   const revealItems = [...doc.querySelectorAll(".reveal")];
   if (reduceMotion || !("IntersectionObserver" in window)) {
     revealItems.forEach((item) => item.classList.add("is-visible"));
