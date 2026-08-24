@@ -46,7 +46,7 @@ const normalizedSiteUrl = (() => {
 const pageUrl = (relative = "") => new URL(relative, normalizedSiteUrl).href;
 const kakaoUrl = safeHttpUrl(data.contact.kakao);
 const phoneDigits = data.contact.phone.replace(/\D/g, "");
-const ogUrl = pageUrl("assets/about-duo-v1.webp");
+const ogUrl = pageUrl("assets/swag-hero-atmosphere.webp");
 
 const publicProjects = data.projects
   .filter((project) => project.published)
@@ -92,7 +92,7 @@ const renderImage = (project, options = {}) => {
 const renderHomeServiceCards = () => data.services.map((service) => `<a class="scope-ledger-item reveal" href="services/#${escapeHtml(service.id)}"><span>${escapeHtml(service.number)}</span><h3>${escapeHtml(service.title)}</h3><p>${escapeHtml(service.subtitle)}</p><i aria-hidden="true">↗</i></a>`).join("");
 
 const renderHomeContactBackdrop = () => {
-  return '<img src="assets/sky-glass.webp" alt="" loading="lazy" decoding="async">';
+  return '<img src="assets/swag-hero-atmosphere.webp" alt="" loading="lazy" decoding="async">';
 };
 
 const renderWorkList = () => publicProjects.map((project, index) => `<article class="work-entry reveal"><figure class="browser-frame work-browser" data-project-visual><span class="browser-surface" data-project-tilt><span class="browser-bar"><i></i><i></i><i></i><b>${escapeHtml(project.title)}</b></span>${renderImage(project, { priority: index === 0 })}</span><figcaption>실제 운영 화면</figcaption></figure><div class="work-entry-copy"><span>${escapeHtml(project.category)}</span><h2>${escapeHtml(project.title)}</h2><p>${escapeHtml(project.summary)}</p><ul>${project.features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}</ul><div class="work-entry-links"><a href="work/${escapeHtml(project.id)}.html">구축 내용 보기 <i aria-hidden="true">↗</i></a>${safeHttpUrl(project.url) ? `<a href="${escapeHtml(safeHttpUrl(project.url))}" target="_blank" rel="noopener noreferrer">운영 사이트 <i aria-hidden="true">↗</i></a>` : ""}</div></div></article>`).join("");
