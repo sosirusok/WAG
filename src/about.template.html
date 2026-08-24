@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f4f9fc">
+  <meta name="theme-color" content="#f3efe6">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -12,11 +12,10 @@
   <meta property="og:description" content="{{PAGE_DESCRIPTION}}">
   <meta property="og:url" content="{{CANONICAL_URL}}">
   <meta property="og:image" content="{{OG_URL}}">
-  <meta name="twitter:card" content="summary_large_image">
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/IBMPlexSansKR-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -24,104 +23,57 @@
 </head>
 <body id="top" data-page="about">
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
+  <div class="page-wipe" aria-hidden="true"></div>
+  <div class="cursor-orb" aria-hidden="true"></div>
   {{HEADER}}
   <main id="main" class="about-page">
-    <header class="about-hero shell" aria-labelledby="about-title">
-      <div class="about-hero-copy reveal">
-        <p class="about-eyebrow">SWAG 소개</p>
-        <h1 id="about-title">두 사람이 기획부터 출시까지 맡습니다</h1>
-        <div class="about-lead">
-          <p>SWAG는 웹사이트, 모바일 앱, 게임형 콘텐츠와 운영 도구를 제작하는 독립 스튜디오입니다.</p>
-          <p>완성 후에도 내용을 직접 수정하고 예약이나 회원 정보를 관리할 수 있도록 관리자 화면과 사용 방법을 함께 제공합니다.</p>
-        </div>
-        <a class="about-text-link" href="contact/">프로젝트 이야기 나누기 <span aria-hidden="true">↗</span></a>
+    <header class="about-hero" aria-labelledby="about-title">
+      <figure aria-hidden="true"><img src="assets/studio-grid.webp" alt="" fetchpriority="high" decoding="async"><i></i></figure>
+      <div class="about-hero-inner shell">
+        <p class="route-label reveal">SWAG</p>
+        <h1 id="about-title" class="reveal">디자인과 개발 사이를 나누지 않습니다.</h1>
+        <p class="about-hero-lead reveal">SWAG는 웹, 앱, 게임을 만드는 디지털 스튜디오입니다. 아이디어가 화면으로 보이고 실제로 움직일 때까지 한 흐름으로 이어서 만듭니다.</p>
       </div>
-
-      <figure class="about-hero-visual reveal" data-ambient data-ambient-depth="0.42">
-        <span class="about-visual-index" aria-hidden="true">기획부터 출시까지</span>
-        <div class="about-screen-stack" aria-label="SWAG 공개 작업 화면"><span><img src="assets/case-catharsis.jpg" alt="카타르시스 이스케이프 공개 화면" fetchpriority="high" decoding="async"></span><span><img src="assets/case-crimescene.jpg" alt="크라임씬플레이 서면1호점 공개 화면" fetchpriority="high" decoding="async"></span><i aria-hidden="true"></i></div>
-        <figcaption><span>화면 설계부터 개발과 최종 검수까지</span><span>공개 주소에서 직접 작동을 확인합니다.</span></figcaption>
-      </figure>
+      <div class="about-hero-word" aria-hidden="true">STUDIO</div>
     </header>
 
-    <section class="about-practice" aria-labelledby="practice-title">
-      <div class="shell about-section-grid">
-        <div class="about-section-label reveal"><p>전문 분야</p></div>
-        <div class="about-section-main">
-          <header class="about-section-heading reveal">
-            <h2 id="practice-title">고객용 화면과 관리자 화면을 함께 설계합니다</h2>
-            <p>예약, 회원과 콘텐츠처럼 고객이 사용하는 화면과 일정, 주문, 문의를 관리하는 화면을 같은 프로젝트 안에서 구성합니다.</p>
-          </header>
-          <div class="about-practice-list">
-            <article class="reveal" id="about-web">
-              <span>01</span>
-              <h3>웹사이트</h3>
-              <p>기업과 브랜드 사이트, 예약 및 판매 기능이 있는 웹서비스</p>
-            </article>
-            <article class="reveal" id="about-app">
-              <span>02</span>
-              <h3>모바일 앱</h3>
-              <p>로그인과 알림, 위치 기능이 필요한 모바일 앱과 PWA</p>
-            </article>
-            <article class="reveal" id="about-game">
-              <span>03</span>
-              <h3>게임</h3>
-              <p>브라우저에서 실행되는 캐주얼 게임과 홍보 및 교육용 콘텐츠</p>
-            </article>
-            <article class="reveal" id="about-system">
-              <span>04</span>
-              <h3>관리 시스템</h3>
-              <p>예약과 회원, 콘텐츠를 관리하는 운영자 화면과 업무 자동화</p>
-            </article>
-          </div>
-        </div>
+    <section class="about-beliefs shell" aria-labelledby="about-beliefs-title">
+      <header class="editorial-heading reveal">
+        <p>중요하게 보는 것</p>
+        <div><h2 id="about-beliefs-title">화면의 인상과 쓰는 감각을 함께 봅니다.</h2></div>
+      </header>
+      <div class="belief-list">
+        <article class="reveal">
+          <h3>한눈에 읽혀야 합니다.</h3>
+          <p>멋을 내더라도 제목, 내용과 버튼의 순서는 분명하게 잡습니다.</p>
+        </article>
+        <article class="reveal">
+          <h3>움직임에는 이유가 있어야 합니다.</h3>
+          <p>시선을 이끌고 반응을 알려주는 곳에 모션을 쓰고, 의미 없이 흔들리는 장식은 줄입니다.</p>
+        </article>
+        <article class="reveal">
+          <h3>실제로 돌아가야 끝입니다.</h3>
+          <p>예쁜 시안에서 멈추지 않고 입력, 데이터와 외부 서비스를 연결해 운영 주소까지 만듭니다.</p>
+        </article>
       </div>
     </section>
 
-    <section class="about-difference" aria-labelledby="difference-title">
-      <div class="shell about-section-grid">
-        <div class="about-section-label reveal"><p>작업 기준</p></div>
-        <div class="about-section-main">
-          <header class="about-section-heading reveal">
-            <h2 id="difference-title">직접 수정하고 관리할 수 있게 인계합니다</h2>
-            <p>자주 바뀌는 내용과 운영에 필요한 계정을 정리하고, 공개 전에는 휴대폰과 PC에서 주요 기능을 확인합니다.</p>
-          </header>
-          <div class="about-compare reveal" role="list" aria-label="인계와 운영 기준">
-            <div role="listitem"><span>01</span><strong>콘텐츠 수정 구조</strong><p>자주 바뀌는 문구와 이미지를 직접 관리할 수 있게 구분합니다.</p></div>
-            <div role="listitem"><span>02</span><strong>권한과 예외 상황</strong><p>정상 화면뿐 아니라 빈 상태, 입력 오류와 권한 차이를 확인합니다.</p></div>
-            <div role="listitem"><span>03</span><strong>결제와 알림 오류 확인</strong><p>결제나 알림이 정상 처리되지 않았을 때 운영자가 확인할 방법을 마련합니다.</p></div>
-            <div role="listitem"><span>04</span><strong>소스와 관리 방법 전달</strong><p>소스, 배포 설정, 필요한 계정과 관리 방법을 정리해 전달합니다.</p></div>
-          </div>
-        </div>
+    <section class="about-voice" aria-labelledby="about-voice-title">
+      <div class="about-voice-art" aria-hidden="true"><img src="assets/hero-kinetic.webp" alt="" loading="lazy" decoding="async"><i></i></div>
+      <div class="about-voice-inner shell">
+        <p class="reveal">SYSTEM WEB APP GAME</p>
+        <h2 id="about-voice-title" class="reveal">분명하게 보이고, 빠르게 반응하고, 오래 기억되는 화면.</h2>
+        <p class="reveal">SWAG라는 이름 그대로 시스템, 웹, 앱과 게임을 한 경계 안에서 다룹니다.</p>
       </div>
     </section>
 
-    <section class="about-fit" aria-labelledby="fit-title">
-      <div class="shell about-fit-inner">
-        <div class="about-section-label reveal"><p>의뢰 범위</p></div>
-        <div class="about-fit-copy reveal">
-          <h2 id="fit-title">주요 의뢰 범위</h2>
-          <ul>
-            <li>회사나 브랜드의 새 웹사이트 또는 기존 사이트 개편</li>
-            <li>회원과 판매 기능이 필요한 웹 및 모바일 서비스</li>
-            <li>홍보와 교육, 행사에 사용할 게임 및 참여형 콘텐츠</li>
-            <li>반복 업무를 줄이는 관리자 화면과 데이터 통계</li>
-            <li>기존 사이트에 외부 서비스나 자동화 기능을 추가하는 작업</li>
-          </ul>
-        </div>
+    <section class="route-cta shell reveal" aria-labelledby="about-contact-title">
+      <p>같이 만들기</p>
+      <div>
+        <h2 id="about-contact-title">아이디어를 들려주세요.</h2>
+        <p>{{RESPONSE_NOTE}}</p>
       </div>
-    </section>
-
-    <section class="about-contact" aria-labelledby="about-contact-title">
-      <div class="shell about-contact-inner reveal">
-        <p>프로젝트 문의</p>
-        <h2 id="about-contact-title">프로젝트 상담</h2>
-        <span>기획서가 없다면 참고 사이트와 필수 기능만 보내도 됩니다. 구현 항목, 예상 일정과 외부 서비스 비용을 구분해 안내합니다.</span>
-        <div>
-          <a class="button" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 상담하기 <i aria-hidden="true">↗</i></a>
-          <a class="about-text-link" href="services/">제작 범위 살펴보기 <span aria-hidden="true">↗</span></a>
-        </div>
-      </div>
+      <a class="button button-dark magnetic" href="contact/">프로젝트 문의 <i aria-hidden="true">→</i></a>
     </section>
   </main>
   {{FOOTER}}

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f4f9fc">
+  <meta name="theme-color" content="#f3efe6">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -15,7 +15,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/IBMPlexSansKR-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -23,80 +23,83 @@
 </head>
 <body id="top" data-page="contact">
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
+  <div class="page-wipe" aria-hidden="true"></div>
+  <div class="cursor-orb" aria-hidden="true"></div>
   {{HEADER}}
   <main id="main">
-    <header class="contact-studio-hero shell reveal" aria-labelledby="contact-title">
-      <div class="contact-studio-index"><span>프로젝트 문의</span><b>카카오 오픈채팅</b></div>
-      <div class="contact-studio-copy"><p>상담 안내</p><h1 id="contact-title">프로젝트 문의</h1><span>{{RESPONSE_NOTE}}</span><div class="contact-studio-actions"><a class="button" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 열기 <i aria-hidden="true">↗</i></a><a href="contact/#scope-title">상담 내용 먼저 정리하기 ↓</a></div></div>
-      <p class="contact-studio-note">아래 요약 도구의 입력 내용은 이 브라우저 탭에만 임시로 보관되며 사이트 서버로 전송되지 않습니다.</p>
+    <header class="contact-hero" aria-labelledby="contact-title">
+      <figure aria-hidden="true"><img src="assets/studio-grid.webp" alt="" fetchpriority="high" decoding="async"><i></i></figure>
+      <div class="contact-hero-inner shell">
+        <p class="route-label reveal">CONTACT</p>
+        <h1 id="contact-title" class="reveal">무엇을 만들지 이야기해 주세요.</h1>
+        <p class="reveal">{{RESPONSE_NOTE}}</p>
+        <div class="contact-direct reveal">
+          <a class="button button-dark magnetic" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 <i aria-hidden="true">↗</i></a>
+          <a class="contact-phone" href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a>
+        </div>
+      </div>
     </header>
 
-    <section class="scope-section shell reveal" aria-labelledby="scope-title">
-      <div class="scope-section-heading"><p>상담용 요약</p><h2 id="scope-title">문의 내용을 간단히 정리해 보세요</h2></div>
-      <div class="scope-builder" data-scope-builder>
-        <div class="scope-form">
-          <nav class="scope-step-nav" aria-label="문의 작성 단계">
-            <button type="button" data-scope-jump="1" aria-current="step"><span>01</span><b>제작 종류</b></button>
-            <button type="button" data-scope-jump="2"><span>02</span><b>필요 기능</b></button>
-            <button type="button" data-scope-jump="3"><span>03</span><b>준비 상태</b></button>
-            <button type="button" data-scope-jump="4"><span>04</span><b>희망 일정</b></button>
-          </nav>
-          <div class="scope-progress" role="progressbar" aria-label="문의 작성 진행률" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1" aria-valuetext="1단계 / 4단계"><span data-scope-progress>1 / 4</span><div><i data-scope-progress-bar></i></div></div>
+    <section class="brief-section shell" aria-labelledby="brief-title">
+      <header class="editorial-heading reveal">
+        <p>문의 정리</p>
+        <div>
+          <h2 id="brief-title">보낼 내용을 미리 만들어 보세요.</h2>
+          <p>고른 내용은 서버로 전송하지 않습니다. 복사한 뒤 카카오 대화창에 붙여 넣으면 됩니다.</p>
+        </div>
+      </header>
 
-          <section class="scope-step" data-scope-step="1">
-            <span>첫 번째</span><h3>무엇을 만들 예정인가요?</h3>
-            <div class="choice-grid type-choices">{{PLANNER_TYPES}}</div>
-          </section>
+      <div class="brief-builder reveal" data-brief-builder>
+        <div class="brief-form">
+          <fieldset>
+            <legend>무엇을 만들까요?</legend>
+            <div class="brief-choices brief-type-choices">{{PLANNER_TYPES}}</div>
+          </fieldset>
 
-          <section class="scope-step" data-scope-step="2" hidden>
-            <span>두 번째</span><h3>어떤 기능이 필요한가요?</h3>
-            <p>여러 개를 선택할 수 있습니다.</p>
-            <div class="choice-grid feature-choices">{{PLANNER_FEATURES}}</div>
-          </section>
+          <fieldset>
+            <legend>필요한 기능이 있나요?</legend>
+            <p>여러 개를 골라도 됩니다.</p>
+            <div class="brief-choices brief-feature-choices">{{PLANNER_FEATURES}}</div>
+          </fieldset>
 
-          <section class="scope-step" data-scope-step="3" hidden>
-            <span>세 번째</span><h3>현재 준비 상태를 골라주세요</h3>
-            <div class="choice-grid state-choices">
-              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="준비 상태" data-scope-value="아이디어만 있음">아이디어만 있음</button>
-              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="준비 상태" data-scope-value="참고 사이트 있음">참고 사이트 있음</button>
-              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="준비 상태" data-scope-value="기획안 있음">기획안 있음</button>
-              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="준비 상태" data-scope-value="기존 사이트 수정">기존 사이트 수정</button>
+          <fieldset>
+            <legend>지금 어느 정도 준비됐나요?</legend>
+            <div class="brief-choices">
+              <button type="button" aria-pressed="false" data-brief-choice data-brief-group="준비 상태" data-brief-value="아이디어만 있음">아이디어만 있음</button>
+              <button type="button" aria-pressed="false" data-brief-choice data-brief-group="준비 상태" data-brief-value="참고 사이트 있음">참고 사이트 있음</button>
+              <button type="button" aria-pressed="false" data-brief-choice data-brief-group="준비 상태" data-brief-value="기획안 있음">기획안 있음</button>
+              <button type="button" aria-pressed="false" data-brief-choice data-brief-group="준비 상태" data-brief-value="기존 서비스 수정">기존 서비스 수정</button>
             </div>
-          </section>
+          </fieldset>
 
-          <section class="scope-step" data-scope-step="4" hidden>
-            <span>마지막</span><h3>희망 기간을 직접 적어주세요</h3>
-            <p>정확한 날짜가 정해지지 않았다면 예상 시작 시점과 필요한 기간만 적어도 됩니다.</p>
-            <label class="schedule-field"><span>희망 기간</span><input type="text" maxlength="80" autocomplete="off" data-scope-schedule placeholder="예: 9월 둘째 주 시작, 6주 안에 완료" aria-describedby="schedule-help"><small id="schedule-help">일정 미정이나 협의 필요라고 직접 적어도 됩니다.</small></label>
-          </section>
+          <label class="brief-field">
+            <span>하고 싶은 이야기</span>
+            <textarea rows="5" maxlength="600" data-brief-note placeholder="예: 브랜드 사이트를 새로 만들고 싶습니다. 첫 화면의 분위기와 모바일 사용성을 중요하게 봅니다."></textarea>
+          </label>
 
-          <div class="scope-controls">
-            <button type="button" data-scope-back disabled>이전</button>
-            <button type="button" data-scope-next disabled>다음 <span aria-hidden="true">→</span></button>
-          </div>
-          <p class="scope-form-status" data-scope-form-status role="status" aria-live="polite"></p>
+          <label class="brief-field">
+            <span>희망 시기</span>
+            <input type="text" maxlength="100" autocomplete="off" data-brief-schedule placeholder="예: 9월 시작, 일정은 협의 가능">
+          </label>
         </div>
 
-        <aside class="scope-summary" aria-labelledby="summary-title">
-          <div class="scope-summary-head"><div><span>상담용 요약</span><h3 id="summary-title" tabindex="-1">선택한 내용</h3></div><button type="button" data-scope-edit hidden>내용 수정</button></div>
-          <pre data-scope-summary>아직 선택한 내용이 없습니다</pre>
-          <div class="summary-actions">
-            <button type="button" data-scope-copy disabled>문의 내용 복사</button>
-            <a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 상담 열기 ↗</a>
-          </div>
-          <p data-copy-status aria-live="polite"></p>
+        <aside class="brief-summary" aria-labelledby="brief-summary-title">
+          <p>미리보기</p>
+          <h3 id="brief-summary-title">문의 내용</h3>
+          <pre data-brief-summary>고른 내용이 여기에 표시됩니다.</pre>
+          <button class="button button-hot" type="button" data-brief-copy>문의 내용 복사</button>
+          <a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 대화창 열기 <i aria-hidden="true">↗</i></a>
+          <p data-brief-status role="status" aria-live="polite"></p>
         </aside>
       </div>
     </section>
 
     <section class="faq-section shell" aria-labelledby="faq-title">
-      <div class="section-intro reveal"><p>자주 묻는 내용</p><div><h2 id="faq-title">문의 전 확인해 주세요</h2></div></div>
+      <header class="editorial-heading reveal">
+        <p>자주 묻는 내용</p>
+        <div><h2 id="faq-title">문의 전에 많이 물어보는 것</h2></div>
+      </header>
       <div class="faq-list">{{FAQ}}</div>
-    </section>
-
-    <section class="direct-contact route-contact reveal">
-      <figure class="route-contact-backdrop" data-ambient aria-hidden="true"><i></i><i></i><span>SWAG</span></figure>
-      <div class="shell direct-contact-inner"><p>직접 문의</p><div><h2>카카오 오픈채팅 또는 전화</h2><a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 <span aria-hidden="true">↗</span></a><a href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a></div></div>
     </section>
   </main>
   {{FOOTER}}

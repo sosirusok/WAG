@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f7f8f4">
+  <meta name="theme-color" content="#090b11">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -16,7 +16,8 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/IBMPlexSansKR-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/hero-kinetic.webp" as="image" type="image/webp" fetchpriority="high">
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -24,92 +25,70 @@
 </head>
 <body id="top" data-page="home">
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
+  <div class="page-wipe" aria-hidden="true"></div>
+  <div class="cursor-orb" aria-hidden="true"></div>
   {{HEADER}}
   <main id="main">
-    <section class="home-hero" aria-labelledby="home-title" data-home-hero>
-      <div class="home-hero-art" aria-hidden="true" data-home-art>
-        <i class="home-hero-grid"></i>
-        <i class="home-hero-beam home-hero-beam-a"></i>
-        <i class="home-hero-beam home-hero-beam-b"></i>
-        <i class="home-hero-light"></i>
-        <i class="home-hero-noise"></i>
-      </div>
-      <canvas class="home-hero-canvas" data-home-canvas aria-hidden="true"></canvas>
+    <section class="cinematic-hero" aria-labelledby="home-title" data-cinematic-hero>
+      <figure class="hero-media" aria-hidden="true">
+        <img src="assets/hero-kinetic.webp" alt="" fetchpriority="high" decoding="async">
+        <i class="hero-media-shade"></i>
+        <i class="hero-media-scan"></i>
+        <i class="hero-media-flash"></i>
+      </figure>
+      <canvas class="impact-canvas" data-impact-canvas aria-hidden="true"></canvas>
+      <div class="hero-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 
-      <div class="home-hero-frame shell">
-        <div class="home-hero-main">
-          <div class="home-hero-copy">
-            <p class="home-hero-kicker reveal"><span>{{HERO_EYEBROW}}</span></p>
-            <div class="home-wordmark-stage reveal" data-home-wordmark>
-              <h1 id="home-title" class="home-wordmark"><span>SWAG</span></h1>
-              <i class="home-wordmark-flare" aria-hidden="true"></i>
-            </div>
-            <p class="home-hero-lead reveal">{{HERO_HEADLINE}}</p>
-            <p class="home-hero-description reveal">{{HERO_DESCRIPTION}}</p>
-            <div class="home-hero-actions reveal">
-              <a class="home-action-primary" href="work/">{{HERO_PRIMARY_CTA}} <i aria-hidden="true">→</i></a>
-              <a class="home-action-secondary" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">{{HERO_SECONDARY_CTA}} <i aria-hidden="true">↗</i></a>
-            </div>
+      <div class="cinematic-hero-inner shell">
+        <p class="hero-expansion reveal">{{BRAND_EXPANSION}}</p>
+        <h1 id="home-title">
+          <span class="hero-wordmark reveal" data-glitch="SWAG">SWAG</span>
+          <span class="hero-headline reveal">{{HERO_HEADLINE}}</span>
+        </h1>
+        <div class="hero-bottom reveal">
+          <p>{{HERO_DESCRIPTION}}</p>
+          <div class="hero-actions">
+            <a class="button button-hot magnetic" href="contact/">{{HERO_PRIMARY_CTA}} <i aria-hidden="true">↗</i></a>
+            <a class="text-link magnetic" href="services/">{{HERO_SECONDARY_CTA}} <i aria-hidden="true">→</i></a>
           </div>
-
-          <figure class="home-showreel-stage reveal" aria-label="공개 작업 화면 미리보기" data-home-showreel>
-            <a class="home-showreel-screen home-showreel-screen-a" href="work/escape-booking.html" aria-label="카타르시스 이스케이프 작업 보기" data-project-visual data-project-tilt><span>카타르시스 이스케이프</span><img src="assets/case-catharsis.jpg" alt="카타르시스 이스케이프 공개 화면" fetchpriority="high" decoding="async"></a>
-            <a class="home-showreel-screen home-showreel-screen-b" href="work/store-experience.html" aria-label="크라임씬플레이 서면1호점 작업 보기" data-project-visual data-project-tilt><span>크라임씬플레이 서면1호점</span><img src="assets/case-crimescene.jpg" alt="크라임씬플레이 서면1호점 공개 화면" fetchpriority="high" decoding="async"></a>
-            <i class="home-showreel-scan"></i>
-            <figcaption><b>운영 중인 사이트</b><span>실제 화면</span></figcaption>
-          </figure>
         </div>
-        <div class="home-hero-scroll" aria-hidden="true"><i></i><span>아래로</span></div>
       </div>
 
-      <div class="home-hero-marquee" aria-hidden="true">
-        <div><span>반응형 웹</span><i></i><span>모바일 앱</span><i></i><span>게임</span><i></i><span>데이터베이스</span><i></i><span>결제</span><i></i><span>관리자 화면</span><i></i><span>반응형 웹</span><i></i><span>모바일 앱</span><i></i><span>게임</span><i></i><span>데이터베이스</span><i></i><span>결제</span><i></i><span>관리자 화면</span></div>
+      <div class="hero-disciplines" aria-hidden="true">
+        <span>WEB</span><span>APP</span><span>GAME</span><span>SYSTEM</span>
       </div>
+      <a class="hero-scroll" href="{{CANONICAL_URL}}#home-services" aria-label="다음 내용 보기"><span>내려보기</span><i></i></a>
     </section>
 
-    <section class="home-featured shell" aria-labelledby="featured-title">
-      <header class="home-section-head reveal">
-        <p>작업 사례</p>
-        <div><h2 id="featured-title">운영 중인 웹사이트 두 곳</h2><span>예약 화면과 관리자 기능을 함께 구축한 프로젝트입니다. 각 사례에서 실제 화면과 포함 기능을 확인할 수 있습니다.</span></div>
-        <a href="work/">작업 전체 보기 <i aria-hidden="true">→</i></a>
+    <section class="home-services shell" id="home-services" aria-labelledby="home-services-title">
+      <header class="editorial-heading reveal">
+        <p>만드는 것</p>
+        <div>
+          <h2 id="home-services-title">서로 다른 화면도 한 가지 인상으로</h2>
+          <p>웹사이트, 앱, 게임과 서비스 개발을 한곳에서 이어서 만듭니다.</p>
+        </div>
       </header>
-      <div class="home-project-grid">{{HOME_FEATURED_WORK}}</div>
+      <div class="home-service-list">{{HOME_SERVICE_PANELS}}</div>
     </section>
 
-    <section class="home-offerings shell" aria-labelledby="scope-preview-title">
-      <header class="home-section-head home-offerings-head reveal">
-        <p>제작 범위</p>
-        <div><h2 id="scope-preview-title">웹사이트, 모바일 앱, 게임, 운영 시스템</h2><span>소개 사이트처럼 화면 중심인 작업과 회원, 예약, 결제, 관리자 기능이 필요한 서비스 모두 상담할 수 있습니다.</span></div>
-        <a href="services/">제작 범위 자세히 보기 <i aria-hidden="true">→</i></a>
-      </header>
-      <div class="home-offerings-grid">{{HOME_SERVICE_CARDS}}</div>
-    </section>
-
-    <section class="home-capability-stage" aria-labelledby="home-capability-title">
-      <div class="home-capability-art" aria-hidden="true"><i></i><i></i><span class="system-node system-node-a"><b>회원</b><em>로그인과 권한</em></span><span class="system-node system-node-b"><b>데이터</b><em>저장과 검색</em></span><span class="system-node system-node-c"><b>결제</b><em>승인과 오류</em></span><span class="system-node system-node-d"><b>관리</b><em>운영자 화면</em></span></div>
-      <div class="home-capability-inner shell">
-        <div class="home-capability-copy reveal">
-          <p>연동 기능</p>
-          <h2 id="home-capability-title">회원, 결제, 데이터, 관리자 기능</h2>
-          <span>회원 가입, 예약과 결제, 관리자 화면이 필요한 프로젝트는 데이터 저장과 외부 서비스 연동까지 함께 진행합니다. 별도 계정과 사용료가 필요한 항목은 제작비와 구분해 안내합니다.</span>
-          <a href="services/">연동 기능 확인하기 <i aria-hidden="true">→</i></a>
-        </div>
-        <div class="home-capability-stream" aria-hidden="true">
-          <div><span>화면 제작</span><i></i><span>서버 기능</span><i></i><span>데이터베이스</span><i></i><span>화면 제작</span><i></i><span>서버 기능</span><i></i><span>데이터베이스</span><i></i></div>
-          <div><span>결제</span><i></i><span>방문 분석</span><i></i><span>AI 기능</span><i></i><span>결제</span><i></i><span>방문 분석</span><i></i><span>AI 기능</span><i></i></div>
-          <div><span>관리자</span><i></i><span>배포</span><i></i><span>유지보수</span><i></i><span>관리자</span><i></i><span>배포</span><i></i><span>유지보수</span><i></i></div>
-        </div>
+    <section class="home-manifesto" aria-labelledby="manifesto-title" data-motion-stage>
+      <figure aria-hidden="true"><img src="assets/system-field.webp" alt="" loading="lazy" decoding="async"><i></i></figure>
+      <div class="home-manifesto-inner shell">
+        <p class="reveal">DESIGN IN MOTION</p>
+        <h2 id="manifesto-title" class="reveal">보이는 순간부터 눌러 쓰는 순간까지</h2>
+        <p class="manifesto-copy reveal">디자인과 개발을 따로 떼지 않습니다. 첫 화면의 인상, 움직임의 속도와 실제 기능이 한 흐름으로 이어지게 만듭니다.</p>
+        <a class="button button-light magnetic reveal" href="about/">SWAG 소개 <i aria-hidden="true">→</i></a>
       </div>
+      <div class="kinetic-type" aria-hidden="true"><span>DESIGN</span><span>MOTION</span><span>CODE</span></div>
     </section>
 
-    <section class="visual-contact reveal" aria-labelledby="home-contact-title">
-      <figure class="contact-backdrop" data-ambient>{{HOME_CONTACT_IMAGE}}</figure>
-      <div class="shell visual-contact-inner">
-        <div class="contact-panel">
-          <p>프로젝트 문의</p>
-          <h2 id="home-contact-title">프로젝트 내용을 보내주세요</h2>
-          <span>{{RESPONSE_NOTE}}</span>
-          <div><a class="button" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 열기 <i aria-hidden="true">↗</i></a><a class="phone-link" href="tel:{{PHONE_DIGITS}}">전화 {{PHONE}}</a></div>
+    <section class="home-contact shell" aria-labelledby="home-contact-title">
+      <div class="home-contact-panel reveal">
+        <p>새 프로젝트</p>
+        <h2 id="home-contact-title">무엇을 만들지 이야기해 주세요.</h2>
+        <div>
+          <p>{{RESPONSE_NOTE}}</p>
+          <a class="button button-dark magnetic" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의 <i aria-hidden="true">↗</i></a>
         </div>
       </div>
     </section>

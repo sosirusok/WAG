@@ -1,700 +1,440 @@
 (() => {
-  "use strict";
+  const doc = document;
+  const root = doc.documentElement;
+  const body = doc.body;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-  const header = document.querySelector("[data-header]");
-  const sentinel = document.querySelector("[data-header-sentinel]");
-  const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const compactMotionQuery = window.matchMedia("(max-width: 760px), (prefers-reduced-data: reduce)");
-  const finePointerQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
-  document.documentElement.classList.add("motion-ready");
-  let reduceMotion = motionQuery.matches;
+  root.classList.add("motion-ready");
+  requestAnimationFrame(() => body.classList.add("is-ready"));
 
-  const siteProgress = document.querySelector("[data-site-progress]");
-  let scrollFrame = 0;
-  const updateScrollState = () => {
-    scrollFrame = 0;
-    if (!siteProgress) return;
-    const scrollable = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
-    const progress = Math.min(Math.max(window.scrollY / scrollable, 0), 1);
-    siteProgress.style.transform = `scaleX(${progress})`;
-  };
-  const requestScrollState = () => {
-    if (scrollFrame) return;
-    scrollFrame = window.requestAnimationFrame(updateScrollState);
-  };
-  updateScrollState();
-  window.addEventListener("scroll", requestScrollState, { passive: true });
-  window.addEventListener("resize", requestScrollState, { passive: true });
+  doc.querySelectorAll("[data-year]").forEach((item) => {
+    item.textContent = String(new Date().getFullYear());
+  });
 
-  if (header && sentinel && "IntersectionObserver" in window) {
-    const headerObserver = new IntersectionObserver(([entry]) => {
-      header.classList.toggle("is-scrolled", !entry.isIntersecting);
-    });
-    headerObserver.observe(sentinel);
-  } else if (header) {
-    const updateHeader = () => header.classList.toggle("is-scrolled", window.scrollY > 8);
-    updateHeader();
-    window.addEventListener("scroll", updateHeader, { passive: true });
-  }
-
-  const revealElements = document.querySelectorAll(".reveal");
-  const revealAll = () => {
-    revealElements.forEach((element) => element.classList.add("is-visible"));
-  };
-  const revealAboveFold = () => {
-    const revealFold = window.innerHeight + 24;
-    revealElements.forEach((element) => {
-      if (element.classList.contains("is-visible")) return;
-      const rect = element.getBoundingClientRect();
-      if (rect.top < revealFold && rect.bottom > 0) element.classList.add("is-visible");
-    });
-  };
-
-  let revealObserver = null;
+  const revealItems = [...doc.querySelectorAll(".reveal")];
   if (reduceMotion || !("IntersectionObserver" in window)) {
-    revealAll();
+    revealItems.forEach((item) => item.classList.add("is-visible"));
   } else {
-    revealAboveFold();
-    revealObserver = new IntersectionObserver((entries) => {
+    const revealObserver = new IntersectionObserver((entries, observer) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         entry.target.classList.add("is-visible");
-        revealObserver.unobserve(entry.target);
+        observer.unobserve(entry.target);
       });
-    }, { rootMargin: "80px 0px -6%", threshold: 0.01 });
-    revealElements.forEach((element) => {
-      if (!element.classList.contains("is-visible")) revealObserver.observe(element);
-    });
-    window.requestAnimationFrame(revealAboveFold);
-    window.addEventListener("load", revealAboveFold, { once: true });
+    }, { rootMargin: "0px 0px -8%", threshold: .08 });
+
+    revealItems.forEach((item) => revealObserver.observe(item));
   }
 
-  const ambientElements = [...document.querySelectorAll("[data-ambient]")];
-  const ambientInlineTranslate = new Map(ambientElements.map((element) => [
-    element,
-    element.style.getPropertyValue("translate")
-  ]));
-  let ambientFrame = 0;
-  let ambientPointerX = 0;
-  let ambientPointerY = 0;
-
-  const restoreAmbient = () => {
-    if (ambientFrame) {
-      window.cancelAnimationFrame(ambientFrame);
-      ambientFrame = 0;
-    }
-    ambientElements.forEach((element) => {
-      const initialTranslate = ambientInlineTranslate.get(element);
-      if (initialTranslate) element.style.setProperty("translate", initialTranslate);
-      else element.style.removeProperty("translate");
-    });
+  const header = doc.querySelector("[data-header]");
+  let headerTicking = false;
+  const updateHeader = () => {
+    header?.classList.toggle("is-scrolled", window.scrollY > 24);
+    headerTicking = false;
   };
-  const paintAmbient = () => {
-    ambientFrame = 0;
-    if (reduceMotion || !finePointerQuery.matches) {
-      restoreAmbient();
-      return;
-    }
-    const scrollOffset = Math.max(-3, Math.min(3, window.scrollY * -0.004));
-    ambientElements.forEach((element) => {
-      const parsedDepth = Number.parseFloat(element.dataset.ambientDepth || "1");
-      const depth = Number.isFinite(parsedDepth) ? Math.max(.1, Math.min(parsedDepth, 1.6)) : 1;
-      element.style.setProperty(
-        "translate",
-        `${(ambientPointerX * depth).toFixed(2)}px ${((ambientPointerY * depth) + (scrollOffset * depth)).toFixed(2)}px`
-      );
-    });
-  };
-  const requestAmbientPaint = () => {
-    if (ambientElements.length && !ambientFrame) {
-      ambientFrame = window.requestAnimationFrame(paintAmbient);
-    }
-  };
-
-  window.addEventListener("pointermove", (event) => {
-    if (reduceMotion || !finePointerQuery.matches || event.pointerType !== "mouse") return;
-    const width = Math.max(window.innerWidth, 1);
-    const height = Math.max(window.innerHeight, 1);
-    ambientPointerX = Math.max(-1, Math.min(1, (event.clientX / width) * 2 - 1)) * 6;
-    ambientPointerY = Math.max(-1, Math.min(1, (event.clientY / height) * 2 - 1)) * 6;
-    requestAmbientPaint();
+  window.addEventListener("scroll", () => {
+    if (headerTicking) return;
+    headerTicking = true;
+    requestAnimationFrame(updateHeader);
   }, { passive: true });
-  window.addEventListener("scroll", requestAmbientPaint, { passive: true });
+  updateHeader();
 
-  const homeHero = document.querySelector("[data-home-hero]");
-  const homeCanvas = homeHero?.querySelector("[data-home-canvas]");
-  const homeContext = homeCanvas?.getContext("2d", { alpha: true });
-  const homeWordmark = homeHero?.querySelector("[data-home-wordmark]");
-  let homePointerX = .72;
-  let homePointerY = .36;
-  let homeDepthX = .72;
-  let homeDepthY = .36;
-  let homeScrollOffset = 0;
-  let homeCanvasWidth = 0;
-  let homeCanvasHeight = 0;
-  let homeAnimationFrame = 0;
-  let homeVisible = true;
-
-  const resizeHomeCanvas = () => {
-    if (!homeHero || !homeCanvas || !homeContext) return;
-    const rect = homeHero.getBoundingClientRect();
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.75);
-    homeCanvasWidth = Math.max(1, rect.width);
-    homeCanvasHeight = Math.max(1, rect.height);
-    homeCanvas.width = Math.round(homeCanvasWidth * pixelRatio);
-    homeCanvas.height = Math.round(homeCanvasHeight * pixelRatio);
-    homeCanvas.style.width = `${homeCanvasWidth}px`;
-    homeCanvas.style.height = `${homeCanvasHeight}px`;
-    homeContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+  const navToggle = doc.querySelector("[data-nav-toggle]");
+  const mobileMenu = doc.querySelector("[data-mobile-menu]");
+  const closeMenu = () => {
+    if (!navToggle || !mobileMenu) return;
+    navToggle.setAttribute("aria-expanded", "false");
+    mobileMenu.hidden = true;
+    body.classList.remove("is-menu-open");
+  };
+  const openMenu = () => {
+    if (!navToggle || !mobileMenu) return;
+    navToggle.setAttribute("aria-expanded", "true");
+    mobileMenu.hidden = false;
+    body.classList.add("is-menu-open");
+    mobileMenu.querySelector("a")?.focus({ preventScroll: true });
   };
 
-  const drawHomeField = (time = 0) => {
-    if (!homeContext || !homeCanvasWidth || !homeCanvasHeight) return;
-    homeContext.clearRect(0, 0, homeCanvasWidth, homeCanvasHeight);
-    const motionTime = reduceMotion ? 0 : time * .00014;
-    const pointerOffsetX = (homePointerX - .5) * 20;
-    const pointerOffsetY = (homePointerY - .5) * 14;
+  navToggle?.addEventListener("click", () => {
+    const expanded = navToggle.getAttribute("aria-expanded") === "true";
+    expanded ? closeMenu() : openMenu();
+  });
+  mobileMenu?.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
+  doc.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMenu();
+  });
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 1100) closeMenu();
+  }, { passive: true });
 
-    for (let line = 0; line < 6; line += 1) {
-      const phase = motionTime * (1 + line * .06) + line * .58;
-      const baseY = homeCanvasHeight * (.14 + line * .145);
-      const amplitude = homeCanvasHeight * (.036 + line * .0065);
-      const gradient = homeContext.createLinearGradient(0, 0, homeCanvasWidth, 0);
-      gradient.addColorStop(0, "rgba(38,118,165,0)");
-      gradient.addColorStop(.28, `rgba(38,118,165,${.09 + line * .017})`);
-      gradient.addColorStop(.62, `rgba(86,176,219,${.2 + line * .014})`);
-      gradient.addColorStop(.84, `rgba(235,181,137,${.07 + line * .008})`);
-      gradient.addColorStop(1, "rgba(38,118,165,0)");
-      homeContext.beginPath();
-      for (let x = 0; x <= homeCanvasWidth + 12; x += 12) {
-        const ratio = x / homeCanvasWidth;
-        const pointerWeight = Math.exp(-Math.pow((ratio - homePointerX) * 3.2, 2));
-        const y = baseY
-          + Math.sin(ratio * 7.2 + phase) * amplitude
-          + Math.sin(ratio * 2.5 - phase * 1.4) * amplitude * .58
-          + pointerOffsetY * pointerWeight;
-        if (x === 0) homeContext.moveTo(x, y);
-        else homeContext.lineTo(x + pointerOffsetX * pointerWeight, y);
+  doc.querySelectorAll("a[href]").forEach((link) => {
+    link.addEventListener("click", (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (link.target === "_blank" || link.hasAttribute("download")) return;
+      let target;
+      try {
+        target = new URL(link.href, window.location.href);
+      } catch {
+        return;
       }
-      homeContext.strokeStyle = gradient;
-      homeContext.lineWidth = line === 2 || line === 4 ? 1.45 : .8;
-      homeContext.stroke();
+      if (target.origin !== window.location.origin) return;
+      const sameDocument = target.pathname === window.location.pathname && target.search === window.location.search;
+      if (sameDocument && target.hash) return;
+      event.preventDefault();
+      body.classList.add("is-leaving");
+      window.setTimeout(() => {
+        window.location.href = target.href;
+      }, reduceMotion ? 0 : 360);
+    });
+  });
+
+  if (finePointer && !reduceMotion) {
+    const orb = doc.querySelector(".cursor-orb");
+    if (orb) {
+      let targetX = window.innerWidth / 2;
+      let targetY = window.innerHeight / 2;
+      let currentX = targetX;
+      let currentY = targetY;
+
+      const moveOrb = () => {
+        currentX += (targetX - currentX) * .18;
+        currentY += (targetY - currentY) * .18;
+        orb.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
+        requestAnimationFrame(moveOrb);
+      };
+      requestAnimationFrame(moveOrb);
+
+      window.addEventListener("pointermove", (event) => {
+        targetX = event.clientX;
+        targetY = event.clientY;
+        orb.classList.add("is-visible");
+      }, { passive: true });
+
+      doc.querySelectorAll("a, button, input, textarea, summary, [data-tilt]").forEach((item) => {
+        item.addEventListener("pointerenter", () => orb.classList.add("is-active"));
+        item.addEventListener("pointerleave", () => orb.classList.remove("is-active"));
+      });
     }
 
-    homeContext.save();
-    homeContext.globalCompositeOperation = "screen";
-    for (let ribbon = 0; ribbon < 2; ribbon += 1) {
-      const sweep = ((motionTime * (38 + ribbon * 9) + ribbon * .36) % 1.5) - .25;
-      const centerX = sweep * homeCanvasWidth;
-      const light = homeContext.createLinearGradient(centerX - 110, 0, centerX + 110, 0);
-      light.addColorStop(0, "rgba(255,255,255,0)");
-      light.addColorStop(.5, ribbon ? "rgba(181,225,245,.11)" : "rgba(255,255,255,.16)");
-      light.addColorStop(1, "rgba(255,255,255,0)");
-      homeContext.beginPath();
-      homeContext.moveTo(centerX - 140, homeCanvasHeight * 1.04);
-      homeContext.bezierCurveTo(centerX - 20, homeCanvasHeight * .72, centerX + 40, homeCanvasHeight * .28, centerX + 165, -homeCanvasHeight * .08);
-      homeContext.strokeStyle = light;
-      homeContext.lineWidth = ribbon ? 24 : 34;
-      homeContext.stroke();
-    }
-    homeContext.restore();
-
-    const pointCount = homeCanvasWidth < 700 ? 22 : 42;
-    for (let point = 0; point < pointCount; point += 1) {
-      const seed = point * 91.73;
-      const x = ((seed * 13.17 + motionTime * 34) % 1000) / 1000 * homeCanvasWidth;
-      const y = ((seed * 7.31) % 1000) / 1000 * homeCanvasHeight;
-      const pulse = .25 + Math.sin(motionTime * 5 + point) * .15;
-      homeContext.beginPath();
-      homeContext.arc(x, y, point % 5 === 0 ? 1.6 : .8, 0, Math.PI * 2);
-      homeContext.fillStyle = `rgba(40,126,176,${Math.max(.08, pulse)})`;
-      homeContext.fill();
-    }
-  };
-
-  const animateHomeField = (time) => {
-    homeAnimationFrame = 0;
-    homeDepthX += (homePointerX - homeDepthX) * .055;
-    homeDepthY += (homePointerY - homeDepthY) * .055;
-    if (!reduceMotion && homeHero) {
-      const depthX = homeDepthX - .5;
-      const depthY = homeDepthY - .5;
-      homeHero.style.setProperty("--hero-x", `${(depthX * -18).toFixed(2)}px`);
-      homeHero.style.setProperty("--hero-y", `${(depthY * -13).toFixed(2)}px`);
-      homeHero.style.setProperty("--hero-scroll", `${homeScrollOffset.toFixed(2)}px`);
-      homeHero.style.setProperty("--hero-deep-x", `${(depthX * 31).toFixed(2)}px`);
-      homeHero.style.setProperty("--hero-deep-y", `${(depthY * 23 + homeScrollOffset * .2).toFixed(2)}px`);
-      homeHero.style.setProperty("--hero-front-x", `${(depthX * -24).toFixed(2)}px`);
-      homeHero.style.setProperty("--hero-front-y", `${(depthY * -16 + homeScrollOffset * .12).toFixed(2)}px`);
-      homeHero.style.setProperty("--hero-tilt-x", `${(depthX * 3.2).toFixed(2)}deg`);
-      homeHero.style.setProperty("--hero-tilt-y", `${(depthY * -2.4).toFixed(2)}deg`);
-      homeWordmark?.style.setProperty("--mark-x", `${(depthX * 14).toFixed(2)}px`);
-      homeWordmark?.style.setProperty("--mark-y", `${(depthY * 10).toFixed(2)}px`);
-      homeWordmark?.style.setProperty("--mark-deep-x", `${(depthX * -20).toFixed(2)}px`);
-      homeWordmark?.style.setProperty("--mark-deep-y", `${(depthY * -14).toFixed(2)}px`);
-    }
-    drawHomeField(time);
-    if (!reduceMotion && !compactMotionQuery.matches && homeVisible && !document.hidden) {
-      homeAnimationFrame = window.requestAnimationFrame(animateHomeField);
-    }
-  };
-
-  const requestHomeField = () => {
-    if (!homeAnimationFrame && homeVisible && !compactMotionQuery.matches && !document.hidden) {
-      homeAnimationFrame = window.requestAnimationFrame(animateHomeField);
-    }
-  };
-
-  if (homeHero && homeCanvas && homeContext) {
-    resizeHomeCanvas();
-    drawHomeField();
-    requestHomeField();
-    window.addEventListener("resize", () => {
-      resizeHomeCanvas();
-      drawHomeField();
+    window.addEventListener("pointerdown", (event) => {
+      const burst = doc.createElement("span");
+      burst.className = "impact-burst";
+      burst.style.left = `${event.clientX}px`;
+      burst.style.top = `${event.clientY}px`;
+      body.append(burst);
+      burst.addEventListener("animationend", () => burst.remove(), { once: true });
     }, { passive: true });
-    homeHero.addEventListener("pointermove", (event) => {
-      if (event.pointerType !== "mouse") return;
-      const rect = homeHero.getBoundingClientRect();
-      homePointerX = Math.max(0, Math.min(1, (event.clientX - rect.left) / Math.max(rect.width, 1)));
-      homePointerY = Math.max(0, Math.min(1, (event.clientY - rect.top) / Math.max(rect.height, 1)));
-      requestHomeField();
+
+    doc.querySelectorAll(".magnetic").forEach((item) => {
+      item.addEventListener("pointermove", (event) => {
+        const rect = item.getBoundingClientRect();
+        const x = (event.clientX - rect.left - rect.width / 2) * .16;
+        const y = (event.clientY - rect.top - rect.height / 2) * .16;
+        item.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      });
+      item.addEventListener("pointerleave", () => {
+        item.style.transform = "";
+      });
+    });
+
+    doc.querySelectorAll("[data-tilt]").forEach((item) => {
+      item.addEventListener("pointermove", (event) => {
+        const rect = item.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width;
+        const y = (event.clientY - rect.top) / rect.height;
+        item.style.setProperty("--tilt-x", `${(y - .5) * -4}deg`);
+        item.style.setProperty("--tilt-y", `${(x - .5) * 4}deg`);
+      });
+      item.addEventListener("pointerleave", () => {
+        item.style.setProperty("--tilt-x", "0deg");
+        item.style.setProperty("--tilt-y", "0deg");
+      });
+    });
+  }
+
+  const hero = doc.querySelector("[data-cinematic-hero]");
+  if (hero && finePointer && !reduceMotion) {
+    hero.addEventListener("pointermove", (event) => {
+      const rect = hero.getBoundingClientRect();
+      hero.style.setProperty("--hero-x", `${((event.clientX - rect.left) / rect.width) * 100}%`);
+      hero.style.setProperty("--hero-y", `${((event.clientY - rect.top) / rect.height) * 100}%`);
     }, { passive: true });
-    homeHero.addEventListener("pointerleave", () => {
-      homePointerX = .72;
-      homePointerY = .36;
-      requestHomeField();
-    }, { passive: true });
-    const updateHomeScroll = () => {
-      const rect = homeHero.getBoundingClientRect();
-      const progress = Math.max(0, Math.min(1, -rect.top / Math.max(rect.height, 1)));
-      homeScrollOffset = progress * 74;
-      requestHomeField();
+    hero.addEventListener("pointerleave", () => {
+      hero.style.setProperty("--hero-x", "50%");
+      hero.style.setProperty("--hero-y", "50%");
+    });
+  }
+
+  const createSignalField = (canvas, options = {}) => {
+    if (!canvas) return;
+    const context = canvas.getContext("2d", { alpha: true });
+    if (!context) return;
+
+    let width = 0;
+    let height = 0;
+    let frame = 0;
+    let pointerX = .72;
+    let pointerY = .48;
+    let pointerActive = false;
+    const count = options.count || 58;
+    const particles = Array.from({ length: count }, (_, index) => ({
+      x: Math.random(),
+      y: Math.random(),
+      vx: (Math.random() - .5) * (.0007 + (index % 4) * .00008),
+      vy: (Math.random() - .5) * .00055,
+      size: 1 + Math.random() * 1.7,
+      warm: index % 13 === 0
+    }));
+    const pulses = [];
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.6);
+      width = Math.max(1, rect.width);
+      height = Math.max(1, rect.height);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
-    updateHomeScroll();
-    window.addEventListener("scroll", updateHomeScroll, { passive: true });
-    if ("IntersectionObserver" in window) {
-      const homeObserver = new IntersectionObserver(([entry]) => {
-        homeVisible = entry.isIntersecting;
-        if (homeVisible) requestHomeField();
-        else if (homeAnimationFrame) {
-          window.cancelAnimationFrame(homeAnimationFrame);
-          homeAnimationFrame = 0;
+
+    const draw = (time = 0) => {
+      context.clearRect(0, 0, width, height);
+
+      particles.forEach((particle) => {
+        if (!reduceMotion) {
+          const dx = pointerX - particle.x;
+          const dy = pointerY - particle.y;
+          const distance = Math.hypot(dx * width, dy * height);
+          if (pointerActive && distance < 220) {
+            particle.vx -= dx * .0000028;
+            particle.vy -= dy * .0000028;
+          }
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+          if (particle.x < -.04) particle.x = 1.04;
+          if (particle.x > 1.04) particle.x = -.04;
+          if (particle.y < -.05) particle.y = 1.05;
+          if (particle.y > 1.05) particle.y = -.05;
         }
-      }, { threshold: 0 });
-      homeObserver.observe(homeHero);
-    }
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden && homeAnimationFrame) {
-        window.cancelAnimationFrame(homeAnimationFrame);
-        homeAnimationFrame = 0;
-      } else if (!document.hidden && homeVisible && !reduceMotion) {
-        requestHomeField();
+      });
+
+      for (let first = 0; first < particles.length; first += 1) {
+        const a = particles[first];
+        for (let second = first + 1; second < particles.length; second += 1) {
+          const b = particles[second];
+          const dx = (a.x - b.x) * width;
+          const dy = (a.y - b.y) * height;
+          const distance = Math.hypot(dx, dy);
+          if (distance > 128) continue;
+          const alpha = (1 - distance / 128) * .2;
+          context.beginPath();
+          context.moveTo(a.x * width, a.y * height);
+          context.lineTo(b.x * width, b.y * height);
+          context.strokeStyle = `rgba(210,225,255,${alpha})`;
+          context.lineWidth = .7;
+          context.stroke();
+        }
       }
-    });
-  }
 
-  const processRoot = document.querySelector("[data-process]");
-  const processChapters = processRoot ? [...processRoot.querySelectorAll("[data-process-step]")] : [];
-  const processCurrent = processRoot?.querySelector("[data-process-current]");
-  const processProgress = processRoot?.querySelector("[data-process-progress]");
-  let processActiveIndex = -1;
-  const setProcessStep = (index) => {
-    if (!processChapters.length) return;
-    const nextIndex = Math.max(0, Math.min(index, processChapters.length - 1));
-    if (nextIndex === processActiveIndex) return;
-    processActiveIndex = nextIndex;
-    processChapters.forEach((chapter, chapterIndex) => chapter.classList.toggle("is-current", chapterIndex === nextIndex));
-    if (processCurrent) processCurrent.textContent = processChapters[nextIndex].dataset.processNumber || String(nextIndex + 1).padStart(2, "0");
-    if (processProgress) {
-      const progress = processChapters.length === 1 ? 100 : (nextIndex / (processChapters.length - 1)) * 100;
-      processProgress.style.height = `${progress}%`;
-    }
-  };
-  if (processChapters.length) {
-    setProcessStep(0);
-    if ("IntersectionObserver" in window) {
-      const processObserver = new IntersectionObserver((entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (!visible) return;
-        setProcessStep(processChapters.indexOf(visible.target));
-      }, { rootMargin: "-28% 0px -48%", threshold: [0, .1, .25, .5] });
-      processChapters.forEach((chapter) => processObserver.observe(chapter));
-    } else {
-      processChapters.forEach((chapter) => chapter.classList.add("is-current"));
-    }
-  }
+      particles.forEach((particle) => {
+        context.beginPath();
+        context.arc(particle.x * width, particle.y * height, particle.size, 0, Math.PI * 2);
+        context.fillStyle = particle.warm ? "rgba(255,91,34,.82)" : "rgba(225,235,255,.72)";
+        context.fill();
+      });
 
-  const serviceGroups = [...document.querySelectorAll("[data-service-group]")];
-  const serviceGroupQuery = window.matchMedia("(max-width: 600px)");
-  const syncServiceGroups = () => {
-    serviceGroups.forEach((group) => {
-      group.open = serviceGroupQuery.matches
-        ? group.dataset.mobileOpen === "true"
-        : true;
-    });
-  };
-  if (serviceGroups.length) {
-    syncServiceGroups();
-    serviceGroupQuery.addEventListener?.("change", syncServiceGroups);
-  }
+      if (pointerActive) {
+        const pulse = 18 + Math.sin(time * .004) * 5;
+        context.beginPath();
+        context.arc(pointerX * width, pointerY * height, pulse, 0, Math.PI * 2);
+        context.strokeStyle = "rgba(255,91,34,.66)";
+        context.lineWidth = 1.4;
+        context.stroke();
+      }
 
-  const projectVisuals = [...document.querySelectorAll("[data-project-visual]")];
-  const projectStates = projectVisuals.map((visual) => {
-    const tiltTarget = visual.querySelector("[data-project-tilt]") || visual;
-    const media = visual.matches("img, video") ? visual : visual.querySelector("img, video");
-    return {
-      visual,
-      tiltTarget,
-      media,
-      initialTransform: tiltTarget.style.getPropertyValue("transform"),
-      initialScale: media?.style.getPropertyValue("scale") || "",
-      rotateX: 0,
-      rotateY: 0,
-      active: false
+      pulses.forEach((pulse, index) => {
+        pulse.radius += 3.6;
+        pulse.alpha *= .93;
+        context.beginPath();
+        context.arc(pulse.x, pulse.y, pulse.radius, 0, Math.PI * 2);
+        context.strokeStyle = `rgba(22,76,255,${pulse.alpha})`;
+        context.lineWidth = 2;
+        context.stroke();
+        if (pulse.alpha < .03) pulses.splice(index, 1);
+      });
+
+      if (!reduceMotion) frame = requestAnimationFrame(draw);
     };
-  });
-  let projectFrame = 0;
 
-  const restoreProjectState = (state) => {
-    if (state.initialTransform) state.tiltTarget.style.setProperty("transform", state.initialTransform);
-    else state.tiltTarget.style.removeProperty("transform");
-    if (!state.media) return;
-    if (state.initialScale) state.media.style.setProperty("scale", state.initialScale);
-    else state.media.style.removeProperty("scale");
-  };
-  const paintProjects = () => {
-    projectFrame = 0;
-    projectStates.forEach((state) => {
-      if (reduceMotion || !finePointerQuery.matches || !state.active) {
-        restoreProjectState(state);
-        return;
-      }
-      const baseTransform = state.initialTransform ? `${state.initialTransform} ` : "";
-      state.tiltTarget.style.setProperty(
-        "transform",
-        `${baseTransform}perspective(1100px) rotateX(${state.rotateX.toFixed(3)}deg) rotateY(${state.rotateY.toFixed(3)}deg)`
-      );
-      state.media?.style.setProperty("scale", "1.01");
-    });
-  };
-  const requestProjectPaint = () => {
-    if (projectStates.length && !projectFrame) {
-      projectFrame = window.requestAnimationFrame(paintProjects);
-    }
-  };
-  const resetProjects = () => {
-    projectStates.forEach((state) => {
-      state.active = false;
-      state.rotateX = 0;
-      state.rotateY = 0;
-    });
-    requestProjectPaint();
-  };
+    const setPointer = (event) => {
+      const rect = canvas.getBoundingClientRect();
+      pointerX = (event.clientX - rect.left) / rect.width;
+      pointerY = (event.clientY - rect.top) / rect.height;
+      pointerActive = true;
+    };
 
-  projectStates.forEach((state) => {
-    state.visual.addEventListener("pointermove", (event) => {
-      if (reduceMotion || !finePointerQuery.matches || event.pointerType !== "mouse") return;
-      const rect = state.visual.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const normalizedX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width) * 2 - 1));
-      const normalizedY = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height) * 2 - 1));
-      state.rotateX = normalizedY * -1.2;
-      state.rotateY = normalizedX * 1.2;
-      state.active = true;
-      requestProjectPaint();
+    canvas.parentElement?.addEventListener("pointermove", setPointer, { passive: true });
+    canvas.parentElement?.addEventListener("pointerleave", () => { pointerActive = false; });
+    canvas.parentElement?.addEventListener("pointerdown", (event) => {
+      const rect = canvas.getBoundingClientRect();
+      pulses.push({ x: event.clientX - rect.left, y: event.clientY - rect.top, radius: 4, alpha: .72 });
     }, { passive: true });
-    const resetProject = () => {
-      state.active = false;
-      state.rotateX = 0;
-      state.rotateY = 0;
-      requestProjectPaint();
+
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(canvas);
+    resize();
+    draw();
+
+    window.addEventListener("pagehide", () => {
+      cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+    }, { once: true });
+  };
+
+  createSignalField(doc.querySelector("[data-impact-canvas]"), { count: 72 });
+  createSignalField(doc.querySelector("[data-process-canvas]"), { count: 46 });
+
+  const motionStage = doc.querySelector("[data-motion-stage]");
+  if (motionStage && !reduceMotion) {
+    let motionTicking = false;
+    const updateMotionStage = () => {
+      const rect = motionStage.getBoundingClientRect();
+      const travel = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+      const clamped = Math.max(0, Math.min(1, travel));
+      motionStage.style.setProperty("--kinetic-shift", `${(clamped - .5) * -120}px`);
+      motionTicking = false;
     };
-    state.visual.addEventListener("pointerleave", resetProject, { passive: true });
-    state.visual.addEventListener("pointercancel", resetProject, { passive: true });
-  });
+    const requestMotionUpdate = () => {
+      if (motionTicking) return;
+      motionTicking = true;
+      requestAnimationFrame(updateMotionStage);
+    };
+    window.addEventListener("scroll", requestMotionUpdate, { passive: true });
+    window.addEventListener("resize", requestMotionUpdate, { passive: true });
+    updateMotionStage();
+  }
 
-  const handleMotionChange = (event) => {
-    reduceMotion = event.matches;
-    if (reduceMotion) {
-      revealObserver?.disconnect();
-      revealAll();
-      restoreAmbient();
-      resetProjects();
-      if (homeAnimationFrame) {
-        window.cancelAnimationFrame(homeAnimationFrame);
-        homeAnimationFrame = 0;
-      }
-      homeHero?.style.setProperty("--hero-x", "0px");
-      homeHero?.style.setProperty("--hero-y", "0px");
-      homeHero?.style.setProperty("--hero-scroll", "0px");
-      homeHero?.style.setProperty("--hero-deep-x", "0px");
-      homeHero?.style.setProperty("--hero-deep-y", "0px");
-      homeHero?.style.setProperty("--hero-front-x", "0px");
-      homeHero?.style.setProperty("--hero-front-y", "0px");
-      homeWordmark?.style.setProperty("--mark-x", "0px");
-      homeWordmark?.style.setProperty("--mark-y", "0px");
-      homeWordmark?.style.setProperty("--mark-deep-x", "0px");
-      homeWordmark?.style.setProperty("--mark-deep-y", "0px");
-      drawHomeField();
-    } else {
-      requestAmbientPaint();
-      requestHomeField();
-    }
-  };
-  motionQuery.addEventListener?.("change", handleMotionChange);
-  finePointerQuery.addEventListener?.("change", (event) => {
-    if (!event.matches) {
-      restoreAmbient();
-      resetProjects();
-    } else if (!reduceMotion) {
-      requestAmbientPaint();
-    }
-  });
-  compactMotionQuery.addEventListener?.("change", () => {
-    if (compactMotionQuery.matches && homeAnimationFrame) {
-      window.cancelAnimationFrame(homeAnimationFrame);
-      homeAnimationFrame = 0;
-      drawHomeField();
-    } else if (!reduceMotion) {
-      requestHomeField();
-    }
-  });
+  const processStory = doc.querySelector("[data-process-story]");
+  if (processStory) {
+    const scenes = [...processStory.querySelectorAll("[data-process-scene]")];
+    const label = processStory.querySelector("[data-process-label]");
+    const bar = processStory.querySelector("[data-process-bar]");
+    let processTicking = false;
 
-  document.querySelectorAll(".faq-item").forEach((item) => {
-    item.addEventListener("toggle", () => {
-      if (!item.open) return;
-      document.querySelectorAll(".faq-item[open]").forEach((other) => {
-        if (other !== item) other.removeAttribute("open");
+    const updateProcess = () => {
+      const focus = window.innerHeight * .48;
+      let current = 0;
+      let closest = Infinity;
+      scenes.forEach((scene, index) => {
+        const rect = scene.getBoundingClientRect();
+        const distance = Math.abs(rect.top + rect.height * .42 - focus);
+        if (distance < closest) {
+          closest = distance;
+          current = index;
+        }
       });
-    });
-  });
+      scenes.forEach((scene, index) => scene.classList.toggle("is-current", index === current));
+      if (label) label.textContent = scenes[current]?.dataset.processLabel || "";
+      if (bar) bar.style.setProperty("--process-progress", String((current + 1) / Math.max(1, scenes.length)));
+      processTicking = false;
+    };
 
-  const fallbackCopy = (text) => {
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-    textarea.readOnly = true;
-    textarea.tabIndex = -1;
-    textarea.setAttribute("aria-hidden", "true");
-    textarea.style.position = "fixed";
-    textarea.style.opacity = "0";
-    document.body.append(textarea);
-    textarea.select();
-    const copied = document.execCommand("copy");
-    textarea.remove();
-    if (!copied) throw new Error("copy failed");
-  };
+    const requestProcessUpdate = () => {
+      if (processTicking) return;
+      processTicking = true;
+      requestAnimationFrame(updateProcess);
+    };
 
-  const copyText = async (text) => {
-    if (navigator.clipboard?.writeText) {
-      try {
-        await navigator.clipboard.writeText(text);
-        return;
-      } catch {
-        fallbackCopy(text);
-        return;
-      }
-    }
-    fallbackCopy(text);
-  };
+    window.addEventListener("scroll", requestProcessUpdate, { passive: true });
+    window.addEventListener("resize", requestProcessUpdate, { passive: true });
+    updateProcess();
+  }
 
-  document.querySelectorAll("[data-scope-builder]").forEach((builder) => {
-    const steps = [...builder.querySelectorAll("[data-scope-step]")];
-    const choices = [...builder.querySelectorAll("[data-scope-choice]")];
-    const back = builder.querySelector("[data-scope-back]");
-    const next = builder.querySelector("[data-scope-next]");
-    const progress = builder.querySelector("[data-scope-progress]");
-    const progressBar = builder.querySelector("[data-scope-progress-bar]");
-    const progressMeter = builder.querySelector(".scope-progress");
-    const summary = builder.querySelector("[data-scope-summary]");
-    const copyButton = builder.querySelector("[data-scope-copy]");
-    const copyStatus = builder.querySelector("[data-copy-status]");
-    const formStatus = builder.querySelector("[data-scope-form-status]");
-    const jumpButtons = [...builder.querySelectorAll("[data-scope-jump]")];
-    const scheduleInput = builder.querySelector("[data-scope-schedule]");
-    const editButton = builder.querySelector("[data-scope-edit]");
-    const summaryTitle = builder.querySelector("#summary-title");
+  const briefBuilder = doc.querySelector("[data-brief-builder]");
+  if (briefBuilder) {
+    const choices = [...briefBuilder.querySelectorAll("[data-brief-choice]")];
+    const note = briefBuilder.querySelector("[data-brief-note]");
+    const schedule = briefBuilder.querySelector("[data-brief-schedule]");
+    const summary = briefBuilder.querySelector("[data-brief-summary]");
+    const copyButton = briefBuilder.querySelector("[data-brief-copy]");
+    const status = briefBuilder.querySelector("[data-brief-status]");
     const singleGroups = new Set(["제작 종류", "준비 상태"]);
-    const requiredChoiceGroups = ["제작 종류", "필요 기능", "준비 상태"];
-    const groupByStep = ["제작 종류", "필요 기능", "준비 상태", "희망 일정"];
-    const storageKey = "swag-scope-builder-v2";
-    let currentStep = 1;
+    const state = new Map();
 
-    const selectedValues = (group) => choices
-      .filter((choice) => choice.dataset.scopeGroup === group && choice.getAttribute("aria-pressed") === "true")
-      .map((choice) => choice.dataset.scopeValue);
-
-    const scheduleValue = () => scheduleInput?.value.trim() || "";
-    const groupHasValue = (group) => group === "희망 일정"
-      ? scheduleValue().length > 0
-      : selectedValues(group).length > 0;
-
-    const summaryText = () => {
-      const types = selectedValues("제작 종류");
-      const features = selectedValues("필요 기능");
-      const states = selectedValues("준비 상태");
-      const schedule = scheduleValue();
-      if (![types, features, states].some((items) => items.length) && !schedule) return "아직 입력한 내용이 없습니다";
-      return [
-        "[SWAG 제작 문의]",
-        `제작 종류: ${types.join(", ") || "선택 전"}`,
-        `필요 기능: ${features.join(", ") || "선택 전"}`,
-        `준비 상태: ${states.join(", ") || "선택 전"}`,
-        `희망 기간: ${schedule || "입력 전"}`
-      ].join("\n");
-    };
-
-    const updateSummary = () => {
-      if (summary) summary.textContent = summaryText();
-      if (copyStatus) copyStatus.textContent = "";
-    };
-
-    const isComplete = () => requiredChoiceGroups.every(groupHasValue) && groupHasValue("희망 일정");
-    const isCurrentStepComplete = () => groupHasValue(groupByStep[currentStep - 1]);
-    const firstIncompleteStep = () => groupByStep.findIndex((group) => !groupHasValue(group)) + 1;
-
-    const saveBuilderState = () => {
-      try {
-        const selected = choices
-          .filter((choice) => choice.getAttribute("aria-pressed") === "true")
-          .map((choice) => ({ group: choice.dataset.scopeGroup, value: choice.dataset.scopeValue }));
-        sessionStorage.setItem(storageKey, JSON.stringify({ step: currentStep, selected, schedule: scheduleValue() }));
-      } catch {
-        // The builder still works when session storage is unavailable.
-      }
-    };
-
-    const restoreBuilderState = () => {
-      try {
-        const saved = JSON.parse(sessionStorage.getItem(storageKey) || "null");
-        if (!saved || !Array.isArray(saved.selected)) return;
-        choices.forEach((choice) => {
-          const selected = saved.selected.some((item) => item.group === choice.dataset.scopeGroup && item.value === choice.dataset.scopeValue);
-          choice.setAttribute("aria-pressed", String(selected));
+    const selectChoice = (choice, pressed) => {
+      const group = choice.dataset.briefGroup || "";
+      if (singleGroups.has(group) && pressed) {
+        choices.filter((item) => item !== choice && item.dataset.briefGroup === group).forEach((item) => {
+          item.setAttribute("aria-pressed", "false");
         });
-        if (scheduleInput && typeof saved.schedule === "string") scheduleInput.value = saved.schedule;
-        if (Number.isInteger(saved.step)) currentStep = Math.min(Math.max(saved.step, 1), steps.length);
-      } catch {
-        // Ignore stale or unavailable session data.
       }
+      choice.setAttribute("aria-pressed", String(pressed));
     };
 
-    const updateControls = () => {
-      if (next) next.disabled = !isCurrentStepComplete();
-      if (copyButton) copyButton.disabled = !isComplete();
-      jumpButtons.forEach((button, index) => {
-        const complete = groupHasValue(groupByStep[index]);
-        button.dataset.complete = String(complete);
-        button.setAttribute("aria-label", `${index + 1}단계 ${groupByStep[index]} ${complete ? "완료" : "미완료"}`);
-      });
-    };
+    const selectedByGroup = (group) => choices
+      .filter((item) => item.dataset.briefGroup === group && item.getAttribute("aria-pressed") === "true")
+      .map((item) => item.dataset.briefValue || item.textContent.trim());
 
-    const showStep = (step, moveFocus = true) => {
-      builder.classList.remove("is-reviewing");
-      if (editButton) editButton.hidden = true;
-      if (summaryTitle) summaryTitle.textContent = "선택한 내용";
-      currentStep = Math.min(Math.max(step, 1), steps.length);
-      steps.forEach((item) => { item.hidden = Number(item.dataset.scopeStep) !== currentStep; });
-      if (progress) progress.textContent = `${currentStep} / ${steps.length}`;
-      if (progressBar) progressBar.style.width = `${(currentStep / steps.length) * 100}%`;
-      if (progressMeter) {
-        progressMeter.setAttribute("aria-valuenow", String(currentStep));
-        progressMeter.setAttribute("aria-valuetext", `${currentStep}단계 / ${steps.length}단계`);
-      }
-      if (formStatus) formStatus.textContent = "";
-      if (back) back.disabled = currentStep === 1;
-      if (next) next.innerHTML = currentStep === steps.length ? '요약 확인 <span aria-hidden="true">↗</span>' : '다음 <span aria-hidden="true">→</span>';
-      jumpButtons.forEach((button) => {
-        if (Number(button.dataset.scopeJump) === currentStep) button.setAttribute("aria-current", "step");
-        else button.removeAttribute("aria-current");
-      });
-      if (moveFocus) {
-        steps[currentStep - 1]?.querySelector("button, input, textarea")?.focus({ preventScroll: true });
-      }
-      updateControls();
-      saveBuilderState();
+    const buildSummary = () => {
+      state.set("제작 종류", selectedByGroup("제작 종류"));
+      state.set("필요 기능", selectedByGroup("필요 기능"));
+      state.set("준비 상태", selectedByGroup("준비 상태"));
+
+      const lines = [];
+      const types = state.get("제작 종류");
+      const features = state.get("필요 기능");
+      const readiness = state.get("준비 상태");
+      if (types.length) lines.push(`만들 것: ${types.join(", ")}`);
+      if (features.length) lines.push(`필요 기능: ${features.join(", ")}`);
+      if (readiness.length) lines.push(`준비 상태: ${readiness.join(", ")}`);
+      if (schedule?.value.trim()) lines.push(`희망 시기: ${schedule.value.trim()}`);
+      if (note?.value.trim()) lines.push(`하고 싶은 이야기:\n${note.value.trim()}`);
+
+      if (summary) summary.textContent = lines.length ? lines.join("\n\n") : "고른 내용이 여기에 표시됩니다.";
+      if (status) status.textContent = "";
+      return lines.join("\n\n");
     };
 
     choices.forEach((choice) => {
       choice.addEventListener("click", () => {
-        const group = choice.dataset.scopeGroup;
-        const pressed = choice.getAttribute("aria-pressed") === "true";
-        if (singleGroups.has(group)) {
-          choices.filter((item) => item.dataset.scopeGroup === group).forEach((item) => item.setAttribute("aria-pressed", "false"));
-          choice.setAttribute("aria-pressed", "true");
-        } else {
-          choice.setAttribute("aria-pressed", String(!pressed));
-        }
-        updateSummary();
-        updateControls();
-        saveBuilderState();
+        const pressed = choice.getAttribute("aria-pressed") !== "true";
+        selectChoice(choice, pressed);
+        buildSummary();
       });
     });
+    note?.addEventListener("input", buildSummary);
+    schedule?.addEventListener("input", buildSummary);
 
-    scheduleInput?.addEventListener("input", () => {
-      updateSummary();
-      updateControls();
-      saveBuilderState();
-    });
-
-    back?.addEventListener("click", () => showStep(currentStep - 1));
-    next?.addEventListener("click", () => {
-      if (currentStep < steps.length) showStep(currentStep + 1);
-      else {
-        const incompleteStep = firstIncompleteStep();
-        if (incompleteStep > 0) {
-          showStep(incompleteStep);
-          if (formStatus) formStatus.textContent = `${groupByStep[incompleteStep - 1]} 항목을 먼저 입력해 주세요.`;
-          return;
-        }
-        updateSummary();
-        builder.classList.add("is-reviewing");
-        if (editButton) editButton.hidden = false;
-        if (summaryTitle) summaryTitle.textContent = "상담 내용 확인";
-        window.requestAnimationFrame(() => {
-          builder.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-          summaryTitle?.focus({ preventScroll: true });
-        });
-      }
-    });
-
-    editButton?.addEventListener("click", () => {
-      showStep(1, false);
-      builder.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-      steps[0]?.querySelector("button, input, textarea")?.focus({ preventScroll: true });
-    });
-
-    jumpButtons.forEach((button) => {
-      button.addEventListener("click", () => showStep(Number(button.dataset.scopeJump)));
-    });
-
-    copyButton?.addEventListener("click", async () => {
-      try {
-        await copyText(summaryText());
-        if (copyStatus) copyStatus.textContent = "문의 내용이 복사됐습니다. 카카오 상담에 붙여 넣으시면 됩니다.";
-      } catch {
-        if (copyStatus) copyStatus.textContent = "복사하지 못했습니다. 위 내용을 직접 선택해 복사해 주세요.";
-      }
-    });
-
-    restoreBuilderState();
-
-    const requestedType = new URLSearchParams(window.location.search).get("type");
-    const requestedChoice = choices.find((choice) => choice.dataset.scopeKey === requestedType);
-    if (requestedChoice) {
-      choices.forEach((choice) => choice.setAttribute("aria-pressed", "false"));
-      requestedChoice.setAttribute("aria-pressed", "true");
-      if (scheduleInput) scheduleInput.value = "";
-      currentStep = 1;
+    const queryType = new URLSearchParams(window.location.search).get("type");
+    if (queryType) {
+      const matched = choices.find((item) => item.dataset.briefKey === queryType);
+      if (matched) selectChoice(matched, true);
     }
 
-    updateSummary();
-    showStep(currentStep, false);
-  });
+    copyButton?.addEventListener("click", async () => {
+      const text = buildSummary();
+      if (!text) {
+        if (status) status.textContent = "먼저 만들 것이나 하고 싶은 이야기를 적어주세요.";
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(text);
+        if (status) status.textContent = "문의 내용을 복사했습니다.";
+      } catch {
+        const fallback = doc.createElement("textarea");
+        fallback.value = text;
+        fallback.setAttribute("readonly", "");
+        fallback.style.position = "fixed";
+        fallback.style.opacity = "0";
+        body.append(fallback);
+        fallback.select();
+        const copied = doc.execCommand("copy");
+        fallback.remove();
+        if (status) status.textContent = copied ? "문의 내용을 복사했습니다." : "복사하지 못했습니다. 내용을 직접 선택해 주세요.";
+      }
+    });
 
-  document.querySelectorAll("[data-year]").forEach((element) => {
-    element.textContent = String(new Date().getFullYear());
-  });
+    buildSummary();
+  }
 })();
