@@ -22,4 +22,4 @@ npm run dev
 
 ## 글꼴
 
-SUIT Variable과 Mona Sans Variable을 저장소에서 직접 제공합니다. 라이선스는 `src/assets/SUIT-LICENSE.txt`와 `src/assets/MonaSans-LICENSE.txt`에 포함되어 있습니다.
+IBM Plex Sans KR의 Regular, SemiBold와 Bold 파일을 저장소에서 직접 제공합니다. 라이선스는 `src/assets/IBMPlex-LICENSE.txt`에 포함되어 있습니다.

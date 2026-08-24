@@ -16,6 +16,7 @@
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/IBMPlexSansKR-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/IBMPlexSansKR-Bold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -31,7 +32,7 @@
       <figure aria-hidden="true"><img src="assets/studio-grid.webp" alt="" fetchpriority="high" decoding="async"><i></i></figure>
       <div class="contact-hero-inner shell">
         <p class="route-label reveal">CONTACT</p>
-        <h1 id="contact-title" class="reveal">무엇을 만들지 이야기해 주세요.</h1>
+        <h1 id="contact-title" class="reveal">프로젝트를 간단히 알려주세요.</h1>
         <p class="reveal">{{RESPONSE_NOTE}}</p>
         <div class="contact-direct reveal">
           <a class="button button-dark magnetic" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 <i aria-hidden="true">↗</i></a>
@@ -45,7 +46,7 @@
         <p>문의 정리</p>
         <div>
           <h2 id="brief-title">보낼 내용을 미리 만들어 보세요.</h2>
-          <p>고른 내용은 서버로 전송하지 않습니다. 복사한 뒤 카카오 대화창에 붙여 넣으면 됩니다.</p>
+          <p>선택한 내용은 이 화면에서만 정리됩니다. 복사해서 카카오 대화창에 붙여 넣어 주세요.</p>
         </div>
       </header>
 
@@ -73,8 +74,8 @@
           </fieldset>
 
           <label class="brief-field">
-            <span>하고 싶은 이야기</span>
-            <textarea rows="5" maxlength="600" data-brief-note placeholder="예: 브랜드 사이트를 새로 만들고 싶습니다. 첫 화면의 분위기와 모바일 사용성을 중요하게 봅니다."></textarea>
+            <span>요청 내용</span>
+            <textarea rows="5" maxlength="600" data-brief-note placeholder="예: 기존 사이트 전면 개편, 모바일 우선, 10월 공개 희망"></textarea>
           </label>
 
           <label class="brief-field">
@@ -86,7 +87,7 @@
         <aside class="brief-summary" aria-labelledby="brief-summary-title">
           <p>미리보기</p>
           <h3 id="brief-summary-title">문의 내용</h3>
-          <pre data-brief-summary>고른 내용이 여기에 표시됩니다.</pre>
+          <pre data-brief-summary aria-live="polite" aria-atomic="true">고른 내용이 여기에 표시됩니다.</pre>
           <button class="button button-hot" type="button" data-brief-copy>문의 내용 복사</button>
           <a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 대화창 열기 <i aria-hidden="true">↗</i></a>
           <p data-brief-status role="status" aria-live="polite"></p>

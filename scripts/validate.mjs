@@ -179,8 +179,8 @@ if (roomEscapeMentions > 1) errors.push(`room-escape copy appears ${roomEscapeMe
 
 const css = await readFile(new URL("src/styles.css", root), "utf8");
 const tinyFontMatches = [...css.matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/gi)]
-  .filter((match) => Number(match[1]) < 14);
-if (tinyFontMatches.length) errors.push(`CSS contains ${tinyFontMatches.length} font sizes below 14px`);
+  .filter((match) => Number(match[1]) < 16);
+if (tinyFontMatches.length) errors.push(`CSS contains ${tinyFontMatches.length} font sizes below 16px`);
 
 const readableCopy = [
   data.brand.headline,

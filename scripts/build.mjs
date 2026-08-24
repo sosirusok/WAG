@@ -55,7 +55,7 @@ const publicProjects = data.projects
 const activeAttr = (active, key) => active === key ? ' aria-current="page"' : "";
 const navItems = [
   ["work", "작업", "work/"],
-  ["services", "제작 범위", "services/"],
+  ["services", "서비스", "services/"],
   ["about", "소개", "about/"],
   ["process", "진행", "process/"],
   ["contact", "문의", "contact/"]
@@ -267,8 +267,8 @@ for (const [index, project] of publicProjects.entries()) {
 }
 
 await writePage("services.template.html", "services/index.html", {
-  PAGE_TITLE: `제작 범위 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "웹사이트, 모바일 앱, 게임과 디지털 서비스 제작 범위",
+  PAGE_TITLE: `서비스 | ${data.brand.name}`,
+  PAGE_DESCRIPTION: "웹사이트, 모바일 앱, 게임과 디지털 서비스 안내",
   CANONICAL_URL: pageUrl("services/"),
   HEADER: renderHeader("services"),
   FOOTER: renderFooter(pageUrl("services/")),
@@ -278,7 +278,7 @@ await writePage("services.template.html", "services/index.html", {
 
 await writePage("process.template.html", "process/index.html", {
   PAGE_TITLE: `진행 방식 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "이야기 정리부터 화면, 개발과 공개까지 SWAG의 진행 방식",
+  PAGE_DESCRIPTION: "요청 정리부터 핵심 화면, 개발, 검수와 배포까지 SWAG의 진행 방식",
   CANONICAL_URL: pageUrl("process/"),
   HEADER: renderHeader("process"),
   FOOTER: renderFooter(pageUrl("process/")),

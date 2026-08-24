@@ -4,8 +4,8 @@
   const body = doc.body;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const saveData = Boolean(navigator.connection?.saveData);
 
-  root.classList.add("motion-ready");
   requestAnimationFrame(() => body.classList.add("is-ready"));
 
   doc.querySelectorAll("[data-year]").forEach((item) => {
@@ -27,6 +27,9 @@
     revealItems.forEach((item) => revealObserver.observe(item));
   }
 
+  root.classList.add("motion-ready");
+  window.setTimeout(() => revealItems.forEach((item) => item.classList.add("is-visible")), 4000);
+
   const header = doc.querySelector("[data-header]");
   let headerTicking = false;
   const updateHeader = () => {
@@ -42,31 +45,64 @@
 
   const navToggle = doc.querySelector("[data-nav-toggle]");
   const mobileMenu = doc.querySelector("[data-mobile-menu]");
-  const closeMenu = () => {
+  const pageMain = doc.querySelector("main");
+  const pageFooter = doc.querySelector("footer");
+  const setPageInert = (inert) => {
+    if (pageMain) pageMain.inert = inert;
+    if (pageFooter) pageFooter.inert = inert;
+  };
+  const closeMenu = ({ restoreFocus = false } = {}) => {
     if (!navToggle || !mobileMenu) return;
     navToggle.setAttribute("aria-expanded", "false");
     mobileMenu.hidden = true;
     body.classList.remove("is-menu-open");
+    root.classList.remove("is-menu-open");
+    setPageInert(false);
+    if (restoreFocus) navToggle.focus({ preventScroll: true });
   };
   const openMenu = () => {
     if (!navToggle || !mobileMenu) return;
     navToggle.setAttribute("aria-expanded", "true");
     mobileMenu.hidden = false;
     body.classList.add("is-menu-open");
+    root.classList.add("is-menu-open");
+    setPageInert(true);
     mobileMenu.querySelector("a")?.focus({ preventScroll: true });
   };
 
   navToggle?.addEventListener("click", () => {
     const expanded = navToggle.getAttribute("aria-expanded") === "true";
-    expanded ? closeMenu() : openMenu();
+    expanded ? closeMenu({ restoreFocus: true }) : openMenu();
   });
-  mobileMenu?.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
+  mobileMenu?.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => closeMenu({ restoreFocus: link.target === "_blank" })));
   doc.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeMenu();
+    if (!navToggle || !mobileMenu || navToggle.getAttribute("aria-expanded") !== "true") return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeMenu({ restoreFocus: true });
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const focusable = [navToggle, ...mobileMenu.querySelectorAll("a[href], button:not([disabled])")];
+    const first = focusable[0];
+    const last = focusable.at(-1);
+    if (event.shiftKey && doc.activeElement === first) {
+      event.preventDefault();
+      last?.focus();
+    } else if (!event.shiftKey && doc.activeElement === last) {
+      event.preventDefault();
+      first?.focus();
+    }
   });
   window.addEventListener("resize", () => {
     if (window.innerWidth > 1100) closeMenu();
   }, { passive: true });
+
+  window.addEventListener("pageshow", (event) => {
+    body.classList.remove("is-leaving");
+    if (event.persisted) body.classList.add("is-restored");
+    closeMenu();
+  });
 
   doc.querySelectorAll("a[href]").forEach((link) => {
     link.addEventListener("click", (event) => {
@@ -96,20 +132,37 @@
       let targetY = window.innerHeight / 2;
       let currentX = targetX;
       let currentY = targetY;
+      let orbFrame = 0;
+      let lastMove = 0;
 
-      const moveOrb = () => {
+      const moveOrb = (time = 0) => {
+        orbFrame = 0;
         currentX += (targetX - currentX) * .18;
         currentY += (targetY - currentY) * .18;
         orb.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
-        requestAnimationFrame(moveOrb);
+        const distance = Math.hypot(targetX - currentX, targetY - currentY);
+        if (!doc.hidden && (time - lastMove < 420 || distance > .2)) orbFrame = requestAnimationFrame(moveOrb);
       };
-      requestAnimationFrame(moveOrb);
+      const requestOrb = () => {
+        if (!orbFrame && !doc.hidden) orbFrame = requestAnimationFrame(moveOrb);
+      };
 
       window.addEventListener("pointermove", (event) => {
         targetX = event.clientX;
         targetY = event.clientY;
+        lastMove = performance.now();
         orb.classList.add("is-visible");
+        requestOrb();
       }, { passive: true });
+
+      doc.addEventListener("visibilitychange", () => {
+        if (doc.hidden && orbFrame) cancelAnimationFrame(orbFrame);
+        if (doc.hidden) orbFrame = 0;
+      });
+      window.addEventListener("pagehide", () => {
+        if (orbFrame) cancelAnimationFrame(orbFrame);
+        orbFrame = 0;
+      });
 
       doc.querySelectorAll("a, button, input, textarea, summary, [data-tilt]").forEach((item) => {
         item.addEventListener("pointerenter", () => orb.classList.add("is-active"));
@@ -167,17 +220,20 @@
   }
 
   const createSignalField = (canvas, options = {}) => {
-    if (!canvas) return;
+    if (!canvas || reduceMotion || saveData) return;
     const context = canvas.getContext("2d", { alpha: true });
     if (!context) return;
 
     let width = 0;
     let height = 0;
     let frame = 0;
+    let lastDraw = 0;
+    let isIntersecting = !("IntersectionObserver" in window);
     let pointerX = .72;
     let pointerY = .48;
     let pointerActive = false;
-    const count = options.count || 58;
+    const lowPower = !finePointer;
+    const count = Math.min(options.count || 58, lowPower ? 28 : 80);
     const particles = Array.from({ length: count }, (_, index) => ({
       x: Math.random(),
       y: Math.random(),
@@ -198,7 +254,24 @@
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const draw = (time = 0) => {
+    const stop = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+    };
+
+    const schedule = () => {
+      if (frame || !isIntersecting || doc.hidden) return;
+      frame = requestAnimationFrame(draw);
+    };
+
+    function draw(time = 0) {
+      frame = 0;
+      if (!isIntersecting || doc.hidden) return;
+      if (lowPower && time - lastDraw < 32) {
+        schedule();
+        return;
+      }
+      lastDraw = time;
       context.clearRect(0, 0, width, height);
 
       particles.forEach((particle) => {
@@ -253,7 +326,8 @@
         context.stroke();
       }
 
-      pulses.forEach((pulse, index) => {
+      for (let index = pulses.length - 1; index >= 0; index -= 1) {
+        const pulse = pulses[index];
         pulse.radius += 3.6;
         pulse.alpha *= .93;
         context.beginPath();
@@ -262,10 +336,10 @@
         context.lineWidth = 2;
         context.stroke();
         if (pulse.alpha < .03) pulses.splice(index, 1);
-      });
+      }
 
-      if (!reduceMotion) frame = requestAnimationFrame(draw);
-    };
+      schedule();
+    }
 
     const setPointer = (event) => {
       const rect = canvas.getBoundingClientRect();
@@ -276,20 +350,31 @@
 
     canvas.parentElement?.addEventListener("pointermove", setPointer, { passive: true });
     canvas.parentElement?.addEventListener("pointerleave", () => { pointerActive = false; });
+    canvas.parentElement?.addEventListener("pointerup", () => { pointerActive = false; }, { passive: true });
+    canvas.parentElement?.addEventListener("pointercancel", () => { pointerActive = false; }, { passive: true });
     canvas.parentElement?.addEventListener("pointerdown", (event) => {
       const rect = canvas.getBoundingClientRect();
       pulses.push({ x: event.clientX - rect.left, y: event.clientY - rect.top, radius: 4, alpha: .72 });
     }, { passive: true });
 
-    const resizeObserver = new ResizeObserver(resize);
-    resizeObserver.observe(canvas);
+    const resizeObserver = "ResizeObserver" in window ? new ResizeObserver(resize) : null;
+    resizeObserver?.observe(canvas);
+    const visibilityObserver = "IntersectionObserver" in window
+      ? new IntersectionObserver(([entry]) => {
+        isIntersecting = Boolean(entry?.isIntersecting);
+        isIntersecting ? schedule() : stop();
+      }, { rootMargin: "180px 0px", threshold: 0 })
+      : null;
+    visibilityObserver?.observe(canvas);
     resize();
-    draw();
+    schedule();
 
-    window.addEventListener("pagehide", () => {
-      cancelAnimationFrame(frame);
-      resizeObserver.disconnect();
-    }, { once: true });
+    doc.addEventListener("visibilitychange", () => doc.hidden ? stop() : schedule());
+    window.addEventListener("pagehide", stop);
+    window.addEventListener("pageshow", () => {
+      resize();
+      schedule();
+    });
   };
 
   createSignalField(doc.querySelector("[data-impact-canvas]"), { count: 72 });
@@ -389,7 +474,7 @@
       if (features.length) lines.push(`필요 기능: ${features.join(", ")}`);
       if (readiness.length) lines.push(`준비 상태: ${readiness.join(", ")}`);
       if (schedule?.value.trim()) lines.push(`희망 시기: ${schedule.value.trim()}`);
-      if (note?.value.trim()) lines.push(`하고 싶은 이야기:\n${note.value.trim()}`);
+      if (note?.value.trim()) lines.push(`요청 내용:\n${note.value.trim()}`);
 
       if (summary) summary.textContent = lines.length ? lines.join("\n\n") : "고른 내용이 여기에 표시됩니다.";
       if (status) status.textContent = "";
