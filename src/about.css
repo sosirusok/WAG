@@ -20,9 +20,9 @@
   padding-top: calc(var(--header-height) + clamp(72px, 8vw, 120px));
   padding-bottom: clamp(90px, 10vw, 148px);
   display: grid;
-  grid-template-columns: minmax(360px, .84fr) minmax(480px, 1.16fr);
+  grid-template-columns: minmax(520px, 1fr) minmax(0, .96fr);
   align-items: center;
-  gap: clamp(56px, 8vw, 128px);
+  gap: clamp(38px, 4.8vw, 72px);
 }
 
 .about-hero::before {
@@ -30,8 +30,8 @@
   position: absolute;
   z-index: -1;
   top: 7%;
-  right: -5%;
-  width: 56%;
+  right: 0;
+  width: 51%;
   height: 88%;
   background: linear-gradient(128deg, transparent 8%, rgba(211, 236, 249, .42) 31%, rgba(255, 245, 228, .32) 71%, transparent 88%);
   clip-path: polygon(22% 0, 100% 4%, 84% 100%, 0 91%);
@@ -51,7 +51,7 @@
 .about-hero h1 {
   max-width: 720px;
   margin-top: 25px;
-  font-size: clamp(47px, 5.4vw, 74px);
+  font-size: clamp(45px, 4.2vw, 62px);
   font-weight: 540;
   line-height: 1.13;
   letter-spacing: -.055em;
@@ -97,7 +97,7 @@
 
 .about-hero-visual {
   position: relative;
-  min-height: 660px;
+  min-height: 580px;
   margin: 0;
   isolation: isolate;
 }
@@ -128,7 +128,7 @@
 
 .about-hero-visual img {
   width: 100%;
-  height: 650px;
+  height: 570px;
   object-fit: cover;
   object-position: center;
   clip-path: polygon(8% 1%, 100% 7%, 94% 89%, 63% 100%, 0 91%, 3% 17%);
@@ -433,7 +433,7 @@
 }
 
 @media (max-width: 1080px) {
-  .about-hero { grid-template-columns: minmax(330px, .88fr) minmax(390px, 1.12fr); gap: 48px; }
+  .about-hero { grid-template-columns: minmax(390px, .94fr) minmax(350px, 1.06fr); gap: 42px; }
   .about-hero-visual { min-height: 570px; }
   .about-hero-visual img { height: 570px; }
   .about-section-heading,
