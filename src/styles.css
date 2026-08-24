@@ -3217,18 +3217,20 @@ h1, h2, h3, .top-nav { font-family: "Wanted Sans", "Pretendard", sans-serif; }
 
 body[data-page="home"] .scope-ledger {
   position: relative;
+  overflow: clip;
   padding-block: clamp(120px, 12vw, 190px);
 }
 body[data-page="home"] .scope-ledger::before {
   content: "";
   position: absolute;
   top: 9%;
-  right: -16vw;
-  width: 55vw;
+  right: 0;
+  width: 45%;
   height: 36vw;
   background: radial-gradient(ellipse, rgba(183,225,246,.24), transparent 66%);
   pointer-events: none;
 }
+body[data-page="home"] main { overflow: clip; }
 body[data-page="home"] .scope-ledger-head h2 {
   color: #102e48;
   font-size: clamp(45px, 5.2vw, 72px);
