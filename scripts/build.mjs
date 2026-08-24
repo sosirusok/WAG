@@ -138,7 +138,7 @@ const renderServiceChapters = () => data.services.map((service) => `
       <h2>${escapeHtml(service.title)}</h2>
       <p class="service-description">${escapeHtml(service.description)}</p>
       <ul>${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-      <a class="text-link" href="contact/?type=${escapeHtml(service.id)}">이 범위로 문의 <i aria-hidden="true">→</i></a>
+      <a class="text-link" href="contact/?type=${escapeHtml(service.id)}">${escapeHtml(service.title)} 문의 <i aria-hidden="true">→</i></a>
     </div>
   </article>`).join("");
 
