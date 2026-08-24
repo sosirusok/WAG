@@ -15,7 +15,9 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/Pretendard-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/MonaSansVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -25,14 +27,15 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <header class="page-intro route-hero contact-route-hero shell reveal">
-      <p>문의</p>
-      <div><h1>프로젝트 문의</h1><span>제작 종류와 필요한 기능을 고르면 카카오 상담에 보낼 내용이 정리됩니다</span></div>
+    <header class="contact-studio-hero shell reveal" aria-labelledby="contact-title">
+      <div class="contact-studio-index"><span>문의 작성</span><b>상담용 요약 도구</b></div>
+      <div class="contact-studio-copy"><p>문의</p><h1 id="contact-title">프로젝트 문의</h1><span>제작 종류, 필요한 기능, 현재 자료와 희망 기간을 정리하면 상담에 바로 사용할 요약을 만들어드립니다</span></div>
+      <p class="contact-studio-note">입력 내용은 이 브라우저 탭에만 임시로 보관되며 사이트 서버로 전송되지 않습니다</p>
     </header>
 
     <section class="scope-section shell reveal" aria-labelledby="scope-title">
-      <div class="scope-section-heading"><p>문의 작성</p><h2 id="scope-title">필요한 내용을 네 단계로 정리합니다</h2></div>
-      <div class="scope-builder glass-panel" data-scope-builder>
+      <div class="scope-section-heading"><p>문의 작성</p><h2 id="scope-title">네 단계만 입력해 주세요</h2></div>
+      <div class="scope-builder" data-scope-builder>
         <div class="scope-form">
           <nav class="scope-step-nav" aria-label="문의 작성 단계">
             <button type="button" data-scope-jump="1" aria-current="step"><span>01</span><b>제작 종류</b></button>
@@ -40,7 +43,7 @@
             <button type="button" data-scope-jump="3"><span>03</span><b>준비 상태</b></button>
             <button type="button" data-scope-jump="4"><span>04</span><b>희망 일정</b></button>
           </nav>
-          <div class="scope-progress"><span data-scope-progress>1 / 4</span><div><i data-scope-progress-bar></i></div></div>
+          <div class="scope-progress" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1" aria-valuetext="1단계 / 4단계"><span data-scope-progress>1 / 4</span><div><i data-scope-progress-bar></i></div></div>
 
           <section class="scope-step" data-scope-step="1">
             <span>첫 번째</span><h3>무엇을 만들 예정인가요?</h3>
@@ -64,26 +67,23 @@
           </section>
 
           <section class="scope-step" data-scope-step="4" hidden>
-            <span>마지막</span><h3>희망 일정을 골라주세요</h3>
-            <div class="choice-grid schedule-choices">
-              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="희망 일정" data-scope-value="가능한 빠르게">가능한 빠르게</button>
-              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="희망 일정" data-scope-value="1개월 안">1개월 안</button>
-              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="희망 일정" data-scope-value="1개월에서 3개월">1개월에서 3개월</button>
-              <button type="button" aria-pressed="false" data-scope-choice data-scope-group="희망 일정" data-scope-value="일정 협의 필요">일정 협의 필요</button>
-            </div>
+            <span>마지막</span><h3>희망 기간을 직접 적어주세요</h3>
+            <p>정확한 날짜가 정해지지 않았다면 예상 시작 시점과 필요한 기간만 적어도 됩니다</p>
+            <label class="schedule-field"><span>희망 기간</span><input type="text" maxlength="80" autocomplete="off" data-scope-schedule placeholder="예: 9월 둘째 주 시작, 6주 안에 완료" aria-describedby="schedule-help"><small id="schedule-help">일정 미정이나 협의 필요라고 직접 적어도 됩니다</small></label>
           </section>
 
           <div class="scope-controls">
             <button type="button" data-scope-back disabled>이전</button>
-            <button type="button" data-scope-next>다음 <span aria-hidden="true">→</span></button>
+            <button type="button" data-scope-next disabled>다음 <span aria-hidden="true">→</span></button>
           </div>
+          <p class="scope-form-status" data-scope-form-status role="status" aria-live="polite"></p>
         </div>
 
         <aside class="scope-summary" aria-labelledby="summary-title">
-          <span>상담용 요약</span><h3 id="summary-title">선택한 내용</h3>
-          <pre data-scope-summary aria-live="polite">아직 선택한 내용이 없습니다</pre>
+          <div class="scope-summary-head"><div><span>상담용 요약</span><h3 id="summary-title" tabindex="-1">선택한 내용</h3></div><button type="button" data-scope-edit hidden>내용 수정</button></div>
+          <pre data-scope-summary>아직 선택한 내용이 없습니다</pre>
           <div class="summary-actions">
-            <button type="button" data-scope-copy>문의 내용 복사</button>
+            <button type="button" data-scope-copy disabled>문의 내용 복사</button>
             <a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 상담 열기 ↗</a>
           </div>
           <p data-copy-status aria-live="polite"></p>

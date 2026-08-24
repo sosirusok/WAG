@@ -125,6 +125,10 @@
     const resetBrandLight = () => {
       brandHero.style.setProperty("--brand-pointer-x", "72%");
       brandHero.style.setProperty("--brand-pointer-y", "23%");
+      brandHero.style.setProperty("--brand-shift-x", "0px");
+      brandHero.style.setProperty("--brand-shift-y", "0px");
+      brandHero.style.setProperty("--brand-scene-x", "0px");
+      brandHero.style.setProperty("--brand-scene-y", "0px");
     };
     resetBrandLight();
     brandHero.addEventListener("pointermove", (event) => {
@@ -135,6 +139,10 @@
       const y = Math.max(8, Math.min(88, ((event.clientY - rect.top) / rect.height) * 100));
       brandHero.style.setProperty("--brand-pointer-x", `${x.toFixed(1)}%`);
       brandHero.style.setProperty("--brand-pointer-y", `${y.toFixed(1)}%`);
+      brandHero.style.setProperty("--brand-shift-x", `${((x - 50) * .035).toFixed(2)}px`);
+      brandHero.style.setProperty("--brand-shift-y", `${((y - 50) * .035).toFixed(2)}px`);
+      brandHero.style.setProperty("--brand-scene-x", `${((x - 50) * .055).toFixed(2)}px`);
+      brandHero.style.setProperty("--brand-scene-y", `${((y - 50) * .045).toFixed(2)}px`);
     }, { passive: true });
     brandHero.addEventListener("pointerleave", resetBrandLight, { passive: true });
     brandHero.addEventListener("pointercancel", resetBrandLight, { passive: true });
@@ -281,12 +289,16 @@
   const fallbackCopy = (text) => {
     const textarea = document.createElement("textarea");
     textarea.value = text;
+    textarea.readOnly = true;
+    textarea.tabIndex = -1;
+    textarea.setAttribute("aria-hidden", "true");
     textarea.style.position = "fixed";
     textarea.style.opacity = "0";
     document.body.append(textarea);
     textarea.select();
-    document.execCommand("copy");
+    const copied = document.execCommand("copy");
     textarea.remove();
+    if (!copied) throw new Error("copy failed");
   };
 
   const copyText = async (text) => {
@@ -309,32 +321,42 @@
     const next = builder.querySelector("[data-scope-next]");
     const progress = builder.querySelector("[data-scope-progress]");
     const progressBar = builder.querySelector("[data-scope-progress-bar]");
+    const progressMeter = builder.querySelector(".scope-progress");
     const summary = builder.querySelector("[data-scope-summary]");
     const copyButton = builder.querySelector("[data-scope-copy]");
     const copyStatus = builder.querySelector("[data-copy-status]");
+    const formStatus = builder.querySelector("[data-scope-form-status]");
     const jumpButtons = [...builder.querySelectorAll("[data-scope-jump]")];
-    const singleGroups = new Set(["제작 종류", "준비 상태", "희망 일정"]);
-    const requiredGroups = ["제작 종류", "필요 기능", "준비 상태", "희망 일정"];
+    const scheduleInput = builder.querySelector("[data-scope-schedule]");
+    const editButton = builder.querySelector("[data-scope-edit]");
+    const summaryTitle = builder.querySelector("#summary-title");
+    const singleGroups = new Set(["제작 종류", "준비 상태"]);
+    const requiredChoiceGroups = ["제작 종류", "필요 기능", "준비 상태"];
     const groupByStep = ["제작 종류", "필요 기능", "준비 상태", "희망 일정"];
-    const storageKey = "swag-scope-builder-v1";
+    const storageKey = "swag-scope-builder-v2";
     let currentStep = 1;
 
     const selectedValues = (group) => choices
       .filter((choice) => choice.dataset.scopeGroup === group && choice.getAttribute("aria-pressed") === "true")
       .map((choice) => choice.dataset.scopeValue);
 
+    const scheduleValue = () => scheduleInput?.value.trim() || "";
+    const groupHasValue = (group) => group === "희망 일정"
+      ? scheduleValue().length > 0
+      : selectedValues(group).length > 0;
+
     const summaryText = () => {
       const types = selectedValues("제작 종류");
       const features = selectedValues("필요 기능");
       const states = selectedValues("준비 상태");
-      const schedules = selectedValues("희망 일정");
-      if (![types, features, states, schedules].some((items) => items.length)) return "아직 선택한 내용이 없습니다";
+      const schedule = scheduleValue();
+      if (![types, features, states].some((items) => items.length) && !schedule) return "아직 입력한 내용이 없습니다";
       return [
         "[SWAG 제작 문의]",
         `제작 종류: ${types.join(", ") || "선택 전"}`,
         `필요 기능: ${features.join(", ") || "선택 전"}`,
         `준비 상태: ${states.join(", ") || "선택 전"}`,
-        `희망 일정: ${schedules.join(", ") || "선택 전"}`
+        `희망 기간: ${schedule || "입력 전"}`
       ].join("\n");
     };
 
@@ -343,18 +365,16 @@
       if (copyStatus) copyStatus.textContent = "";
     };
 
-    const isComplete = () => requiredGroups.every((group) => selectedValues(group).length > 0);
-
-    const isCurrentStepComplete = () => {
-      return selectedValues(groupByStep[currentStep - 1]).length > 0;
-    };
+    const isComplete = () => requiredChoiceGroups.every(groupHasValue) && groupHasValue("희망 일정");
+    const isCurrentStepComplete = () => groupHasValue(groupByStep[currentStep - 1]);
+    const firstIncompleteStep = () => groupByStep.findIndex((group) => !groupHasValue(group)) + 1;
 
     const saveBuilderState = () => {
       try {
         const selected = choices
           .filter((choice) => choice.getAttribute("aria-pressed") === "true")
           .map((choice) => ({ group: choice.dataset.scopeGroup, value: choice.dataset.scopeValue }));
-        sessionStorage.setItem(storageKey, JSON.stringify({ step: currentStep, selected }));
+        sessionStorage.setItem(storageKey, JSON.stringify({ step: currentStep, selected, schedule: scheduleValue() }));
       } catch {
         // The builder still works when session storage is unavailable.
       }
@@ -368,6 +388,7 @@
           const selected = saved.selected.some((item) => item.group === choice.dataset.scopeGroup && item.value === choice.dataset.scopeValue);
           choice.setAttribute("aria-pressed", String(selected));
         });
+        if (scheduleInput && typeof saved.schedule === "string") scheduleInput.value = saved.schedule;
         if (Number.isInteger(saved.step)) currentStep = Math.min(Math.max(saved.step, 1), steps.length);
       } catch {
         // Ignore stale or unavailable session data.
@@ -378,15 +399,25 @@
       if (next) next.disabled = !isCurrentStepComplete();
       if (copyButton) copyButton.disabled = !isComplete();
       jumpButtons.forEach((button, index) => {
-        button.dataset.complete = String(selectedValues(groupByStep[index]).length > 0);
+        const complete = groupHasValue(groupByStep[index]);
+        button.dataset.complete = String(complete);
+        button.setAttribute("aria-label", `${index + 1}단계 ${groupByStep[index]} ${complete ? "완료" : "미완료"}`);
       });
     };
 
     const showStep = (step, moveFocus = true) => {
+      builder.classList.remove("is-reviewing");
+      if (editButton) editButton.hidden = true;
+      if (summaryTitle) summaryTitle.textContent = "선택한 내용";
       currentStep = Math.min(Math.max(step, 1), steps.length);
       steps.forEach((item) => { item.hidden = Number(item.dataset.scopeStep) !== currentStep; });
       if (progress) progress.textContent = `${currentStep} / ${steps.length}`;
       if (progressBar) progressBar.style.width = `${(currentStep / steps.length) * 100}%`;
+      if (progressMeter) {
+        progressMeter.setAttribute("aria-valuenow", String(currentStep));
+        progressMeter.setAttribute("aria-valuetext", `${currentStep}단계 / ${steps.length}단계`);
+      }
+      if (formStatus) formStatus.textContent = "";
       if (back) back.disabled = currentStep === 1;
       if (next) next.innerHTML = currentStep === steps.length ? '요약 확인 <span aria-hidden="true">↗</span>' : '다음 <span aria-hidden="true">→</span>';
       jumpButtons.forEach((button) => {
@@ -394,7 +425,7 @@
         else button.removeAttribute("aria-current");
       });
       if (moveFocus) {
-        steps[currentStep - 1]?.querySelector("button")?.focus({ preventScroll: true });
+        steps[currentStep - 1]?.querySelector("button, input, textarea")?.focus({ preventScroll: true });
       }
       updateControls();
       saveBuilderState();
@@ -416,13 +447,37 @@
       });
     });
 
+    scheduleInput?.addEventListener("input", () => {
+      updateSummary();
+      updateControls();
+      saveBuilderState();
+    });
+
     back?.addEventListener("click", () => showStep(currentStep - 1));
     next?.addEventListener("click", () => {
       if (currentStep < steps.length) showStep(currentStep + 1);
       else {
-        summary?.setAttribute("tabindex", "-1");
-        summary?.focus();
+        const incompleteStep = firstIncompleteStep();
+        if (incompleteStep > 0) {
+          showStep(incompleteStep);
+          if (formStatus) formStatus.textContent = `${groupByStep[incompleteStep - 1]} 항목을 먼저 입력해 주세요`;
+          return;
+        }
+        updateSummary();
+        builder.classList.add("is-reviewing");
+        if (editButton) editButton.hidden = false;
+        if (summaryTitle) summaryTitle.textContent = "상담 내용 확인";
+        window.requestAnimationFrame(() => {
+          builder.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          summaryTitle?.focus({ preventScroll: true });
+        });
       }
+    });
+
+    editButton?.addEventListener("click", () => {
+      showStep(1, false);
+      builder.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      steps[0]?.querySelector("button, input, textarea")?.focus({ preventScroll: true });
     });
 
     jumpButtons.forEach((button) => {
@@ -443,8 +498,9 @@
     const requestedType = new URLSearchParams(window.location.search).get("type");
     const requestedChoice = choices.find((choice) => choice.dataset.scopeKey === requestedType);
     if (requestedChoice) {
-      choices.filter((choice) => choice.dataset.scopeGroup === "제작 종류").forEach((choice) => choice.setAttribute("aria-pressed", "false"));
+      choices.forEach((choice) => choice.setAttribute("aria-pressed", "false"));
       requestedChoice.setAttribute("aria-pressed", "true");
+      if (scheduleInput) scheduleInput.value = "";
       currentStep = 1;
     }
 
