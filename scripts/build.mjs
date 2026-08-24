@@ -175,7 +175,10 @@ const structuredData = JSON.stringify({
   url: normalizedSiteUrl,
   telephone: data.contact.phone,
   areaServed: { "@type": "Country", name: "대한민국" },
-  serviceType: ["웹사이트 제작", "모바일 앱 개발", "게임 개발", "디지털 서비스 개발"]
+  makesOffer: ["웹사이트 제작", "모바일 앱 개발", "게임 개발", "디지털 서비스 개발"].map((name) => ({
+    "@type": "Offer",
+    itemOffered: { "@type": "Service", name, serviceType: name }
+  }))
 }).replaceAll("<", "\\u003c");
 
 const commonTokens = {
