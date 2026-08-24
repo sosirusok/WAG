@@ -16,9 +16,8 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/SWAGSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="about.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
   <script type="application/ld+json">{{STRUCTURED_DATA}}</script>
@@ -29,19 +28,19 @@
   <main id="main" class="about-page">
     <header class="about-hero shell" aria-labelledby="about-title">
       <div class="about-hero-copy reveal">
-        <p class="about-eyebrow">About SWAG</p>
-        <h1 id="about-title">웹사이트, 앱, 게임과<br>운영 시스템을 만듭니다</h1>
+        <p class="about-eyebrow">SWAG 소개</p>
+        <h1 id="about-title">두 사람이 기획부터 출시까지 맡습니다</h1>
         <div class="about-lead">
-          <p>SWAG는 기획, 디자인, 개발을 함께 맡는 2인 프리랜서 스튜디오입니다</p>
-          <p>UX/UI와 프론트엔드, 서버 API, 데이터베이스, 결제와 알림, 관리자 화면, 외부 서비스 연동과 배포를 맡습니다</p>
+          <p>SWAG는 웹사이트, 모바일 앱, 게임형 콘텐츠와 운영 도구를 제작하는 독립 스튜디오입니다.</p>
+          <p>완성 후에도 내용을 직접 수정하고 예약이나 회원 정보를 관리할 수 있도록 관리자 화면과 사용 방법을 함께 제공합니다.</p>
         </div>
         <a class="about-text-link" href="contact/">프로젝트 이야기 나누기 <span aria-hidden="true">↗</span></a>
       </div>
 
       <figure class="about-hero-visual reveal" data-ambient data-ambient-depth="0.42">
-        <span class="about-visual-index" aria-hidden="true">DESIGN / DEVELOPMENT</span>
-        <img src="assets/about-duo-v1.webp" alt="서로 다른 재료가 하나의 구조를 이루는 SWAG 협업 이미지" fetchpriority="high" decoding="async">
-        <figcaption><span>UX/UI · FRONTEND · BACKEND · QA</span><span>화면과 기능을 실제 서비스로 연결합니다</span></figcaption>
+        <span class="about-visual-index" aria-hidden="true">기획부터 출시까지</span>
+        <div class="about-screen-stack" aria-label="SWAG 공개 작업 화면"><span><img src="assets/case-catharsis.jpg" alt="카타르시스 이스케이프 공개 화면" fetchpriority="high" decoding="async"></span><span><img src="assets/case-crimescene.jpg" alt="크라임씬플레이 서면1호점 공개 화면" fetchpriority="high" decoding="async"></span><i aria-hidden="true"></i></div>
+        <figcaption><span>화면 설계부터 개발과 최종 검수까지</span><span>공개 주소에서 직접 작동을 확인합니다.</span></figcaption>
       </figure>
     </header>
 
@@ -50,57 +49,32 @@
         <div class="about-section-label reveal"><p>전문 분야</p></div>
         <div class="about-section-main">
           <header class="about-section-heading reveal">
-            <h2 id="practice-title">공개 화면과 관리자 기능을<br>같은 데이터 구조로 설계합니다</h2>
-            <p>사용자가 보는 화면과 관리자가 처리할 업무를 나눈 뒤 콘텐츠 구조, 기능 우선순위, 데이터와 권한을 설계합니다 정해진 템플릿에 내용을 끼워 넣지 않습니다</p>
+            <h2 id="practice-title">고객용 화면과 관리자 화면을 함께 설계합니다</h2>
+            <p>예약, 회원과 콘텐츠처럼 고객이 사용하는 화면과 일정, 주문, 문의를 관리하는 화면을 같은 프로젝트 안에서 구성합니다.</p>
           </header>
           <div class="about-practice-list">
             <article class="reveal" id="about-web">
               <span>01</span>
               <h3>웹사이트</h3>
-              <p>기업·브랜드 사이트, 캠페인, 포트폴리오, 커머스, 콘텐츠 플랫폼</p>
+              <p>기업과 브랜드 사이트, 예약 및 판매 기능이 있는 웹서비스</p>
             </article>
             <article class="reveal" id="about-app">
               <span>02</span>
-              <h3>앱 · 어플</h3>
-              <p>iOS·Android 앱, PWA, 회원 서비스, 커뮤니티, 위치·알림 기반 기능</p>
+              <h3>모바일 앱</h3>
+              <p>로그인과 알림, 위치 기능이 필요한 모바일 앱과 PWA</p>
             </article>
             <article class="reveal" id="about-game">
               <span>03</span>
               <h3>게임</h3>
-              <p>캐주얼 게임, 프로모션·교육 콘텐츠, 실시간 플레이, 랭킹·보상 시스템</p>
+              <p>브라우저에서 실행되는 캐주얼 게임과 홍보 및 교육용 콘텐츠</p>
             </article>
             <article class="reveal" id="about-system">
               <span>04</span>
-              <h3>시스템 · 플랫폼</h3>
-              <p>SaaS, 사내 도구, 관리 콘솔, 대시보드, 데이터 연동과 업무 자동화</p>
+              <h3>관리 시스템</h3>
+              <p>예약과 회원, 콘텐츠를 관리하는 운영자 화면과 업무 자동화</p>
             </article>
           </div>
         </div>
-      </div>
-    </section>
-
-    <section class="about-duo shell" aria-labelledby="duo-title">
-      <div class="about-section-label reveal"><p>프로젝트 운영</p></div>
-      <div class="about-duo-statement reveal">
-        <h2 id="duo-title">착수 전에 화면, 기능과<br>완료 기준을 확정합니다</h2>
-        <p>화면 목록, 기능 명세, 일정과 외부 서비스 비용을 먼저 공유하고 주요 화면을 검토한 뒤 전체 제작을 진행합니다 변경 사항은 영향 범위를 확인해 반영합니다</p>
-      </div>
-      <div class="about-duo-flow reveal" aria-label="SWAG의 협업 방식">
-        <article>
-          <span>01</span>
-          <h3>요구사항과 견적</h3>
-          <p>필수 기능, 참고 자료, 희망 일정을 기준으로 제작 항목과 별도 비용이 필요한 연동을 구분합니다</p>
-        </article>
-        <article>
-          <span>02</span>
-          <h3>화면과 데이터 설계</h3>
-          <p>페이지 구조, 사용자 동선, 권한, 데이터 저장 방식과 오류 상황을 구현 가능한 수준으로 문서화합니다</p>
-        </article>
-        <article>
-          <span>03</span>
-          <h3>개발과 출시</h3>
-          <p>기기별 화면과 기능을 구현하고 실제 데이터, 권한, 결제 실패, 성능과 배포 설정을 점검합니다</p>
-        </article>
       </div>
     </section>
 
@@ -109,37 +83,16 @@
         <div class="about-section-label reveal"><p>작업 기준</p></div>
         <div class="about-section-main">
           <header class="about-section-heading reveal">
-            <h2 id="difference-title">자동 생성 결과를<br>그대로 납품하지 않습니다</h2>
-            <p>정보 구조, 브랜드 요소, 권한, 오류와 복구, 실제 데이터와 성능을 다시 설계합니다 마지막 검수는 데모 화면이 아니라 실제 운영 주소와 기기에서 진행합니다</p>
+            <h2 id="difference-title">직접 수정하고 관리할 수 있게 인계합니다</h2>
+            <p>자주 바뀌는 내용과 운영에 필요한 계정을 정리하고, 공개 전에는 휴대폰과 PC에서 주요 기능을 확인합니다.</p>
           </header>
-          <div class="about-compare reveal" role="table" aria-label="자동 생성 방식과 SWAG 제작 방식 비교">
-            <div class="about-compare-head" role="row">
-              <span role="columnheader">자동 생성 중심</span>
-              <span role="columnheader">SWAG 제작</span>
-            </div>
-            <div role="row"><span role="cell">미리 정해진 구조에 내용을 배치</span><strong role="cell">목표와 콘텐츠에 맞춰 정보 구조 설계</strong></div>
-            <div role="row"><span role="cell">정상 화면과 기본 동작 위주</span><strong role="cell">권한, 빈 상태, 오류와 복구 흐름까지 구현</strong></div>
-            <div role="row"><span role="cell">유사한 문장과 시각 요소 조합</span><strong role="cell">브랜드와 사용자 맥락에 맞춰 디자인 조정</strong></div>
-            <div role="row"><span role="cell">생성된 결과를 바로 전달</span><strong role="cell">실제 데이터와 운영 환경에서 테스트 후 출시</strong></div>
+          <div class="about-compare reveal" role="list" aria-label="인계와 운영 기준">
+            <div role="listitem"><span>01</span><strong>콘텐츠 수정 구조</strong><p>자주 바뀌는 문구와 이미지를 직접 관리할 수 있게 구분합니다.</p></div>
+            <div role="listitem"><span>02</span><strong>권한과 예외 상황</strong><p>정상 화면뿐 아니라 빈 상태, 입력 오류와 권한 차이를 확인합니다.</p></div>
+            <div role="listitem"><span>03</span><strong>결제와 알림 오류 확인</strong><p>결제나 알림이 정상 처리되지 않았을 때 운영자가 확인할 방법을 마련합니다.</p></div>
+            <div role="listitem"><span>04</span><strong>소스와 관리 방법 전달</strong><p>소스, 배포 설정, 필요한 계정과 관리 방법을 정리해 전달합니다.</p></div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <section class="about-quality shell" aria-labelledby="quality-title">
-      <div class="about-section-label reveal"><p>완성도 기준</p></div>
-      <div class="about-quality-main">
-        <div class="about-quality-heading reveal">
-          <h2 id="quality-title">출시 전에<br>확인하는 기준</h2>
-          <p>주요 브라우저와 모바일 화면, 입력 오류, 권한, 성능, 도메인과 배포 설정을 항목별로 점검합니다</p>
-        </div>
-        <ol class="about-checks">
-          <li class="reveal"><span>01</span><p>PC·모바일 화면, 브라우저 호환성과 접근성</p></li>
-          <li class="reveal"><span>02</span><p>페이지 속도, 이미지 최적화와 검색 노출 기본 설정</p></li>
-          <li class="reveal"><span>03</span><p>입력, 권한, 오류, 빈 화면과 복구 동작</p></li>
-          <li class="reveal"><span>04</span><p>데이터 저장, 외부 서비스 연동과 알림 흐름</p></li>
-          <li class="reveal"><span>05</span><p>도메인, 보안 설정, 분석 도구와 관리 환경</p></li>
-        </ol>
       </div>
     </section>
 
@@ -149,11 +102,11 @@
         <div class="about-fit-copy reveal">
           <h2 id="fit-title">주요 의뢰 범위</h2>
           <ul>
-            <li>브랜드나 회사의 디지털 접점을 새로 만들거나 개편하는 프로젝트</li>
-            <li>회원, 콘텐츠, 커뮤니티, 커머스 기능을 갖춘 웹·모바일 서비스</li>
-            <li>게임과 인터랙티브 콘텐츠가 필요한 캠페인·교육·이벤트</li>
-            <li>반복 업무를 줄이는 사내 도구, 관리 콘솔과 데이터 대시보드</li>
-            <li>기존 서비스에 새로운 기능, 외부 API 또는 자동화를 연결하는 작업</li>
+            <li>회사나 브랜드의 새 웹사이트 또는 기존 사이트 개편</li>
+            <li>회원과 판매 기능이 필요한 웹 및 모바일 서비스</li>
+            <li>홍보와 교육, 행사에 사용할 게임 및 참여형 콘텐츠</li>
+            <li>반복 업무를 줄이는 관리자 화면과 데이터 통계</li>
+            <li>기존 사이트에 외부 서비스나 자동화 기능을 추가하는 작업</li>
           </ul>
         </div>
       </div>
@@ -162,8 +115,8 @@
     <section class="about-contact" aria-labelledby="about-contact-title">
       <div class="shell about-contact-inner reveal">
         <p>프로젝트 문의</p>
-        <h2 id="about-contact-title">필요한 기능과<br>희망 기간을 알려주세요</h2>
-        <span>기획서가 없다면 참고 사이트와 필수 기능만 보내도 됩니다 구현 항목, 예상 일정과 외부 서비스 비용을 구분해 안내합니다</span>
+        <h2 id="about-contact-title">프로젝트 상담</h2>
+        <span>기획서가 없다면 참고 사이트와 필수 기능만 보내도 됩니다. 구현 항목, 예상 일정과 외부 서비스 비용을 구분해 안내합니다.</span>
         <div>
           <a class="button" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 상담하기 <i aria-hidden="true">↗</i></a>
           <a class="about-text-link" href="services/">제작 범위 살펴보기 <span aria-hidden="true">↗</span></a>

@@ -16,11 +16,10 @@ SWAG의 고객용 웹사이트입니다. 홈, 서비스, 진행 방식, 작업�
 ## 로컬 확인
 
 ```bash
-npm run check
-npm run build
-python -m http.server 4173 -d dist
+npm run verify
+npm run dev
 ```
 
 ## 글꼴
 
-Wanted Sans Variable을 저장소에서 직접 제공합니다. 라이선스는 `src/assets/WantedSans-LICENSE.txt`에 포함되어 있습니다.
+SUIT Variable과 Mona Sans Variable을 저장소에서 직접 제공합니다. 라이선스는 `src/assets/SUIT-LICENSE.txt`와 `src/assets/MonaSans-LICENSE.txt`에 포함되어 있습니다.

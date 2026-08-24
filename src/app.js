@@ -4,6 +4,7 @@
   const header = document.querySelector("[data-header]");
   const sentinel = document.querySelector("[data-header-sentinel]");
   const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const compactMotionQuery = window.matchMedia("(max-width: 760px), (prefers-reduced-data: reduce)");
   const finePointerQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
   document.documentElement.classList.add("motion-ready");
   let reduceMotion = motionQuery.matches;
@@ -120,39 +121,10 @@
   }, { passive: true });
   window.addEventListener("scroll", requestAmbientPaint, { passive: true });
 
-  const brandHero = document.querySelector("[data-brand-hero]");
-  if (brandHero) {
-    const resetBrandLight = () => {
-      brandHero.style.setProperty("--brand-pointer-x", "72%");
-      brandHero.style.setProperty("--brand-pointer-y", "23%");
-      brandHero.style.setProperty("--brand-shift-x", "0px");
-      brandHero.style.setProperty("--brand-shift-y", "0px");
-      brandHero.style.setProperty("--brand-scene-x", "0px");
-      brandHero.style.setProperty("--brand-scene-y", "0px");
-    };
-    resetBrandLight();
-    brandHero.addEventListener("pointermove", (event) => {
-      if (reduceMotion || !finePointerQuery.matches || event.pointerType !== "mouse") return;
-      const rect = brandHero.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const x = Math.max(8, Math.min(92, ((event.clientX - rect.left) / rect.width) * 100));
-      const y = Math.max(8, Math.min(88, ((event.clientY - rect.top) / rect.height) * 100));
-      brandHero.style.setProperty("--brand-pointer-x", `${x.toFixed(1)}%`);
-      brandHero.style.setProperty("--brand-pointer-y", `${y.toFixed(1)}%`);
-      brandHero.style.setProperty("--brand-shift-x", `${((x - 50) * .035).toFixed(2)}px`);
-      brandHero.style.setProperty("--brand-shift-y", `${((y - 50) * .035).toFixed(2)}px`);
-      brandHero.style.setProperty("--brand-scene-x", `${((x - 50) * .055).toFixed(2)}px`);
-      brandHero.style.setProperty("--brand-scene-y", `${((y - 50) * .045).toFixed(2)}px`);
-    }, { passive: true });
-    brandHero.addEventListener("pointerleave", resetBrandLight, { passive: true });
-    brandHero.addEventListener("pointercancel", resetBrandLight, { passive: true });
-  }
-
   const homeHero = document.querySelector("[data-home-hero]");
   const homeCanvas = homeHero?.querySelector("[data-home-canvas]");
   const homeContext = homeCanvas?.getContext("2d", { alpha: true });
   const homeWordmark = homeHero?.querySelector("[data-home-wordmark]");
-  const homeOfferings = [...document.querySelectorAll("[data-home-offering]")];
   let homePointerX = .72;
   let homePointerY = .36;
   let homeDepthX = .72;
@@ -254,8 +226,6 @@
       homeHero.style.setProperty("--hero-deep-y", `${(depthY * 23 + homeScrollOffset * .2).toFixed(2)}px`);
       homeHero.style.setProperty("--hero-front-x", `${(depthX * -24).toFixed(2)}px`);
       homeHero.style.setProperty("--hero-front-y", `${(depthY * -16 + homeScrollOffset * .12).toFixed(2)}px`);
-      homeHero.style.setProperty("--sculpture-x", `${(depthX * -28).toFixed(2)}px`);
-      homeHero.style.setProperty("--sculpture-y", `${(depthY * -20 - homeScrollOffset * .65).toFixed(2)}px`);
       homeHero.style.setProperty("--hero-tilt-x", `${(depthX * 3.2).toFixed(2)}deg`);
       homeHero.style.setProperty("--hero-tilt-y", `${(depthY * -2.4).toFixed(2)}deg`);
       homeWordmark?.style.setProperty("--mark-x", `${(depthX * 14).toFixed(2)}px`);
@@ -264,11 +234,15 @@
       homeWordmark?.style.setProperty("--mark-deep-y", `${(depthY * -14).toFixed(2)}px`);
     }
     drawHomeField(time);
-    if (!reduceMotion && homeVisible) homeAnimationFrame = window.requestAnimationFrame(animateHomeField);
+    if (!reduceMotion && !compactMotionQuery.matches && homeVisible && !document.hidden) {
+      homeAnimationFrame = window.requestAnimationFrame(animateHomeField);
+    }
   };
 
   const requestHomeField = () => {
-    if (!homeAnimationFrame && homeVisible) homeAnimationFrame = window.requestAnimationFrame(animateHomeField);
+    if (!homeAnimationFrame && homeVisible && !compactMotionQuery.matches && !document.hidden) {
+      homeAnimationFrame = window.requestAnimationFrame(animateHomeField);
+    }
   };
 
   if (homeHero && homeCanvas && homeContext) {
@@ -310,21 +284,15 @@
       }, { threshold: 0 });
       homeObserver.observe(homeHero);
     }
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && homeAnimationFrame) {
+        window.cancelAnimationFrame(homeAnimationFrame);
+        homeAnimationFrame = 0;
+      } else if (!document.hidden && homeVisible && !reduceMotion) {
+        requestHomeField();
+      }
+    });
   }
-
-  homeOfferings.forEach((offering) => {
-    offering.addEventListener("pointermove", (event) => {
-      if (reduceMotion || event.pointerType !== "mouse") return;
-      const rect = offering.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      offering.style.setProperty("--offer-x", `${(((event.clientX - rect.left) / rect.width) * 100).toFixed(1)}%`);
-      offering.style.setProperty("--offer-y", `${(((event.clientY - rect.top) / rect.height) * 100).toFixed(1)}%`);
-    }, { passive: true });
-    offering.addEventListener("pointerleave", () => {
-      offering.style.setProperty("--offer-x", "50%");
-      offering.style.setProperty("--offer-y", "50%");
-    }, { passive: true });
-  });
 
   const processRoot = document.querySelector("[data-process]");
   const processChapters = processRoot ? [...processRoot.querySelectorAll("[data-process-step]")] : [];
@@ -357,6 +325,20 @@
     } else {
       processChapters.forEach((chapter) => chapter.classList.add("is-current"));
     }
+  }
+
+  const serviceGroups = [...document.querySelectorAll("[data-service-group]")];
+  const serviceGroupQuery = window.matchMedia("(max-width: 600px)");
+  const syncServiceGroups = () => {
+    serviceGroups.forEach((group) => {
+      group.open = serviceGroupQuery.matches
+        ? group.dataset.mobileOpen === "true"
+        : true;
+    });
+  };
+  if (serviceGroups.length) {
+    syncServiceGroups();
+    serviceGroupQuery.addEventListener?.("change", syncServiceGroups);
   }
 
   const projectVisuals = [...document.querySelectorAll("[data-project-visual]")];
@@ -452,8 +434,6 @@
       homeHero?.style.setProperty("--hero-deep-y", "0px");
       homeHero?.style.setProperty("--hero-front-x", "0px");
       homeHero?.style.setProperty("--hero-front-y", "0px");
-      homeHero?.style.setProperty("--sculpture-x", "0px");
-      homeHero?.style.setProperty("--sculpture-y", "0px");
       homeWordmark?.style.setProperty("--mark-x", "0px");
       homeWordmark?.style.setProperty("--mark-y", "0px");
       homeWordmark?.style.setProperty("--mark-deep-x", "0px");
@@ -471,6 +451,15 @@
       resetProjects();
     } else if (!reduceMotion) {
       requestAmbientPaint();
+    }
+  });
+  compactMotionQuery.addEventListener?.("change", () => {
+    if (compactMotionQuery.matches && homeAnimationFrame) {
+      window.cancelAnimationFrame(homeAnimationFrame);
+      homeAnimationFrame = 0;
+      drawHomeField();
+    } else if (!reduceMotion) {
+      requestHomeField();
     }
   });
 
@@ -657,7 +646,7 @@
         const incompleteStep = firstIncompleteStep();
         if (incompleteStep > 0) {
           showStep(incompleteStep);
-          if (formStatus) formStatus.textContent = `${groupByStep[incompleteStep - 1]} 항목을 먼저 입력해 주세요`;
+          if (formStatus) formStatus.textContent = `${groupByStep[incompleteStep - 1]} 항목을 먼저 입력해 주세요.`;
           return;
         }
         updateSummary();
@@ -684,9 +673,9 @@
     copyButton?.addEventListener("click", async () => {
       try {
         await copyText(summaryText());
-        if (copyStatus) copyStatus.textContent = "문의 내용이 복사됐습니다 카카오 상담에 붙여넣으시면 됩니다";
+        if (copyStatus) copyStatus.textContent = "문의 내용이 복사됐습니다. 카카오 상담에 붙여 넣으시면 됩니다.";
       } catch {
-        if (copyStatus) copyStatus.textContent = "복사하지 못했습니다 위 내용을 직접 선택해 복사해 주세요";
+        if (copyStatus) copyStatus.textContent = "복사하지 못했습니다. 위 내용을 직접 선택해 복사해 주세요.";
       }
     });
 

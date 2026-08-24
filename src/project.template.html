@@ -15,7 +15,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/SWAGSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -29,7 +29,7 @@
       <header class="project-hero route-hero shell reveal">
         <a class="breadcrumb" href="work/">← 작업 목록</a>
         <div class="project-heading">
-          <p>{{PROJECT_CATEGORY}} / {{PROJECT_YEAR}}</p>
+          <p><span>{{PROJECT_CATEGORY}}</span><b>{{PROJECT_YEAR}}</b></p>
           <h1>{{PROJECT_TITLE}}</h1>
           <div><p>{{PROJECT_SUMMARY}}</p>{{PROJECT_EXTERNAL}}</div>
         </div>
@@ -41,7 +41,7 @@
         <article class="reveal"><span>사용 방식</span><p>{{PROJECT_RESULT}}</p></article>
       </section>
       <section class="project-features shell reveal" aria-labelledby="project-features-title">
-        <div><p>구축 기능</p><h2 id="project-features-title">이 작업에 포함된 범위</h2></div>
+        <div><p>구축 기능</p><h2 id="project-features-title">주요 기능</h2></div>
         <ul>{{PROJECT_FEATURES}}</ul>
       </section>
       <div class="project-next shell reveal">{{NEXT_PROJECT}}</div>

@@ -11,7 +11,8 @@ const valueAfter = (name, fallback) => {
 };
 const host = valueAfter("--host", "0.0.0.0");
 const port = Number(valueAfter("--port", process.env.PORT || "4173"));
-process.env.SITE_URL = `http://terminal.local:${port}/`;
+const publicHost = valueAfter("--public-host", host === "0.0.0.0" ? "127.0.0.1" : host);
+process.env.SITE_URL = `http://${publicHost}:${port}/`;
 await import("./build.mjs");
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../dist");

@@ -6,6 +6,7 @@ const errors = [];
 const projects = Array.isArray(data.projects) ? data.projects : [];
 const services = Array.isArray(data.services) ? data.services : [];
 const capabilities = Array.isArray(data.capabilities) ? data.capabilities : [];
+const capabilityGroups = Array.isArray(data.capabilityGroups) ? data.capabilityGroups : [];
 const processSteps = Array.isArray(data.process) ? data.process : [];
 const faqItems = Array.isArray(data.faq) ? data.faq : [];
 
@@ -17,6 +18,10 @@ required(data?.meta?.title, "meta.title");
 required(data?.meta?.description, "meta.description");
 required(data?.brand?.name, "brand.name");
 required(data?.brand?.headlineTop, "brand.headlineTop");
+required(data?.brand?.headlineFocus, "brand.headlineFocus");
+required(data?.brand?.description, "brand.description");
+required(data?.brand?.primaryCta, "brand.primaryCta");
+required(data?.brand?.secondaryCta, "brand.secondaryCta");
 required(data?.contact?.owner, "contact.owner");
 required(data?.contact?.phone, "contact.phone");
 
@@ -30,6 +35,7 @@ try {
 if (!Array.isArray(data.projects)) errors.push("projects must be an array");
 if (!Array.isArray(data.services)) errors.push("services must be an array");
 if (!Array.isArray(data.capabilities)) errors.push("capabilities must be an array");
+if (!Array.isArray(data.capabilityGroups)) errors.push("capabilityGroups must be an array");
 if (!Array.isArray(data.process)) errors.push("process must be an array");
 if (!Array.isArray(data.faq)) errors.push("faq must be an array");
 
@@ -60,6 +66,7 @@ for (const [index, project] of projects.entries()) {
   ids.add(project.id);
   if (project.published && !project.image) errors.push(`projects[${index}].image is required when published`);
   if (project.featured && !project.published) errors.push(`projects[${index}] must be published before it can be featured`);
+  if (!Number.isFinite(Number(project.order))) errors.push(`projects[${index}].order must be a number`);
   if (project.published && (!Array.isArray(project.features) || project.features.length < 1 || project.features.some((feature) => typeof feature !== "string" || !feature.trim()))) {
     errors.push(`projects[${index}].features must be a non-empty string array`);
   }
@@ -107,10 +114,21 @@ for (const [index, service] of services.entries()) {
   if (!Array.isArray(service.items) || service.items.length < 1 || service.items.some((item) => typeof item !== "string" || !item.trim())) {
     errors.push(`services[${index}].items must be a non-empty string array`);
   }
+  for (const field of ["advanced", "operations"]) {
+    if (!Array.isArray(service[field]) || service[field].length < 1 || service[field].some((item) => typeof item !== "string" || !item.trim())) {
+      errors.push(`services[${index}].${field} must be a non-empty string array`);
+    }
+  }
 }
 
 if (services.length < 1) errors.push("at least one service is required");
 if (capabilities.length < 1 || capabilities.some((item) => typeof item !== "string" || !item.trim())) errors.push("capabilities must be a non-empty string array");
+if (capabilityGroups.length < 1) errors.push("capabilityGroups must be a non-empty array");
+capabilityGroups.forEach((item, index) => {
+  required(item.code, `capabilityGroups[${index}].code`);
+  required(item.title, `capabilityGroups[${index}].title`);
+  required(item.description, `capabilityGroups[${index}].description`);
+});
 if (processSteps.length < 1) errors.push("at least one process step is required");
 processSteps.forEach((step, index) => {
   required(step.number, `process[${index}].number`);
