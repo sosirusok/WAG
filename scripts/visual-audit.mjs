@@ -90,7 +90,7 @@ for (const viewport of viewports) {
         text: element.textContent.trim().slice(0, 80),
         rect: [Math.round(element.getBoundingClientRect().left), Math.round(element.getBoundingClientRect().right)]
       }));
-      const tinyText = textElements.filter((element) => Number.parseFloat(getComputedStyle(element).fontSize) < 14)
+      const tinyText = textElements.filter((element) => Number.parseFloat(getComputedStyle(element).fontSize) < 16)
         .map((element) => ({ tag: element.tagName, text: element.textContent.trim().slice(0, 80), size: getComputedStyle(element).fontSize }));
       const brokenImages = [...document.images].filter((image) => image.complete && image.naturalWidth === 0)
         .map((image) => image.currentSrc || image.src);

@@ -691,13 +691,19 @@ body.is-leaving .page-wipe {
 .hero-wordmark::before {
   color: var(--blue);
   clip-path: inset(12% 0 58% 0);
-  animation: glitch-blue .8s .7s steps(2, end) both;
 }
 
 .hero-wordmark::after {
   color: var(--orange);
   clip-path: inset(63% 0 14% 0);
-  animation: glitch-orange .8s .74s steps(2, end) both;
+}
+
+.fonts-ready .hero-wordmark::before {
+  animation: glitch-blue .8s .7s steps(2, end);
+}
+
+.fonts-ready .hero-wordmark::after {
+  animation: glitch-orange .8s .74s steps(2, end);
 }
 
 .hero-wordmark:hover::before,
