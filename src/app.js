@@ -151,8 +151,13 @@
   const homeHero = document.querySelector("[data-home-hero]");
   const homeCanvas = homeHero?.querySelector("[data-home-canvas]");
   const homeContext = homeCanvas?.getContext("2d", { alpha: true });
+  const homeWordmark = homeHero?.querySelector("[data-home-wordmark]");
+  const homeOfferings = [...document.querySelectorAll("[data-home-offering]")];
   let homePointerX = .72;
   let homePointerY = .36;
+  let homeDepthX = .72;
+  let homeDepthY = .36;
+  let homeScrollOffset = 0;
   let homeCanvasWidth = 0;
   let homeCanvasHeight = 0;
   let homeAnimationFrame = 0;
@@ -178,14 +183,15 @@
     const pointerOffsetX = (homePointerX - .5) * 20;
     const pointerOffsetY = (homePointerY - .5) * 14;
 
-    for (let line = 0; line < 4; line += 1) {
-      const phase = motionTime + line * .72;
-      const baseY = homeCanvasHeight * (.2 + line * .2);
-      const amplitude = homeCanvasHeight * (.032 + line * .006);
+    for (let line = 0; line < 6; line += 1) {
+      const phase = motionTime * (1 + line * .06) + line * .58;
+      const baseY = homeCanvasHeight * (.14 + line * .145);
+      const amplitude = homeCanvasHeight * (.036 + line * .0065);
       const gradient = homeContext.createLinearGradient(0, 0, homeCanvasWidth, 0);
       gradient.addColorStop(0, "rgba(38,118,165,0)");
-      gradient.addColorStop(.34, `rgba(38,118,165,${.08 + line * .018})`);
-      gradient.addColorStop(.72, `rgba(115,191,226,${.17 + line * .012})`);
+      gradient.addColorStop(.28, `rgba(38,118,165,${.09 + line * .017})`);
+      gradient.addColorStop(.62, `rgba(86,176,219,${.2 + line * .014})`);
+      gradient.addColorStop(.84, `rgba(235,181,137,${.07 + line * .008})`);
       gradient.addColorStop(1, "rgba(38,118,165,0)");
       homeContext.beginPath();
       for (let x = 0; x <= homeCanvasWidth + 12; x += 12) {
@@ -199,11 +205,29 @@
         else homeContext.lineTo(x + pointerOffsetX * pointerWeight, y);
       }
       homeContext.strokeStyle = gradient;
-      homeContext.lineWidth = line === 2 ? 1.25 : .75;
+      homeContext.lineWidth = line === 2 || line === 4 ? 1.45 : .8;
       homeContext.stroke();
     }
 
-    const pointCount = homeCanvasWidth < 700 ? 15 : 26;
+    homeContext.save();
+    homeContext.globalCompositeOperation = "screen";
+    for (let ribbon = 0; ribbon < 2; ribbon += 1) {
+      const sweep = ((motionTime * (38 + ribbon * 9) + ribbon * .36) % 1.5) - .25;
+      const centerX = sweep * homeCanvasWidth;
+      const light = homeContext.createLinearGradient(centerX - 110, 0, centerX + 110, 0);
+      light.addColorStop(0, "rgba(255,255,255,0)");
+      light.addColorStop(.5, ribbon ? "rgba(181,225,245,.11)" : "rgba(255,255,255,.16)");
+      light.addColorStop(1, "rgba(255,255,255,0)");
+      homeContext.beginPath();
+      homeContext.moveTo(centerX - 140, homeCanvasHeight * 1.04);
+      homeContext.bezierCurveTo(centerX - 20, homeCanvasHeight * .72, centerX + 40, homeCanvasHeight * .28, centerX + 165, -homeCanvasHeight * .08);
+      homeContext.strokeStyle = light;
+      homeContext.lineWidth = ribbon ? 24 : 34;
+      homeContext.stroke();
+    }
+    homeContext.restore();
+
+    const pointCount = homeCanvasWidth < 700 ? 22 : 42;
     for (let point = 0; point < pointCount; point += 1) {
       const seed = point * 91.73;
       const x = ((seed * 13.17 + motionTime * 34) % 1000) / 1000 * homeCanvasWidth;
@@ -218,6 +242,27 @@
 
   const animateHomeField = (time) => {
     homeAnimationFrame = 0;
+    homeDepthX += (homePointerX - homeDepthX) * .055;
+    homeDepthY += (homePointerY - homeDepthY) * .055;
+    if (!reduceMotion && homeHero) {
+      const depthX = homeDepthX - .5;
+      const depthY = homeDepthY - .5;
+      homeHero.style.setProperty("--hero-x", `${(depthX * -18).toFixed(2)}px`);
+      homeHero.style.setProperty("--hero-y", `${(depthY * -13).toFixed(2)}px`);
+      homeHero.style.setProperty("--hero-scroll", `${homeScrollOffset.toFixed(2)}px`);
+      homeHero.style.setProperty("--hero-deep-x", `${(depthX * 31).toFixed(2)}px`);
+      homeHero.style.setProperty("--hero-deep-y", `${(depthY * 23 + homeScrollOffset * .2).toFixed(2)}px`);
+      homeHero.style.setProperty("--hero-front-x", `${(depthX * -24).toFixed(2)}px`);
+      homeHero.style.setProperty("--hero-front-y", `${(depthY * -16 + homeScrollOffset * .12).toFixed(2)}px`);
+      homeHero.style.setProperty("--sculpture-x", `${(depthX * -28).toFixed(2)}px`);
+      homeHero.style.setProperty("--sculpture-y", `${(depthY * -20 - homeScrollOffset * .65).toFixed(2)}px`);
+      homeHero.style.setProperty("--hero-tilt-x", `${(depthX * 3.2).toFixed(2)}deg`);
+      homeHero.style.setProperty("--hero-tilt-y", `${(depthY * -2.4).toFixed(2)}deg`);
+      homeWordmark?.style.setProperty("--mark-x", `${(depthX * 14).toFixed(2)}px`);
+      homeWordmark?.style.setProperty("--mark-y", `${(depthY * 10).toFixed(2)}px`);
+      homeWordmark?.style.setProperty("--mark-deep-x", `${(depthX * -20).toFixed(2)}px`);
+      homeWordmark?.style.setProperty("--mark-deep-y", `${(depthY * -14).toFixed(2)}px`);
+    }
     drawHomeField(time);
     if (!reduceMotion && homeVisible) homeAnimationFrame = window.requestAnimationFrame(animateHomeField);
   };
@@ -239,17 +284,21 @@
       const rect = homeHero.getBoundingClientRect();
       homePointerX = Math.max(0, Math.min(1, (event.clientX - rect.left) / Math.max(rect.width, 1)));
       homePointerY = Math.max(0, Math.min(1, (event.clientY - rect.top) / Math.max(rect.height, 1)));
-      if (!reduceMotion) {
-        homeHero.style.setProperty("--hero-x", `${((homePointerX - .5) * -8).toFixed(2)}px`);
-        homeHero.style.setProperty("--hero-y", `${((homePointerY - .5) * -6).toFixed(2)}px`);
-      }
+      requestHomeField();
     }, { passive: true });
     homeHero.addEventListener("pointerleave", () => {
       homePointerX = .72;
       homePointerY = .36;
-      homeHero.style.setProperty("--hero-x", "0px");
-      homeHero.style.setProperty("--hero-y", "0px");
+      requestHomeField();
     }, { passive: true });
+    const updateHomeScroll = () => {
+      const rect = homeHero.getBoundingClientRect();
+      const progress = Math.max(0, Math.min(1, -rect.top / Math.max(rect.height, 1)));
+      homeScrollOffset = progress * 74;
+      requestHomeField();
+    };
+    updateHomeScroll();
+    window.addEventListener("scroll", updateHomeScroll, { passive: true });
     if ("IntersectionObserver" in window) {
       const homeObserver = new IntersectionObserver(([entry]) => {
         homeVisible = entry.isIntersecting;
@@ -262,6 +311,20 @@
       homeObserver.observe(homeHero);
     }
   }
+
+  homeOfferings.forEach((offering) => {
+    offering.addEventListener("pointermove", (event) => {
+      if (reduceMotion || event.pointerType !== "mouse") return;
+      const rect = offering.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      offering.style.setProperty("--offer-x", `${(((event.clientX - rect.left) / rect.width) * 100).toFixed(1)}%`);
+      offering.style.setProperty("--offer-y", `${(((event.clientY - rect.top) / rect.height) * 100).toFixed(1)}%`);
+    }, { passive: true });
+    offering.addEventListener("pointerleave", () => {
+      offering.style.setProperty("--offer-x", "50%");
+      offering.style.setProperty("--offer-y", "50%");
+    }, { passive: true });
+  });
 
   const processRoot = document.querySelector("[data-process]");
   const processChapters = processRoot ? [...processRoot.querySelectorAll("[data-process-step]")] : [];
@@ -384,6 +447,17 @@
       }
       homeHero?.style.setProperty("--hero-x", "0px");
       homeHero?.style.setProperty("--hero-y", "0px");
+      homeHero?.style.setProperty("--hero-scroll", "0px");
+      homeHero?.style.setProperty("--hero-deep-x", "0px");
+      homeHero?.style.setProperty("--hero-deep-y", "0px");
+      homeHero?.style.setProperty("--hero-front-x", "0px");
+      homeHero?.style.setProperty("--hero-front-y", "0px");
+      homeHero?.style.setProperty("--sculpture-x", "0px");
+      homeHero?.style.setProperty("--sculpture-y", "0px");
+      homeWordmark?.style.setProperty("--mark-x", "0px");
+      homeWordmark?.style.setProperty("--mark-y", "0px");
+      homeWordmark?.style.setProperty("--mark-deep-x", "0px");
+      homeWordmark?.style.setProperty("--mark-deep-y", "0px");
       drawHomeField();
     } else {
       requestAmbientPaint();

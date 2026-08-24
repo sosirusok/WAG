@@ -89,7 +89,7 @@ const renderImage = (project, options = {}) => {
   return `<img src="${escapeHtml(image)}" alt="${escapeHtml(project.imageAlt || project.title)}" decoding="async"${priority}>`;
 };
 
-const renderHomeServiceCards = () => data.services.map((service) => `<a class="scope-ledger-item reveal" href="services/#${escapeHtml(service.id)}"><span>${escapeHtml(service.number)}</span><h3>${escapeHtml(service.title)}</h3><p>${escapeHtml(service.subtitle)}</p><i aria-hidden="true">↗</i></a>`).join("");
+const renderHomeServiceCards = () => data.services.map((service) => `<a class="home-offering reveal" href="services/#${escapeHtml(service.id)}" data-home-offering><span>${escapeHtml(service.number)}</span><div><h3>${escapeHtml(service.title)}</h3><p>${escapeHtml(service.subtitle)}</p></div><i aria-hidden="true">↗</i></a>`).join("");
 
 const renderHomeContactBackdrop = () => {
   return '<img src="assets/swag-hero-atmosphere.webp" alt="" loading="lazy" decoding="async">';
