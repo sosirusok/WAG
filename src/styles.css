@@ -30,6 +30,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
   background: var(--paper);
   color: var(--ink);
   text-size-adjust: 100%;

@@ -22,7 +22,7 @@ required(data?.meta?.description, "meta.description");
 required(data?.brand?.name, "brand.name");
 required(data?.brand?.description, "brand.description");
 required(data?.contact?.phone, "contact.phone");
-if (data?.meta?.version !== 42) errors.push("meta.version must be 42 for this release");
+if (data?.meta?.version !== 43) errors.push("meta.version must be 43 for this release");
 
 try {
   const kakao = new URL(data?.contact?.kakao);
@@ -148,7 +148,7 @@ if (!/:focus-visible\b/.test(css)) errors.push("visible keyboard focus styles ar
 
 const tinyFonts = [...css.matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/gi)].filter((match) => Number(match[1]) < 14);
 if (tinyFonts.length) errors.push(`CSS contains ${tinyFonts.length} font sizes below 14px`);
-if (!/#ff4b1f\b/i.test(css)) errors.push("v42 signal-orange accent is missing");
+if (!/#ff4b1f\b/i.test(css)) errors.push("v43 signal-orange accent is missing");
 
 const revealCount = (sourceText.match(/data-reveal/g) || []).length;
 if (revealCount < 16) errors.push(`motion coverage is too low: ${revealCount}`);
