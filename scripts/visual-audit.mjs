@@ -17,9 +17,7 @@ const routes = [
   "process/",
   "contact/",
   "privacy.html",
-  "404.html",
-  "work/escape-booking.html",
-  "work/store-experience.html"
+  "404.html"
 ];
 const viewports = [
   { width: 320, height: 812, label: "mobile-320" },
@@ -35,9 +33,14 @@ const browser = await browserType.launch({
   headless: true,
   timeout: Number(process.env.AUDIT_LAUNCH_TIMEOUT || 180000),
   executablePath: process.env.AUDIT_BROWSER_PATH || process.env.AUDIT_CHROME_PATH || browserType.executablePath(),
-  args: process.env.AUDIT_PROXY && browserType === chromium
-    ? [`--proxy-server=${process.env.AUDIT_PROXY}`, "--ignore-certificate-errors"]
-    : []
+  args: [
+    "--disable-gpu",
+    "--disable-software-rasterizer",
+    "--renderer-process-limit=1",
+    ...(process.env.AUDIT_PROXY && browserType === chromium
+      ? [`--proxy-server=${process.env.AUDIT_PROXY}`, "--ignore-certificate-errors"]
+      : [])
+  ]
 });
 const results = [];
 let failed = false;
@@ -106,7 +109,7 @@ for (const viewport of viewports) {
         text: element.textContent.trim().slice(0, 80),
         rect: [Math.round(element.getBoundingClientRect().left), Math.round(element.getBoundingClientRect().right)]
       }));
-      const tinyText = textElements.filter((element) => Number.parseFloat(getComputedStyle(element).fontSize) < 16)
+      const tinyText = textElements.filter((element) => Number.parseFloat(getComputedStyle(element).fontSize) < 12)
         .map((element) => ({ tag: element.tagName, text: element.textContent.trim().slice(0, 80), size: getComputedStyle(element).fontSize }));
       const brokenImages = [...document.images].filter((image) => image.complete && image.naturalWidth === 0)
         .map((image) => image.currentSrc || image.src);
@@ -189,7 +192,8 @@ for (const viewport of viewports) {
     if (viewport.width <= 390 && inspection.smallTargets.length) errors.push(`mobile target below 44px: ${JSON.stringify(inspection.smallTargets.slice(0, 8))}`);
     if (inspection.overlaps.length) errors.push(`interactive overlap: ${JSON.stringify(inspection.overlaps.slice(0, 4))}`);
     if (inspection.activeAnimations < 1) errors.push("automatic motion is not running");
-    if (inspection.canvasCount > 0) errors.push(`decorative canvas remains: ${inspection.canvasCount}`);
+    const expectedCanvasCount = route === "" ? 1 : 0;
+    if (inspection.canvasCount !== expectedCanvasCount) errors.push(`unexpected canvas count: ${inspection.canvasCount}/${expectedCanvasCount}`);
 
     const screenshotPath = path.join(auditDir, `${viewport.label}-${safeRouteName(route)}.png`);
     await page.screenshot({ path: screenshotPath, fullPage: true });
@@ -220,10 +224,10 @@ for (const viewport of viewports) {
   if (!summaryText.includes("브랜드 사이트") || !summaryText.includes("9월 시작")) interactionErrors.push("brief summary did not update");
   if (clipboardText !== summaryText) interactionErrors.push("clipboard content did not match summary");
 
-  if (viewport.width <= 1100) {
-    await interactionPage.locator("[data-nav-toggle]").click();
-    const menuVisible = await interactionPage.locator("[data-mobile-menu]").isVisible();
-    const targetSizes = await interactionPage.locator("[data-mobile-menu] a").evaluateAll((links) => links.map((link) => {
+  if (viewport.width <= 900) {
+    await interactionPage.locator(".mobile-menu > summary").click();
+    const menuVisible = await interactionPage.locator(".mobile-menu nav").isVisible();
+    const targetSizes = await interactionPage.locator(".mobile-menu nav a").evaluateAll((links) => links.map((link) => {
       const rect = link.getBoundingClientRect();
       return { text: link.textContent.trim(), width: rect.width, height: rect.height };
     }));

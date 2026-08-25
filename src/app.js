@@ -7,6 +7,7 @@ document.querySelectorAll("[data-year]").forEach((item) => {
 
 root.classList.add("motion-ready");
 const revealItems = [...document.querySelectorAll("[data-reveal]")];
+revealItems.forEach((item, index) => item.style.setProperty("--reveal-order", String(index % 6)));
 
 if (reducedMotion || !("IntersectionObserver" in window)) {
   revealItems.forEach((item) => item.classList.add("is-visible"));
@@ -17,44 +18,167 @@ if (reducedMotion || !("IntersectionObserver" in window)) {
       entry.target.classList.add("is-visible");
       observer.unobserve(entry.target);
     });
-  }, { threshold: 0.12, rootMargin: "0px 0px -8%" });
+  }, { threshold: 0.1, rootMargin: "0px 0px -6%" });
   revealItems.forEach((item) => revealObserver.observe(item));
 }
 
 const header = document.querySelector("[data-header]");
-const updateScroll = () => {
-  header?.classList.toggle("is-scrolled", window.scrollY > 18);
+const impactHero = document.querySelector("[data-impact-hero]");
+const wordmark = document.querySelector("[data-wordmark]");
+let scrollFrame = 0;
+
+const paintScroll = () => {
+  const scrollTop = window.scrollY;
+  header?.classList.toggle("is-scrolled", scrollTop > 18);
   const distance = document.documentElement.scrollHeight - window.innerHeight;
-  root.style.setProperty("--scroll-progress", String(distance > 0 ? Math.min(1, window.scrollY / distance) : 0));
-};
-updateScroll();
-window.addEventListener("scroll", updateScroll, { passive: true });
-
-const hero = document.querySelector(".hero");
-const heroStage = document.querySelector(".hero-stage");
-let pointerFrame = 0;
-let pointerX = 50;
-let pointerY = 40;
-
-const paintPointer = () => {
-  if (heroStage && !reducedMotion) {
-    heroStage.style.setProperty("--stage-x", `${(pointerX - 50) * 0.035}px`);
-    heroStage.style.setProperty("--stage-y", `${(pointerY - 50) * 0.035}px`);
+  root.style.setProperty("--scroll-progress", String(distance > 0 ? Math.min(1, scrollTop / distance) : 0));
+  if (impactHero) {
+    const heroProgress = Math.min(1, scrollTop / Math.max(1, impactHero.offsetHeight));
+    root.style.setProperty("--hero-scroll", String(heroProgress));
+    root.style.setProperty("--hero-shift", `${heroProgress * 30}px`);
   }
-  pointerFrame = 0;
+  scrollFrame = 0;
 };
 
-hero?.addEventListener("pointermove", (event) => {
-  if (event.pointerType === "touch") return;
-  const bounds = hero.getBoundingClientRect();
-  pointerX = ((event.clientX - bounds.left) / bounds.width) * 100;
-  pointerY = ((event.clientY - bounds.top) / bounds.height) * 100;
-  if (!pointerFrame) pointerFrame = window.requestAnimationFrame(paintPointer);
-}, { passive: true });
+const requestScrollPaint = () => {
+  if (!scrollFrame) scrollFrame = window.requestAnimationFrame(paintScroll);
+};
+
+paintScroll();
+window.addEventListener("scroll", requestScrollPaint, { passive: true });
+window.addEventListener("resize", requestScrollPaint, { passive: true });
 
 document.querySelectorAll(".mobile-menu nav a").forEach((link) => {
   link.addEventListener("click", () => link.closest("details")?.removeAttribute("open"));
 });
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  document.querySelectorAll(".mobile-menu[open]").forEach((menu) => menu.removeAttribute("open"));
+});
+
+let pointerFrame = 0;
+let pointerX = 0;
+let pointerY = 0;
+
+const paintPointer = () => {
+  wordmark?.style.setProperty("--wordmark-x", `${pointerX}px`);
+  wordmark?.style.setProperty("--wordmark-y", `${pointerY}px`);
+  pointerFrame = 0;
+};
+
+impactHero?.addEventListener("pointermove", (event) => {
+  if (reducedMotion || event.pointerType === "touch") return;
+  const bounds = impactHero.getBoundingClientRect();
+  pointerX = ((event.clientX - bounds.left) / bounds.width - 0.5) * 12;
+  pointerY = ((event.clientY - bounds.top) / bounds.height - 0.5) * 8;
+  if (!pointerFrame) pointerFrame = window.requestAnimationFrame(paintPointer);
+}, { passive: true });
+
+impactHero?.addEventListener("pointerleave", () => {
+  pointerX = 0;
+  pointerY = 0;
+  if (!pointerFrame) pointerFrame = window.requestAnimationFrame(paintPointer);
+}, { passive: true });
+
+const canvas = document.querySelector("[data-impact-canvas]");
+
+if (canvas) {
+  const context = canvas.getContext("2d", { alpha: true });
+  const contours = Array.from({ length: 12 }, (_, index) => ({
+    phase: index * 0.63,
+    speed: 0.00012 + (index % 4) * 0.000018,
+    amplitude: 22 + (index % 5) * 9,
+    offset: index / 11,
+    width: index % 4 === 0 ? 1.4 : 0.75,
+    accent: index === 3 || index === 9
+  }));
+  let canvasWidth = 1;
+  let canvasHeight = 1;
+  let frame = 0;
+  let active = true;
+  const pointer = { x: 0.5, y: 0.5, active: false };
+
+  const resizeCanvas = () => {
+    const bounds = canvas.getBoundingClientRect();
+    const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+    canvasWidth = Math.max(1, Math.round(bounds.width));
+    canvasHeight = Math.max(1, Math.round(bounds.height));
+    canvas.width = Math.round(canvasWidth * ratio);
+    canvas.height = Math.round(canvasHeight * ratio);
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+  };
+
+  const drawCanvas = (time = 0) => {
+    context.clearRect(0, 0, canvasWidth, canvasHeight);
+
+    const scan = ((time * 0.035) % (canvasWidth + 360)) - 180;
+    const scanGradient = context.createLinearGradient(scan - 180, 0, scan + 180, 0);
+    scanGradient.addColorStop(0, "rgba(201,52,0,0)");
+    scanGradient.addColorStop(0.5, "rgba(201,52,0,0.075)");
+    scanGradient.addColorStop(1, "rgba(201,52,0,0)");
+    context.fillStyle = scanGradient;
+    context.fillRect(scan - 180, 0, 360, canvasHeight);
+
+    contours.forEach((contour, index) => {
+      const baseY = canvasHeight * (0.15 + contour.offset * 0.72);
+      const pull = pointer.active ? (pointer.y - 0.5) * 38 * Math.max(0, 1 - Math.abs(contour.offset - pointer.y)) : 0;
+      context.beginPath();
+      for (let step = 0; step <= 72; step += 1) {
+        const progress = step / 72;
+        const x = progress * canvasWidth;
+        const wave = Math.sin(progress * 8.2 + contour.phase + time * contour.speed) * contour.amplitude;
+        const cross = Math.cos(progress * 3.6 - contour.phase + time * contour.speed * 0.7) * 12;
+        const localPull = pointer.active ? Math.max(0, 1 - Math.abs(progress - pointer.x) * 4) * pull : 0;
+        const y = baseY + wave + cross + localPull;
+        if (step === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
+      }
+      context.strokeStyle = contour.accent
+        ? `rgba(201,52,0,${0.18 + (index % 3) * 0.035})`
+        : `rgba(10,10,10,${0.065 + (index % 4) * 0.018})`;
+      context.lineWidth = contour.width;
+      context.stroke();
+    });
+
+    for (let column = 0; column < 7; column += 1) {
+      const travel = (time * (0.018 + column * 0.0015) + column * 173) % (canvasWidth + 260) - 130;
+      context.fillStyle = column % 3 === 0 ? "rgba(201,52,0,0.045)" : "rgba(0,0,0,0.025)";
+      context.fillRect(travel, 0, column % 3 === 0 ? 2 : 1, canvasHeight);
+    }
+
+    if (!reducedMotion && active) frame = window.requestAnimationFrame(drawCanvas);
+  };
+
+  impactHero?.addEventListener("pointermove", (event) => {
+    const bounds = impactHero.getBoundingClientRect();
+    pointer.x = (event.clientX - bounds.left) / bounds.width;
+    pointer.y = (event.clientY - bounds.top) / bounds.height;
+    pointer.active = event.pointerType !== "touch";
+  }, { passive: true });
+
+  impactHero?.addEventListener("pointerleave", () => {
+    pointer.active = false;
+  }, { passive: true });
+
+  document.addEventListener("visibilitychange", () => {
+    active = !document.hidden;
+    if (active && !reducedMotion && !frame) frame = window.requestAnimationFrame(drawCanvas);
+    if (!active && frame) {
+      window.cancelAnimationFrame(frame);
+      frame = 0;
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    resizeCanvas();
+    if (reducedMotion) drawCanvas(0);
+  }, { passive: true });
+
+  resizeCanvas();
+  if (reducedMotion) drawCanvas(0);
+  else frame = window.requestAnimationFrame(drawCanvas);
+}
 
 const briefBuilder = document.querySelector("[data-brief-builder]");
 
@@ -101,24 +225,20 @@ if (briefBuilder) {
   schedule?.addEventListener("input", updateBrief);
 
   const queryType = new URLSearchParams(window.location.search).get("type");
-  if (queryType) {
-    const matched = choiceButtons.find((button) => button.dataset.briefKey === queryType);
-    matched?.click();
-  } else {
-    updateBrief();
-  }
+  if (queryType) choiceButtons.find((button) => button.dataset.briefKey === queryType)?.click();
+  else updateBrief();
 
   copyButton?.addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(summary.textContent);
-      copyButton.textContent = "복사했습니다";
-      status.textContent = "카카오 대화창에 붙여 넣으면 됩니다.";
+      copyButton.textContent = "복사 완료";
+      status.textContent = "카카오 대화창에 붙여 넣을 수 있습니다.";
       window.setTimeout(() => {
         copyButton.textContent = "내용 복사하기";
         status.textContent = "";
       }, 2200);
     } catch {
-      status.textContent = "복사하지 못했습니다. 내용을 직접 선택해 복사해 주세요.";
+      status.textContent = "내용을 직접 선택해 복사해 주세요.";
     }
   });
 }
