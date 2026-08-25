@@ -305,7 +305,16 @@ await writePage("404.template.html", "404.html", {
 
 await cp(path.join(source, "styles.css"), path.join(output, "styles.css"));
 await cp(path.join(source, "app.js"), path.join(output, "app.js"));
-await cp(path.join(source, "assets"), path.join(output, "assets"), { recursive: true });
+for (const asset of [
+  "favicon.svg",
+  "WantedSansVariable.woff2",
+  "swag-hero-brand.png",
+  "swag-og.png",
+  "case-catharsis.jpg",
+  "case-crimescene.jpg"
+]) {
+  await cp(path.join(source, "assets", asset), path.join(output, "assets", asset));
+}
 
 const version = {
   commitSha: process.env.GITHUB_SHA || "local",

@@ -1,4 +1,4 @@
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, readdir } from "node:fs/promises";
 
 const root = new URL("../", import.meta.url);
 const data = JSON.parse(await readFile(new URL("data/site.json", root), "utf8"));
@@ -60,15 +60,21 @@ if (capabilityGroups.length < 3) errors.push("at least three capability groups a
 if (processSteps.length < 4) errors.push("at least four process stages are required");
 if (faqItems.length < 4) errors.push("at least four FAQ items are required");
 
-for (const asset of [
-  "src/assets/favicon.svg",
-  "src/assets/WantedSansVariable.woff2",
-  "src/assets/swag-hero-brand.png",
-  "src/assets/swag-og.png",
-  "src/assets/case-catharsis.jpg",
-  "src/assets/case-crimescene.jpg"
-]) {
-  if (!await fileExists(asset)) errors.push(`missing required asset: ${asset}`);
+const requiredAssets = [
+  "WantedSansVariable.woff2",
+  "case-catharsis.jpg",
+  "case-crimescene.jpg",
+  "favicon.svg",
+  "swag-hero-brand.png",
+  "swag-og.png"
+];
+for (const asset of requiredAssets) {
+  if (!await fileExists(`src/assets/${asset}`)) errors.push(`missing required asset: src/assets/${asset}`);
+}
+const actualAssets = (await readdir(new URL("src/assets/", root))).sort();
+const unexpectedAssets = actualAssets.filter((asset) => !requiredAssets.includes(asset));
+if (unexpectedAssets.length) {
+  errors.push(`unexpected legacy assets found: ${unexpectedAssets.join(", ")}`);
 }
 
 const activeSources = [
