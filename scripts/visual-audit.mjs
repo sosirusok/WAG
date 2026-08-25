@@ -150,6 +150,28 @@ for (const viewport of viewports) {
         }
       }
       const koreanElement = textElements.find((element) => /[가-힣]/.test(element.textContent));
+      const glyphCanvas = document.createElement("canvas");
+      glyphCanvas.width = 72;
+      glyphCanvas.height = 72;
+      const glyphContext = glyphCanvas.getContext("2d", { willReadFrequently: true });
+      const glyphSignature = (character) => {
+        if (!glyphContext) return "";
+        glyphContext.clearRect(0, 0, 72, 72);
+        glyphContext.fillStyle = "#000";
+        glyphContext.font = '52px "SWAG Grotesk"';
+        glyphContext.textBaseline = "top";
+        glyphContext.fillText(character, 4, 4);
+        const pixels = glyphContext.getImageData(0, 0, 72, 72).data;
+        let hash = 2166136261;
+        for (let index = 3; index < pixels.length; index += 4) {
+          hash ^= pixels[index];
+          hash = Math.imul(hash, 16777619);
+        }
+        return String(hash >>> 0);
+      };
+      const missingSignatures = new Set([glyphSignature("\u0378"), glyphSignature("\uFFFF")]);
+      const koreanCharacters = [...new Set([...document.body.innerText].filter((character) => /[가-힣]/.test(character)))];
+      const missingGlyphs = koreanCharacters.filter((character) => missingSignatures.has(glyphSignature(character)));
       const sampleCardTitle = document.querySelector(".work-entry h2");
       let longTitleSafe = true;
       if (sampleCardTitle) {
@@ -168,6 +190,7 @@ for (const viewport of viewports) {
         clientWidth: document.documentElement.clientWidth,
         fontReady: document.fonts.status === "loaded",
         koreanFont: koreanElement ? getComputedStyle(koreanElement).fontFamily : "",
+        missingGlyphs,
         longTitleSafe,
         clippedText,
         offscreenText,
@@ -185,7 +208,8 @@ for (const viewport of viewports) {
     if (!inspection.h1) errors.push("missing h1");
     if (inspection.bodyLength < 80) errors.push("page content is unexpectedly short");
     if (inspection.scrollWidth > inspection.clientWidth + 1) errors.push(`horizontal overflow: ${inspection.scrollWidth}/${inspection.clientWidth}`);
-    if (!inspection.fontReady || /Plex KR|IBMPlex/i.test(inspection.koreanFont)) errors.push(`font state is invalid: ${inspection.koreanFont}`);
+    if (!inspection.fontReady || !/SWAG Grotesk/i.test(inspection.koreanFont) || /Plex KR|IBMPlex/i.test(inspection.koreanFont)) errors.push(`font state is invalid: ${inspection.koreanFont}`);
+    if (inspection.missingGlyphs.length) errors.push(`missing Korean glyphs: ${inspection.missingGlyphs.join("")}`);
     if (!inspection.longTitleSafe) errors.push("long Korean title overflowed its project card");
     if (inspection.clippedText.length) errors.push(`clipped text: ${JSON.stringify(inspection.clippedText.slice(0, 4))}`);
     if (inspection.offscreenText.length) errors.push(`offscreen text: ${JSON.stringify(inspection.offscreenText.slice(0, 4))}`);
@@ -198,7 +222,9 @@ for (const viewport of viewports) {
     if (inspection.canvasCount !== expectedCanvasCount) errors.push(`unexpected canvas count: ${inspection.canvasCount}/${expectedCanvasCount}`);
 
     const screenshotPath = path.join(auditDir, `${viewport.label}-${safeRouteName(route)}.png`);
-    await page.screenshot({ path: screenshotPath, fullPage: true });
+    const screenshot = await page.screenshot({ path: screenshotPath, fullPage: true });
+    const screenshotWidth = screenshot.readUInt32BE(16);
+    if (screenshotWidth > viewport.width + 1) errors.push(`paint overflow: ${screenshotWidth}/${viewport.width}`);
 
     results.push({
       viewport: viewport.label,
@@ -206,6 +232,7 @@ for (const viewport of viewports) {
       status: response?.status() || 0,
       screenshotPath,
       inspection,
+      screenshotWidth,
       errors
     });
     if (errors.length) failed = true;

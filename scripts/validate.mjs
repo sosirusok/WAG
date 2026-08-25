@@ -22,7 +22,7 @@ required(data?.meta?.description, "meta.description");
 required(data?.brand?.name, "brand.name");
 required(data?.brand?.description, "brand.description");
 required(data?.contact?.phone, "contact.phone");
-if (data?.meta?.version !== 43) errors.push("meta.version must be 43 for this release");
+if (data?.meta?.version !== 44) errors.push("meta.version must be 44 for this release");
 
 try {
   const kakao = new URL(data?.contact?.kakao);
@@ -84,16 +84,17 @@ for (const [index, item] of faqItems.entries()) {
 }
 
 const requiredAssets = [
-  "accent-exposure-v1.webp",
+  "accent-signal-drag-v1.webp",
   "case-catharsis.jpg",
   "case-crimescene.jpg",
-  "swag-og-v4.png",
+  "swag-og-v5.png",
   "swag-lockup-dark-v4.svg",
   "swag-lockup-light-v4.svg",
   "swag-symbol-v4.svg",
-  "swag-square-v1.woff",
-  "swag-square-OFL-1.1.txt",
+  "swag-grotesk-v1.woff2",
+  "swag-grotesk-LICENSE.txt",
   "texture-ink-drag-v1.webp",
+  "texture-xerox-rip-v1.webp",
   "texture-shutter-v1.webp",
   "texture-toner-field-v1.webp"
 ];
@@ -130,7 +131,7 @@ const bannedPatterns = [
   [/>\s*0[1-9]\s*</g, "visible arbitrary numbering"],
   [/(?:맑은\s*고딕|Malgun Gothic|Dotum|돋움|Gulim|굴림)/gi, "legacy system font"],
   [/#(?:4254ff|2436d9|00c7f2|9d7cff|e9edff|e5faff|f0ebff|007eec|008fe9|16275b|142461|6576ff|7584ff)\b/gi, "legacy blue, cyan, or violet palette"],
-  [/swag-symbol-v2|WantedSansVariable|swag-hero-brand/gi, "legacy brand asset"],
+  [/swag-symbol-v2|WantedSansVariable|swag-square-v1|swag-hero-brand|swag-og-v4/gi, "legacy brand asset or font"],
   [/(?:SUIT-Variable|Paperlogy-8ExtraBold|swag-monogram-v3|swag-wordmark-v3|swag-og\.png)/gi, "retired v3 brand or font asset"],
   [/김의현/g, "personal name"],
   [/\bkhaki\b/gi, "khaki palette"]
@@ -148,7 +149,13 @@ if (!/:focus-visible\b/.test(css)) errors.push("visible keyboard focus styles ar
 
 const tinyFonts = [...css.matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/gi)].filter((match) => Number(match[1]) < 14);
 if (tinyFonts.length) errors.push(`CSS contains ${tinyFonts.length} font sizes below 14px`);
-if (!/#ff4b1f\b/i.test(css)) errors.push("v43 signal-orange accent is missing");
+if (!/#ed1c24\b/i.test(css)) errors.push("v44 signal-red accent is missing");
+
+for (const logoAsset of ["swag-lockup-dark-v4.svg", "swag-lockup-light-v4.svg", "swag-symbol-v4.svg"]) {
+  const logoSource = await readFile(new URL(`src/assets/${logoAsset}`, root), "utf8");
+  if (!/#ed1c24\b/i.test(logoSource)) errors.push(`${logoAsset} is missing the v44 signal-red accent`);
+  if (/#ff4b1f\b/i.test(logoSource)) errors.push(`${logoAsset} still contains the retired orange accent`);
+}
 
 const revealCount = (sourceText.match(/data-reveal/g) || []).length;
 if (revealCount < 16) errors.push(`motion coverage is too low: ${revealCount}`);
@@ -166,7 +173,7 @@ if (!/제작 분야[\s\S]*프로젝트[\s\S]*진행 방식[\s\S]*스튜디오[\s
 }
 
 const aboutSource = await readFile(new URL("src/about.template.html", root), "utf8");
-for (const fact of ["웹사이트", "앱", "브라우저 게임", "운영 도구", "실제 기기"]) {
+for (const fact of ["웹사이트", "앱", "브라우저 게임", "운영 도구", "휴대폰과 PC"]) {
   if (!aboutSource.includes(fact)) errors.push(`about page is missing required fact: ${fact}`);
 }
 

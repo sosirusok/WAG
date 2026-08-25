@@ -28,9 +28,10 @@
   <main id="main">
     <header class="page-hero page-hero-work" data-flash>
       <img class="page-hero-material" src="assets/texture-ink-drag-v1.webp" alt="" width="1800" height="594" data-parallax aria-hidden="true">
+      <img class="page-signal" src="assets/accent-signal-drag-v1.webp" alt="" width="1800" height="600" aria-hidden="true">
       <div class="shell">
         <p class="eyebrow" data-reveal>{{PROJECT_CATEGORY}} / {{PROJECT_YEAR}}</p>
-        <h1 data-reveal>{{PROJECT_TITLE}}</h1>
+        <h1 data-reveal data-impact-title data-echo="{{PROJECT_TITLE}}">{{PROJECT_TITLE}}</h1>
         <p class="page-lead" data-reveal>{{PROJECT_SUMMARY}}</p>
       </div>
     </header>
@@ -38,7 +39,6 @@
     <section class="work-feed shell" aria-label="프로젝트 작업 기록">
       <article class="case-study">
         <div class="case-browser" data-reveal data-shutter>
-          <span class="browser-top"><b>PROJECT VIEW</b><span>{{PROJECT_YEAR}}</span></span>
           <figure>{{PROJECT_IMAGE}}</figure>
         </div>
         <div class="case-copy" data-reveal>
@@ -55,7 +55,7 @@
     <nav class="project-invite shell" aria-label="다음 프로젝트" data-reveal data-shutter>
       <img src="assets/texture-shutter-v1.webp" alt="" width="1800" height="600" loading="lazy" aria-hidden="true">
       <p>NEXT PROJECT</p>
-      <h2>다음 작업 이어서 보기</h2>
+      <h2 data-impact-title data-echo="다음 작업 이어서 보기">다음 작업 이어서 보기</h2>
       {{NEXT_PROJECT}}
     </nav>
   </main>

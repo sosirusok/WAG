@@ -47,7 +47,7 @@ const normalizedSiteUrl = (() => {
 const pageUrl = (relative = "") => new URL(relative, normalizedSiteUrl).href;
 const kakaoUrl = safeHttpUrl(data.contact.kakao);
 const phoneDigits = data.contact.phone.replace(/\D/g, "");
-const ogUrl = pageUrl("assets/swag-og-v4.png");
+const ogUrl = pageUrl("assets/swag-og-v5.png");
 
 const publicProjects = data.projects
   .filter((project) => project.published)
@@ -106,8 +106,8 @@ const renderWorkList = () => publicProjects.map((project, index) => {
   return `
   <article class="case-study" data-reveal>
     <a class="case-browser" href="${detailUrl}" aria-label="${escapeHtml(project.title)} 프로젝트 보기" data-shutter>
-      <span class="browser-top"><b>PROJECT</b><span>${escapeHtml(project.year)}</span></span>
       <figure>${renderImage(project, { priority: index === 0 })}</figure>
+      <span class="case-open" aria-hidden="true">OPEN PROJECT ↗</span>
     </a>
     <div class="case-copy">
       <p class="case-type">${escapeHtml(project.category)}</p>
@@ -138,11 +138,10 @@ const renderHomeProjects = () => publicProjects.map((project, index) => {
 }).join("");
 
 const renderServiceChapters = () => data.services.map((service) => `
-  <article id="${escapeHtml(service.id)}" data-reveal>
-    <header><p>${escapeHtml(service.short)}</p><h2>${escapeHtml(service.title)}</h2><span>${escapeHtml(service.description)}</span></header>
+  <article id="${escapeHtml(service.id)}" data-reveal data-service-scene data-title="${escapeHtml(service.title)}">
+    <header><p>${escapeHtml(service.short)}</p><h2 data-impact-title data-echo="${escapeHtml(service.title)}">${escapeHtml(service.title)}</h2><span>${escapeHtml(service.description)}</span></header>
     <div class="service-body">
-      <div><h3>핵심 구성</h3><ul>${service.items.slice(0, 3).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
-      <div><h3>연동과 운영</h3><ul class="option-list">${service.items.slice(3).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
+      <ul class="service-list">${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
       <a class="service-link" href="contact/?type=${escapeHtml(service.id)}">견적 문의 <i aria-hidden="true">↗</i></a>
     </div>
   </article>`).join("");
@@ -157,9 +156,9 @@ const renderPlannerFeatures = () => data.capabilities.map((item) => `
   <button type="button" aria-pressed="false" data-brief-choice data-brief-group="필요 기능" data-brief-value="${escapeHtml(item)}">${escapeHtml(item)}</button>`).join("");
 
 const renderProcess = () => data.process.map((item) => `
-  <article data-reveal>
-    <div><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description)}</p></div>
-    <aside><b>확인 항목</b><p>${escapeHtml(item.result)}</p></aside>
+  <article data-reveal data-title="${escapeHtml(item.title)}">
+    <div><h2 data-impact-title data-echo="${escapeHtml(item.title)}">${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description)}</p></div>
+    <p class="process-outcome">${escapeHtml(item.result)}</p>
   </article>`).join("");
 
 const renderProcessFlow = () => data.process.map((item) => `<span>${escapeHtml(item.title)}</span>`).join("");
@@ -322,14 +321,15 @@ await writePage("404.template.html", "404.html", {
 await cp(path.join(source, "styles.css"), path.join(output, "styles.css"));
 await cp(path.join(source, "app.js"), path.join(output, "app.js"));
 for (const asset of [
-  "accent-exposure-v1.webp",
-  "swag-og-v4.png",
+  "accent-signal-drag-v1.webp",
+  "swag-og-v5.png",
   "swag-lockup-dark-v4.svg",
   "swag-lockup-light-v4.svg",
   "swag-symbol-v4.svg",
-  "swag-square-v1.woff",
-  "swag-square-OFL-1.1.txt",
+  "swag-grotesk-v1.woff2",
+  "swag-grotesk-LICENSE.txt",
   "texture-ink-drag-v1.webp",
+  "texture-xerox-rip-v1.webp",
   "texture-shutter-v1.webp",
   "texture-toner-field-v1.webp",
   "case-catharsis.jpg",

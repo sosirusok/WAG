@@ -19,6 +19,7 @@
   <link rel="icon" href="assets/swag-symbol-v4.svg" type="image/svg+xml">
   <link rel="preload" href="assets/swag-lockup-dark-v4.svg" as="image" type="image/svg+xml" fetchpriority="high">
   <link rel="preload" href="assets/texture-ink-drag-v1.webp" as="image" type="image/webp">
+  <link rel="preload" href="assets/texture-xerox-rip-v1.webp" as="image" type="image/webp">
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -31,15 +32,15 @@
     <section class="brand-hero" data-impact-hero data-flash>
       <canvas class="impact-canvas" data-impact-canvas aria-hidden="true"></canvas>
       <img class="hero-ink" src="assets/texture-ink-drag-v1.webp" alt="" width="1800" height="594" fetchpriority="high" data-parallax aria-hidden="true">
-      <img class="hero-exposure" src="assets/accent-exposure-v1.webp" alt="" width="1600" height="800" aria-hidden="true">
-      <div class="hero-rail shell" aria-hidden="true"><span>SWAG / DIGITAL BUILD STUDIO</span><span>BUSAN · AVAILABLE WORLDWIDE</span></div>
+      <img class="hero-signal-drag" src="assets/accent-signal-drag-v1.webp" alt="" width="1800" height="600" aria-hidden="true">
+      <div class="hero-rail shell" aria-hidden="true"><span>SWAG / DIGITAL BUILD STUDIO</span><span>DESIGN · CODE · MOTION</span></div>
       <div class="hero-core shell">
-        <h1 class="hero-logo" data-reveal data-shutter>
+        <h1 class="hero-logo" data-reveal data-shutter data-impact-title data-echo="SWAG">
           <img src="assets/swag-lockup-dark-v4.svg" alt="SWAG" width="500" height="100" fetchpriority="high">
           <span class="visually-hidden">웹, 앱, 게임과 운영 시스템을 만드는 SWAG</span>
         </h1>
         <div class="hero-copy" data-reveal>
-          <p>웹과 앱, 게임, 운영 도구를 만듭니다.</p>
+          <p><span>웹사이트, 앱, 게임, 운영 도구.</span> 보기부터 작동까지 제대로 만듭니다.</p>
           <div class="hero-actions">
             <a class="button button-dark" href="work/">프로젝트 보기 <i aria-hidden="true">↗</i></a>
             <a class="text-link" href="contact/">새 프로젝트 문의 <i aria-hidden="true">↗</i></a>
@@ -59,7 +60,7 @@
     <section class="selected-work shell" id="selected" aria-labelledby="selected-title">
       <header class="editorial-heading" data-reveal>
         <p>SELECTED WORK</p>
-        <h2 id="selected-title">지금 볼 수 있는 작업</h2>
+        <h2 id="selected-title" data-impact-title data-echo="지금 볼 수 있는 작업">지금 볼 수 있는 작업</h2>
         <a class="text-link" href="work/">전체 프로젝트 <i aria-hidden="true">↗</i></a>
       </header>
       <div class="home-projects">{{HOME_PROJECTS}}</div>
@@ -67,9 +68,10 @@
 
     <section class="studio-manifesto" data-flash>
       <img class="manifesto-toner" src="assets/texture-toner-field-v1.webp" alt="" width="1400" height="933" loading="lazy" data-parallax aria-hidden="true">
+      <img class="manifesto-signal" src="assets/accent-signal-drag-v1.webp" alt="" width="1800" height="600" loading="lazy" aria-hidden="true">
       <div class="shell">
         <img class="manifesto-symbol" src="assets/swag-symbol-v4.svg" alt="" width="100" height="100" aria-hidden="true">
-        <p data-reveal>복잡한 설명보다 작동하는 화면으로 보여드립니다.</p>
+        <p data-reveal data-impact-title data-echo="보기 좋고, 제대로 작동하게.">보기 좋고, 제대로 작동하게.</p>
         <div class="manifesto-links" data-reveal>
           <a href="services/"><span>어떤 것을 만드는지</span><i aria-hidden="true">↗</i></a>
           <a href="process/"><span>어떻게 진행하는지</span><i aria-hidden="true">↗</i></a>
@@ -81,7 +83,7 @@
       <img src="assets/texture-shutter-v1.webp" alt="" width="1800" height="600" loading="lazy" aria-hidden="true">
       <div>
         <p>START A PROJECT</p>
-        <h2>만들고 싶은 화면이 있으신가요?</h2>
+        <h2 data-impact-title data-echo="새 사이트나 앱이 필요하신가요?">새 사이트나 앱이 필요하신가요?</h2>
       </div>
       <a class="button button-accent" href="contact/">이야기 나누기 <i aria-hidden="true">↗</i></a>
     </section>

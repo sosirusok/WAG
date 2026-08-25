@@ -18,6 +18,24 @@ document.querySelectorAll("[data-year]").forEach((item) => {
 
 root.classList.add("motion-ready");
 
+const sparkLayer = document.createElement("div");
+sparkLayer.className = "motion-sparks";
+sparkLayer.setAttribute("aria-hidden", "true");
+const sparkPositions = [
+  [7, 82, -3.2, 12.4], [14, 32, -8.7, 10.8], [23, 68, -1.4, 14.1], [31, 16, -6.1, 11.6],
+  [42, 88, -11.2, 13.5], [51, 47, -4.4, 9.8], [59, 74, -9.5, 12.9], [67, 22, -2.3, 10.4],
+  [74, 91, -7.6, 14.6], [81, 56, -12.1, 11.2], [88, 27, -5.2, 13.8], [94, 76, -9.1, 10.1]
+];
+sparkPositions.forEach(([x, y, delay, duration]) => {
+  const spark = document.createElement("i");
+  spark.style.setProperty("--spark-x", `${x}vw`);
+  spark.style.setProperty("--spark-y", `${y}vh`);
+  spark.style.setProperty("--spark-delay", `${delay}s`);
+  spark.style.setProperty("--spark-duration", `${duration}s`);
+  sparkLayer.append(spark);
+});
+document.body.append(sparkLayer);
+
 const revealItems = [...document.querySelectorAll("[data-reveal]")];
 const hiddenRevealItems = new Set(revealItems);
 
@@ -87,6 +105,7 @@ const marqueeItems = [...document.querySelectorAll("[data-marquee]")];
 const parallaxItems = [...document.querySelectorAll("[data-parallax]")];
 const heroMotionItems = [...document.querySelectorAll("[data-impact-hero]")];
 const wordmarkMotionItems = [...document.querySelectorAll("[data-wordmark], .hero-logo")];
+const impactTitleItems = [...document.querySelectorAll("[data-impact-title]")];
 const activeParallax = new Set();
 const flashTimers = new WeakMap();
 
@@ -155,7 +174,8 @@ if (reducedMotion || saveData) {
     ...marqueeItems,
     ...parallaxItems,
     ...heroMotionItems,
-    ...wordmarkMotionItems
+    ...wordmarkMotionItems,
+    ...impactTitleItems
   ])]
     .forEach((item) => effectObserver.observe(item));
 } else {
