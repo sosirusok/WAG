@@ -7,12 +7,13 @@
   <meta name="color-scheme" content="light">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="article">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:title" content="{{PAGE_TITLE}}">
   <meta property="og:description" content="{{PAGE_DESCRIPTION}}">
   <meta property="og:url" content="{{CANONICAL_URL}}">
   <meta property="og:image" content="{{OG_URL}}">
+  <meta name="twitter:card" content="summary_large_image">
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/swag-symbol-v4.svg" type="image/svg+xml">
@@ -21,29 +22,42 @@
   <script>document.documentElement.classList.add("js")</script>
   <script type="application/ld+json">{{STRUCTURED_DATA}}</script>
 </head>
-<body id="top" data-page="work">
+<body id="top" data-page="project">
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
     <header class="page-hero page-hero-work" data-flash>
       <img class="page-hero-material" src="assets/texture-ink-drag-v1.webp" alt="" width="1800" height="594" data-parallax aria-hidden="true">
       <div class="shell">
-        <p class="eyebrow" data-reveal>SELECTED WORK</p>
-        <h1 data-reveal>프로젝트</h1>
-        <p class="page-lead" data-reveal>공개된 화면과 실제 작동 주소를 함께 볼 수 있습니다.</p>
+        <p class="eyebrow" data-reveal>{{PROJECT_CATEGORY}} / {{PROJECT_YEAR}}</p>
+        <h1 data-reveal>{{PROJECT_TITLE}}</h1>
+        <p class="page-lead" data-reveal>{{PROJECT_SUMMARY}}</p>
       </div>
     </header>
 
-    <section class="work-feed shell" aria-label="프로젝트 목록">
-      {{WORK_CARDS}}
+    <section class="work-feed shell" aria-label="프로젝트 작업 기록">
+      <article class="case-study">
+        <div class="case-browser" data-reveal data-shutter>
+          <span class="browser-top"><b>PROJECT VIEW</b><span>{{PROJECT_YEAR}}</span></span>
+          <figure>{{PROJECT_IMAGE}}</figure>
+        </div>
+        <div class="case-copy" data-reveal>
+          <p class="case-type">작업 기록</p>
+          <h2>{{PROJECT_PROBLEM}}</h2>
+          <p class="case-description">{{PROJECT_SOLUTION}}</p>
+          <dl><div><dt>정리한 결과</dt><dd>{{PROJECT_RESULT}}</dd></div></dl>
+          <ul>{{PROJECT_FEATURES}}</ul>
+          {{PROJECT_EXTERNAL}}
+        </div>
+      </article>
     </section>
 
-    <section class="project-invite shell" data-reveal data-shutter>
+    <nav class="project-invite shell" aria-label="다음 프로젝트" data-reveal data-shutter>
       <img src="assets/texture-shutter-v1.webp" alt="" width="1800" height="600" loading="lazy" aria-hidden="true">
-      <p>다음 화면은 무엇인가요?</p>
-      <h2>새 프로젝트를 함께 시작해 보세요.</h2>
-      <a class="button button-accent" href="contact/">프로젝트 문의 <i aria-hidden="true">↗</i></a>
-    </section>
+      <p>NEXT PROJECT</p>
+      <h2>다음 작업 이어서 보기</h2>
+      {{NEXT_PROJECT}}
+    </nav>
   </main>
   {{FOOTER}}
   <script src="app.js" defer></script>

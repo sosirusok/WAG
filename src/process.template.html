@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#F5F5F5">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="color-scheme" content="light">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -14,9 +15,7 @@
   <meta property="og:image" content="{{OG_URL}}">
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
-  <link rel="icon" href="assets/swag-monogram-v3.png" type="image/png">
-  <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/Paperlogy-8ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="icon" href="assets/swag-symbol-v4.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -26,22 +25,30 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <header class="page-intro shell" data-reveal>
-      <p class="page-kicker">PROCESS</p>
-      <h1>진행 방식</h1>
-      <p class="page-description">상담 · 범위 · 기획 · 디자인 · 개발 · 검수 · 배포</p>
-    </header>
-    <section class="process-flow shell" aria-label="프로젝트 진행 흐름">{{PROCESS_FLOW}}</section>
-    <section class="process-list shell">{{PROCESS}}</section>
-    <section class="aftercare shell" data-reveal>
-      <div><p>AFTER LAUNCH</p><h2>배포 후 관리</h2></div>
-      <div><p>운영 주소, 관리자 화면, 계정과 콘텐츠 수정 방법을 함께 확인합니다.</p><p>오류 수정과 기능 추가는 기존 구조를 확인한 뒤 기간과 범위를 정합니다.</p></div>
-    </section>
-    <section class="contact-band" data-reveal>
+    <header class="page-hero page-hero-process" data-flash>
+      <img class="page-hero-material shutter" src="assets/texture-shutter-v1.webp" alt="" width="1800" height="600" data-parallax aria-hidden="true">
       <div class="shell">
-        <div><span>ESTIMATE</span><h2>새 프로젝트 상담</h2><p>제작 종류 · 필요 기능 · 참고 자료 · 희망 일정</p></div>
-        <div><a class="button light" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 <i aria-hidden="true">↗</i></a><a class="phone-link" href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a></div>
+        <p class="eyebrow" data-reveal>HOW WE WORK</p>
+        <h1 data-reveal>진행 방식</h1>
+        <p class="page-lead" data-reveal>처음 정한 목표가 실제 화면에서 흐려지지 않도록, 확인할 장면을 나눠 진행합니다.</p>
       </div>
+    </header>
+
+    <section class="process-run" aria-label="프로젝트 진행 흐름" data-marquee><div aria-hidden="true">{{PROCESS_FLOW}}{{PROCESS_FLOW}}</div></section>
+    <section class="process-story shell">{{PROCESS}}</section>
+
+    <section class="launch-note" data-flash>
+      <img src="assets/texture-toner-field-v1.webp" alt="" width="1400" height="933" loading="lazy" data-parallax aria-hidden="true">
+      <div class="shell" data-reveal>
+        <p>AFTER LAUNCH</p>
+        <h2>공개가 끝이 되지 않도록</h2>
+        <span>배포 직후 발견되는 오류는 확인하고, 이후 보완이나 기능 추가는 필요한 범위를 다시 맞춥니다.</span>
+      </div>
+    </section>
+
+    <section class="simple-cta shell" data-reveal>
+      <p>현재 준비된 내용부터 알려주세요.</p>
+      <a class="button button-accent" href="contact/">상담 시작하기 <i aria-hidden="true">↗</i></a>
     </section>
   </main>
   {{FOOTER}}

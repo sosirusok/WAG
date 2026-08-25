@@ -37,6 +37,7 @@ const normalizedSiteUrl = (() => {
   const candidate = process.env.SITE_URL || "https://sosirusok.github.io/WAG/";
   try {
     const url = new URL(candidate);
+    if (!["http:", "https:"].includes(url.protocol)) throw new Error("unsupported SITE_URL protocol");
     return url.href.endsWith("/") ? url.href : `${url.href}/`;
   } catch {
     return "https://sosirusok.github.io/WAG/";
@@ -46,7 +47,7 @@ const normalizedSiteUrl = (() => {
 const pageUrl = (relative = "") => new URL(relative, normalizedSiteUrl).href;
 const kakaoUrl = safeHttpUrl(data.contact.kakao);
 const phoneDigits = data.contact.phone.replace(/\D/g, "");
-const ogUrl = pageUrl("assets/swag-og.png");
+const ogUrl = pageUrl("assets/swag-og-v4.png");
 
 const publicProjects = data.projects
   .filter((project) => project.published)
@@ -66,7 +67,7 @@ const renderNavLinks = (active, className = "") => navItems.map(([key, label, hr
 ).join("");
 
 const renderBrand = (footer = false) => `<a class="brand${footer ? " brand-footer" : ""}" href="./" aria-label="SWAG 홈">
-  <img src="assets/swag-wordmark-v3.png" alt="SWAG" width="2103" height="748">
+  <img src="assets/${footer ? "swag-lockup-light-v4.svg" : "swag-lockup-dark-v4.svg"}" alt="SWAG" width="500" height="100">
 </a>`;
 
 const renderHeader = (active = "") => `
@@ -87,7 +88,7 @@ const renderFooter = (currentUrl = normalizedSiteUrl) => `
     <div class="footer-top shell">
       <div class="footer-brand">${renderBrand(true)}<p>웹사이트 · 앱 · 브라우저 게임 · 운영 시스템</p></div>
       <nav class="footer-links" aria-label="하단 메뉴">${renderNavLinks("")}</nav>
-      <div class="footer-contact"><span>문의</span><a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a href="tel:${phoneDigits}">김의현 ${escapeHtml(data.contact.phone)}</a></div>
+      <div class="footer-contact"><span>문의</span><a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a href="tel:${phoneDigits}">전화 ${escapeHtml(data.contact.phone)}</a></div>
     </div>
     <div class="footer-bottom shell"><span>© <b data-year>2026</b> SWAG</span><a href="privacy.html">개인정보 처리 안내</a><a href="${escapeHtml(currentUrl)}#top">위로 ↑</a></div>
   </footer>`;
@@ -101,10 +102,11 @@ const renderImage = (entry, options = {}) => {
 
 const renderWorkList = () => publicProjects.map((project, index) => {
   const external = safeHttpUrl(project.url);
+  const detailUrl = `work/${encodeURIComponent(project.id)}.html`;
   return `
   <article class="case-study" data-reveal>
-    <a class="case-browser" href="${escapeHtml(external)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(project.title)} 운영 사이트 열기">
-      <span class="browser-top"><b>LIVE SITE</b><span>${escapeHtml(project.year)}</span></span>
+    <a class="case-browser" href="${detailUrl}" aria-label="${escapeHtml(project.title)} 프로젝트 보기" data-shutter>
+      <span class="browser-top"><b>PROJECT</b><span>${escapeHtml(project.year)}</span></span>
       <figure>${renderImage(project, { priority: index === 0 })}</figure>
     </a>
     <div class="case-copy">
@@ -113,7 +115,24 @@ const renderWorkList = () => publicProjects.map((project, index) => {
       <p class="case-description">${escapeHtml(project.summary)}</p>
       <dl><div><dt>제작 범위</dt><dd>${escapeHtml(project.problem)}</dd></div><div><dt>구현 내용</dt><dd>${escapeHtml(project.solution)}</dd></div></dl>
       <ul>${project.features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}</ul>
+      <a class="case-link" href="${detailUrl}">프로젝트 보기 <i aria-hidden="true">↗</i></a>
       ${external ? `<a class="case-link" href="${escapeHtml(external)}" target="_blank" rel="noopener noreferrer">운영 사이트에서 확인하기 <i aria-hidden="true">↗</i></a>` : ""}
+    </div>
+  </article>`;
+}).join("");
+
+const renderHomeProjects = () => publicProjects.map((project, index) => {
+  const detailUrl = `work/${encodeURIComponent(project.id)}.html`;
+  return `
+  <article class="home-project" data-reveal data-shutter>
+    <a class="home-project-media" href="${detailUrl}" aria-label="${escapeHtml(project.title)} 프로젝트 보기">
+      ${renderImage(project, { priority: index === 0 })}
+    </a>
+    <div class="home-project-copy">
+      <p>${escapeHtml(project.category)}</p>
+      <h3><a href="${detailUrl}">${escapeHtml(project.title)}</a></h3>
+      <span>${escapeHtml(project.summary)}</span>
+      <a class="text-link" href="${detailUrl}">프로젝트 보기 <i aria-hidden="true">↗</i></a>
     </div>
   </article>`;
 }).join("");
@@ -122,9 +141,8 @@ const renderServiceChapters = () => data.services.map((service) => `
   <article id="${escapeHtml(service.id)}" data-reveal>
     <header><p>${escapeHtml(service.short)}</p><h2>${escapeHtml(service.title)}</h2><span>${escapeHtml(service.description)}</span></header>
     <div class="service-body">
-      <div><h3>기본 범위</h3><ul>${service.items.slice(0, 4).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
-      <div><h3>추가 기능</h3><ul class="option-list">${service.items.slice(2).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
-      <p class="operation-note">관리 방식, 외부 계정, 배포 후 수정 범위는 견적 단계에서 확인합니다.</p>
+      <div><h3>핵심 구성</h3><ul>${service.items.slice(0, 3).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
+      <div><h3>연동과 운영</h3><ul class="option-list">${service.items.slice(3).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
       <a class="service-link" href="contact/?type=${escapeHtml(service.id)}">견적 문의 <i aria-hidden="true">↗</i></a>
     </div>
   </article>`).join("");
@@ -212,8 +230,9 @@ await writePage("index.template.html", "index.html", {
   HERO_DESCRIPTION: data.brand.description,
   HERO_HEADLINE: data.brand.headline,
   HERO_PRIMARY_CTA: data.brand.primaryCta,
-  HERO_SECONDARY_CTA: data.brand.secondaryCta
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER"]);
+  HERO_SECONDARY_CTA: data.brand.secondaryCta,
+  HOME_PROJECTS: renderHomeProjects()
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_PROJECTS"]);
 
 await writePage("work.template.html", "work/index.html", {
   PAGE_TITLE: `프로젝트 | ${data.brand.name}`,
@@ -223,6 +242,30 @@ await writePage("work.template.html", "work/index.html", {
   FOOTER: renderFooter(pageUrl("work/")),
   WORK_CARDS: renderWorkList()
 }, ["STRUCTURED_DATA", "HEADER", "FOOTER", "WORK_CARDS"]);
+
+for (const [index, project] of publicProjects.entries()) {
+  const next = publicProjects[(index + 1) % publicProjects.length];
+  const externalUrl = safeHttpUrl(project.url);
+  await writePage("project.template.html", `work/${project.id}.html`, {
+    PAGE_TITLE: `${project.title} | SWAG 프로젝트`,
+    PAGE_DESCRIPTION: project.summary,
+    OG_URL: pageUrl(project.image),
+    CANONICAL_URL: pageUrl(`work/${project.id}.html`),
+    HEADER: renderHeader("work"),
+    FOOTER: renderFooter(pageUrl(`work/${project.id}.html`)),
+    PROJECT_CATEGORY: project.category,
+    PROJECT_YEAR: project.year,
+    PROJECT_TITLE: project.title,
+    PROJECT_SUMMARY: project.summary,
+    PROJECT_IMAGE: renderImage(project, { priority: true }),
+    PROJECT_PROBLEM: project.problem,
+    PROJECT_SOLUTION: project.solution,
+    PROJECT_RESULT: project.result,
+    PROJECT_FEATURES: project.features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join(""),
+    PROJECT_EXTERNAL: externalUrl ? `<a class="text-link" href="${escapeHtml(externalUrl)}" target="_blank" rel="noopener noreferrer">운영 사이트 열기 <i aria-hidden="true">↗</i></a>` : "",
+    NEXT_PROJECT: next ? `<a class="button button-accent" href="work/${escapeHtml(next.id)}.html">${escapeHtml(next.title)} <i aria-hidden="true">↗</i></a>` : ""
+  }, ["STRUCTURED_DATA", "HEADER", "FOOTER", "PROJECT_IMAGE", "PROJECT_FEATURES", "PROJECT_EXTERNAL", "NEXT_PROJECT"]);
+}
 
 await writePage("services.template.html", "services/index.html", {
   PAGE_TITLE: `제작 분야 | ${data.brand.name}`,
@@ -246,7 +289,7 @@ await writePage("process.template.html", "process/index.html", {
 
 await writePage("about.template.html", "about/index.html", {
   PAGE_TITLE: `스튜디오 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "두 명의 프리랜서가 직접 맡는 SWAG의 제작 방식",
+  PAGE_DESCRIPTION: "SWAG의 작업 방식과 제작 기준",
   CANONICAL_URL: pageUrl("about/"),
   HEADER: renderHeader("about"),
   FOOTER: renderFooter(pageUrl("about/"))
@@ -279,11 +322,16 @@ await writePage("404.template.html", "404.html", {
 await cp(path.join(source, "styles.css"), path.join(output, "styles.css"));
 await cp(path.join(source, "app.js"), path.join(output, "app.js"));
 for (const asset of [
-  "SUIT-Variable.woff2",
-  "Paperlogy-8ExtraBold.woff2",
-  "swag-monogram-v3.png",
-  "swag-wordmark-v3.png",
-  "swag-og.png",
+  "accent-exposure-v1.webp",
+  "swag-og-v4.png",
+  "swag-lockup-dark-v4.svg",
+  "swag-lockup-light-v4.svg",
+  "swag-symbol-v4.svg",
+  "swag-square-v1.woff",
+  "swag-square-OFL-1.1.txt",
+  "texture-ink-drag-v1.webp",
+  "texture-shutter-v1.webp",
+  "texture-toner-field-v1.webp",
   "case-catharsis.jpg",
   "case-crimescene.jpg"
 ]) {
@@ -299,7 +347,7 @@ await writeFile(path.join(output, "version.json"), JSON.stringify(version, null,
 await writeFile(path.join(output, ".nojekyll"), "");
 await writeFile(path.join(output, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${pageUrl("sitemap.xml")}\n`);
 
-const sitemapEntries = ["", "services/", "work/", "process/", "about/", "contact/", "privacy.html"];
+const sitemapEntries = ["", "services/", "work/", ...publicProjects.map((project) => `work/${project.id}.html`), "process/", "about/", "contact/", "privacy.html"];
 await writeFile(path.join(output, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${sitemapEntries.map((entry) => `<url><loc>${escapeHtml(pageUrl(entry))}</loc></url>`).join("")}</urlset>\n`);
 
 console.log(`Built SWAG to ${output}`);

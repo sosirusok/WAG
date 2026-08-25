@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#F5F5F5">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="color-scheme" content="light">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -14,9 +15,7 @@
   <meta property="og:image" content="{{OG_URL}}">
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
-  <link rel="icon" href="assets/swag-monogram-v3.png" type="image/png">
-  <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/Paperlogy-8ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="icon" href="assets/swag-symbol-v4.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -26,26 +25,29 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <header class="page-intro shell" data-reveal>
-      <p class="page-kicker">ESTIMATE</p>
-      <h1>견적 문의</h1>
-      <p class="page-description">제작 종류 · 필요 기능 · 참고 자료 · 희망 일정</p>
+    <header class="page-hero page-hero-contact" data-flash>
+      <img class="page-hero-material shutter" src="assets/texture-shutter-v1.webp" alt="" width="1800" height="600" data-parallax aria-hidden="true">
+      <div class="shell">
+        <p class="eyebrow" data-reveal>START A PROJECT</p>
+        <h1 data-reveal>견적 문의</h1>
+        <p class="page-lead" data-reveal>정해진 내용만 골라도 되고, 아직 아이디어뿐이어도 괜찮습니다.</p>
+      </div>
     </header>
 
     <section class="inquiry-wrap shell" data-reveal>
       <div class="inquiry" data-brief-builder>
         <div class="inquiry-form">
-          <fieldset><legend>제작 종류</legend><p>가장 가까운 항목을 선택하세요.</p><div>{{PLANNER_TYPES}}</div></fieldset>
-          <fieldset><legend>필요 기능</legend><p>현재 정해진 기능만 선택하세요.</p><div>{{PLANNER_FEATURES}}</div></fieldset>
-          <fieldset><legend>준비 상태</legend><div>
+          <fieldset><legend>제작 종류</legend><p>가장 가까운 항목을 골라주세요.</p><div class="choice-lines">{{PLANNER_TYPES}}</div></fieldset>
+          <fieldset><legend>필요 기능</legend><p>현재 떠오르는 기능만 골라주세요.</p><div class="choice-lines">{{PLANNER_FEATURES}}</div></fieldset>
+          <fieldset><legend>준비 상태</legend><div class="choice-lines">
             <button type="button" aria-pressed="false" data-brief-choice data-brief-group="준비 상태" data-brief-value="아이디어만 있음">아이디어만 있음</button>
             <button type="button" aria-pressed="false" data-brief-choice data-brief-group="준비 상태" data-brief-value="참고 사이트 있음">참고 사이트 있음</button>
             <button type="button" aria-pressed="false" data-brief-choice data-brief-group="준비 상태" data-brief-value="기획안 있음">기획안 있음</button>
             <button type="button" aria-pressed="false" data-brief-choice data-brief-group="준비 상태" data-brief-value="기존 서비스 수정">기존 서비스 수정</button>
           </div></fieldset>
-          <fieldset><legend>추가 요청</legend><p>현재 상황과 희망 일정을 적어주세요.</p><label class="brief-field"><span>요청 내용</span><textarea rows="5" maxlength="600" data-brief-note placeholder="예: 기존 사이트 전면 개편, 모바일 우선"></textarea></label><label class="brief-field"><span>희망 시기</span><input type="text" maxlength="100" autocomplete="off" data-brief-schedule placeholder="예: 9월 시작, 일정 협의"></label></fieldset>
+          <fieldset><legend>더 알려주실 내용</legend><p>현재 상황과 원하는 시기를 편하게 적어주세요.</p><label class="brief-field"><span>요청 내용</span><textarea rows="5" maxlength="600" data-brief-note placeholder="예: 기존 사이트 전면 개편, 모바일 우선"></textarea></label><label class="brief-field"><span>희망 시기</span><input type="text" maxlength="100" autocomplete="off" data-brief-schedule placeholder="예: 9월 시작, 일정 협의"></label></fieldset>
         </div>
-        <aside>
+        <aside class="brief-panel" data-shutter>
           <span>상담할 내용</span>
           <pre data-brief-summary aria-live="polite" aria-atomic="true">고른 내용이 여기에 표시됩니다.</pre>
           <button type="button" data-brief-copy>내용 복사하기</button>
@@ -55,9 +57,9 @@
       </div>
     </section>
 
-    <section class="direct shell" data-reveal>
-      <div><p>DIRECT CONTACT</p><h2>카카오 · 전화 상담</h2></div>
-      <div><a class="button" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 <i aria-hidden="true">↗</i></a><a class="direct-phone" href="tel:{{PHONE_DIGITS}}">김의현 {{PHONE}}</a></div>
+    <section class="direct-contact shell" data-reveal>
+      <p>바로 이야기하고 싶다면</p>
+      <div><a class="button button-dark" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 <i aria-hidden="true">↗</i></a><a class="phone-link" href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a></div>
     </section>
 
     <section class="faq shell" data-reveal>

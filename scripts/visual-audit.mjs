@@ -12,6 +12,8 @@ const auditDir = process.env.AUDIT_DIR || "/tmp/swag-visual-audit";
 const routes = [
   "",
   "work/",
+  "work/escape-booking.html",
+  "work/store-experience.html",
   "about/",
   "services/",
   "process/",
@@ -100,7 +102,7 @@ for (const viewport of viewports) {
         scroll: [element.scrollWidth, element.scrollHeight]
       }));
       const offscreenText = textElements.filter((element) => {
-        if (element.closest("[aria-hidden='true'], .mobile-menu[hidden]")) return false;
+        if (element.closest("[aria-hidden='true'], [data-marquee], .mobile-menu:not([open])")) return false;
         const rect = element.getBoundingClientRect();
         return rect.left < -2 || rect.right > document.documentElement.clientWidth + 2;
       }).map((element) => ({

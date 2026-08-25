@@ -22,6 +22,7 @@ required(data?.meta?.description, "meta.description");
 required(data?.brand?.name, "brand.name");
 required(data?.brand?.description, "brand.description");
 required(data?.contact?.phone, "contact.phone");
+if (data?.meta?.version !== 42) errors.push("meta.version must be 42 for this release");
 
 try {
   const kakao = new URL(data?.contact?.kakao);
@@ -37,11 +38,18 @@ const processSteps = Array.isArray(data.process) ? data.process : [];
 const faqItems = Array.isArray(data.faq) ? data.faq : [];
 
 if (projects.filter((project) => project.published).length < 2) errors.push("at least two public projects are required");
+const projectIds = projects.map((project) => project.id).filter(Boolean);
+if (new Set(projectIds).size !== projectIds.length) errors.push("project ids must be unique");
 for (const [index, project] of projects.entries()) {
-  for (const field of ["id", "title", "category", "summary", "problem", "solution", "image", "imageAlt", "url"]) {
+  for (const field of ["id", "title", "category", "summary", "problem", "solution", "result", "image", "imageAlt", "url"]) {
     required(project[field], `projects[${index}].${field}`);
   }
-  if (!Array.isArray(project.features) || project.features.length < 3) errors.push(`projects[${index}].features needs at least three entries`);
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(project.id || "")) errors.push(`projects[${index}].id must be URL-safe`);
+  if (!Array.isArray(project.features) || project.features.length < 3) {
+    errors.push(`projects[${index}].features needs at least three entries`);
+  } else if (project.features.some((feature) => typeof feature !== "string" || !feature.trim())) {
+    errors.push(`projects[${index}].features must contain non-empty strings`);
+  }
   if (project.image?.startsWith("assets/") && !await fileExists(`src/${project.image}`)) errors.push(`missing project image: ${project.image}`);
   try {
     if (new URL(project.url).protocol !== "https:") throw new Error();
@@ -53,21 +61,41 @@ for (const [index, project] of projects.entries()) {
 if (services.length !== 4) errors.push("exactly four service groups are required");
 for (const [index, service] of services.entries()) {
   for (const field of ["id", "title", "short", "description"]) required(service[field], `services[${index}].${field}`);
-  if (!Array.isArray(service.items) || service.items.length < 4) errors.push(`services[${index}].items needs at least four entries`);
+  if (!Array.isArray(service.items) || service.items.length !== 6) {
+    errors.push(`services[${index}].items needs exactly six entries`);
+  } else if (service.items.some((item) => typeof item !== "string" || !item.trim())) {
+    errors.push(`services[${index}].items must contain non-empty strings`);
+  } else if (new Set(service.items.map((item) => item.trim())).size !== service.items.length) {
+    errors.push(`services[${index}].items contains duplicate entries`);
+  }
 }
 
 if (capabilityGroups.length < 3) errors.push("at least three capability groups are required");
 if (processSteps.length < 4) errors.push("at least four process stages are required");
 if (faqItems.length < 4) errors.push("at least four FAQ items are required");
+for (const [index, group] of capabilityGroups.entries()) {
+  for (const field of ["title", "description"]) required(group[field], `capabilityGroups[${index}].${field}`);
+}
+for (const [index, step] of processSteps.entries()) {
+  for (const field of ["title", "description", "result"]) required(step[field], `process[${index}].${field}`);
+}
+for (const [index, item] of faqItems.entries()) {
+  for (const field of ["question", "answer"]) required(item[field], `faq[${index}].${field}`);
+}
 
 const requiredAssets = [
-  "Paperlogy-8ExtraBold.woff2",
-  "SUIT-Variable.woff2",
+  "accent-exposure-v1.webp",
   "case-catharsis.jpg",
   "case-crimescene.jpg",
-  "swag-og.png",
-  "swag-monogram-v3.png",
-  "swag-wordmark-v3.png"
+  "swag-og-v4.png",
+  "swag-lockup-dark-v4.svg",
+  "swag-lockup-light-v4.svg",
+  "swag-symbol-v4.svg",
+  "swag-square-v1.woff",
+  "swag-square-OFL-1.1.txt",
+  "texture-ink-drag-v1.webp",
+  "texture-shutter-v1.webp",
+  "texture-toner-field-v1.webp"
 ];
 for (const asset of requiredAssets) {
   if (!await fileExists(`src/assets/${asset}`)) errors.push(`missing required asset: src/assets/${asset}`);
@@ -88,6 +116,7 @@ const activeSources = [
   "src/contact.template.html",
   "src/privacy.template.html",
   "src/404.template.html",
+  "src/project.template.html",
   "src/app.js",
   "src/styles.css",
   "scripts/build.mjs"
@@ -102,6 +131,8 @@ const bannedPatterns = [
   [/(?:맑은\s*고딕|Malgun Gothic|Dotum|돋움|Gulim|굴림)/gi, "legacy system font"],
   [/#(?:4254ff|2436d9|00c7f2|9d7cff|e9edff|e5faff|f0ebff|007eec|008fe9|16275b|142461|6576ff|7584ff)\b/gi, "legacy blue, cyan, or violet palette"],
   [/swag-symbol-v2|WantedSansVariable|swag-hero-brand/gi, "legacy brand asset"],
+  [/(?:SUIT-Variable|Paperlogy-8ExtraBold|swag-monogram-v3|swag-wordmark-v3|swag-og\.png)/gi, "retired v3 brand or font asset"],
+  [/김의현/g, "personal name"],
   [/\bkhaki\b/gi, "khaki palette"]
 ];
 
@@ -110,40 +141,43 @@ for (const [pattern, label] of bannedPatterns) {
 }
 
 const css = await readFile(new URL("src/styles.css", root), "utf8");
-if (!/@font-face[\s\S]*SUIT Variable/.test(css)) errors.push("SUIT Variable webfont is not configured");
-if (!/@font-face[\s\S]*Paperlogy/.test(css)) errors.push("Paperlogy display font is not configured");
+if (/SUIT Variable|Paperlogy|SUIT-Variable|Paperlogy-8ExtraBold/i.test(css)) errors.push("retired SUIT or Paperlogy font reference remains");
 if (!/body\s*\{[\s\S]*?font-size:\s*(?:17|18)px/.test(css)) errors.push("body copy must be at least 17px");
 if (!/@media\s*\(prefers-reduced-motion:\s*reduce\)/.test(css)) errors.push("reduced-motion mode is required");
 if (!/:focus-visible\b/.test(css)) errors.push("visible keyboard focus styles are required");
 
 const tinyFonts = [...css.matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/gi)].filter((match) => Number(match[1]) < 14);
 if (tinyFonts.length) errors.push(`CSS contains ${tinyFonts.length} font sizes below 14px`);
-if (!/#c93400\b/i.test(css)) errors.push("accessible orange accent is missing");
-if (!/#ff5a00\b/i.test(css)) errors.push("high-contrast orange for dark surfaces is missing");
+if (!/#ff4b1f\b/i.test(css)) errors.push("v42 signal-orange accent is missing");
 
 const revealCount = (sourceText.match(/data-reveal/g) || []).length;
 if (revealCount < 16) errors.push(`motion coverage is too low: ${revealCount}`);
 
+const teamMentions = sourceText.match(/(?:2인|두\s*명|두\s*사람|TWO-PERSON|2\s+FREELANCERS)/gi) || [];
+if (teamMentions.length > 2) errors.push(`team-size copy is repeated too often: ${teamMentions.length}`);
+const escapeRoomMentions = sourceText.match(/방탈출/g) || [];
+if (escapeRoomMentions.length > 1) errors.push(`escape-room copy is repeated too often: ${escapeRoomMentions.length}`);
+
 const homeSource = await readFile(new URL("src/index.template.html", root), "utf8");
-if (/HOME_WORK|HERO_PROJECT|case-catharsis|case-crimescene|공개 작업|작업 사례 보기/i.test(homeSource)) {
-  errors.push("homepage must not contain project examples");
-}
-if (!/class="hero-wordmark"[\s\S]*swag-wordmark-v3\.png/.test(homeSource)) errors.push("homepage custom wordmark is missing");
-if (!/rel="icon" href="assets\/swag-monogram-v3\.png"/.test(homeSource)) errors.push("custom monogram favicon is missing");
-if (!/2인 프리랜서 스튜디오/.test(homeSource)) errors.push("homepage team fact is missing");
+if (!/\{\{HOME_PROJECTS\}\}/.test(homeSource)) errors.push("homepage project slot is missing");
+if (!/swag-(?:lockup-(?:dark|light)|symbol)-v4\.svg/.test(homeSource)) errors.push("homepage v4 brand artwork is missing");
 if (!/제작 분야[\s\S]*프로젝트[\s\S]*진행 방식[\s\S]*스튜디오[\s\S]*견적 문의/.test(sourceText)) {
   errors.push("desktop navigation is missing required destinations");
 }
 
 const aboutSource = await readFile(new URL("src/about.template.html", root), "utf8");
-for (const fact of ["2인 프리랜서", "합리적인 비용", "빠른 진행", "같은 담당자", "상담", "기획", "디자인", "개발", "검수", "배포"]) {
+for (const fact of ["웹사이트", "앱", "브라우저 게임", "운영 도구", "실제 기기"]) {
   if (!aboutSource.includes(fact)) errors.push(`about page is missing required fact: ${fact}`);
 }
 
 const appSource = await readFile(new URL("src/app.js", root), "utf8");
-if (!/requestAnimationFrame\(drawCanvas\)/.test(appSource)) errors.push("continuous hero canvas motion is missing");
+if (!/requestAnimationFrame\((?:drawCanvas|canvasTick)\)/.test(appSource)) errors.push("continuous hero canvas motion is missing");
 if (/createRadialGradient|\bdot(?:X|Y)?\b/.test(appSource)) errors.push("point-like canvas decoration remains");
-if (!/@keyframes\s+(?:glitchA|wordmarkCut)[\s\S]*@keyframes\s+ticker/.test(css)) errors.push("continuous wordmark and ticker motion is missing");
+if (/\b(?:fetch|XMLHttpRequest|WebSocket|EventSource)\b/.test(appSource)) errors.push("runtime network dependency is not allowed on this static site");
+if (/@import\s|url\(\s*["']?https?:\/\//i.test(css)) errors.push("external CSS or font dependency is not allowed");
+if ((css.match(/@keyframes\b/g) || []).length < 3 || (css.match(/animation\s*:/g) || []).length < 3) {
+  errors.push("automatic CSS motion coverage is too low");
+}
 
 if (errors.length) {
   console.error(errors.join("\n"));
