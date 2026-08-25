@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#050505">
+  <meta name="theme-color" content="#FBFAF6">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow">
   <meta property="og:type" content="website">
@@ -15,6 +15,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -22,20 +23,19 @@
 </head>
 <body id="top" data-page="privacy">
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
-  <div class="page-wipe" aria-hidden="true"></div>
   {{HEADER}}
-  <main id="main" class="legal-page shell">
-    <header class="legal-hero reveal">
-      <p>이용 안내</p>
-      <h1>개인정보 처리 안내</h1>
-      <span>시행일 2026년 8월 24일</span>
+  <main id="main">
+    <header class="page-intro shell" data-reveal>
+      <p class="page-kicker"><i aria-hidden="true"></i>시행일 2026년 8월 25일</p>
+      <h1>개인정보처리 안내</h1>
+      <p class="page-description">SWAG 사이트와 외부 상담 과정에서 다루는 정보에 대해 안내합니다.</p>
     </header>
-    <section class="legal-copy">
-      <article><h2>상담 과정에서 받는 정보</h2><p>전화나 카카오 상담 중 프로젝트 내용과 연락처를 받을 수 있습니다. 상담과 계약을 진행하는 데 필요한 범위에서만 사용합니다.</p></article>
-      <article><h2>사이트 방문 정보</h2><p>현재 이 사이트에는 광고 추적이나 방문자 분석 도구를 연결하지 않았습니다.</p></article>
-      <article><h2>문의 정리 도구</h2><p>문의 페이지에서 고른 내용과 입력한 문장은 사이트 서버로 보내지지 않습니다. 브라우저 화면에서 요약을 만드는 데만 사용합니다.</p></article>
-      <article><h2>보관과 삭제</h2><p>상담이 끝났거나 보관할 이유가 사라진 정보는 지체 없이 삭제합니다. 계약과 거래에 관한 기록은 관련 법령에서 정한 기간 동안 보관할 수 있습니다.</p></article>
-      <article><h2>문의</h2><p>개인정보와 관련한 요청은 사이트의 카카오 오픈채팅 또는 전화로 보내주세요.</p></article>
+    <section class="policy shell" data-reveal>
+      <article><h2>사이트에서 직접 수집하는 정보</h2><p>SWAG 사이트에는 이름, 연락처나 이메일을 입력해 전송하는 문의 양식이 없습니다. 사이트 자체에서 상담 정보를 직접 수집하거나 저장하지 않습니다.</p></article>
+      <article><h2>문의 정리 도구</h2><p>문의 페이지에서 고른 내용과 입력한 문장은 서버로 전송되지 않습니다. 현재 브라우저 화면에서 상담 내용을 정리하는 데만 사용합니다.</p></article>
+      <article><h2>외부 상담 서비스</h2><p>상담 버튼을 누르면 카카오 오픈채팅으로 이동합니다. 이동 후 제공하는 정보에는 카카오의 서비스 약관과 개인정보 처리 기준이 적용됩니다.</p></article>
+      <article><h2>전화 상담</h2><p>프로젝트 상담 과정에서 요청 사항과 연락처를 전달받을 수 있습니다. 해당 정보는 상담과 계약 이행을 위한 범위에서만 이용합니다.</p></article>
+      <article><h2>자동 수집과 분석 도구</h2><p>현재 별도의 광고 추적 도구나 방문자 분석 도구를 사용하지 않습니다.</p></article>
     </section>
   </main>
   {{FOOTER}}

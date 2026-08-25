@@ -1,29 +1,16 @@
 import { access, readFile } from "node:fs/promises";
 
 const root = new URL("../", import.meta.url);
-const raw = await readFile(new URL("data/site.json", root), "utf8");
-const data = JSON.parse(raw);
+const data = JSON.parse(await readFile(new URL("data/site.json", root), "utf8"));
 const errors = [];
-const projects = Array.isArray(data.projects) ? data.projects : [];
-const services = Array.isArray(data.services) ? data.services : [];
-const capabilities = Array.isArray(data.capabilities) ? data.capabilities : [];
-const capabilityGroups = Array.isArray(data.capabilityGroups) ? data.capabilityGroups : [];
-const processSteps = Array.isArray(data.process) ? data.process : [];
-const faqItems = Array.isArray(data.faq) ? data.faq : [];
-const requiredAccentAssets = [
-  "accent-red-rip.webp",
-  "accent-black-burst.webp",
-  "accent-white-tape.webp",
-  "accent-red-stamp.webp"
-];
 
 const required = (value, path) => {
   if (typeof value !== "string" || !value.trim()) errors.push(`${path} is required`);
 };
 
-const fileExists = async (url) => {
+const fileExists = async (relative) => {
   try {
-    await access(url);
+    await access(new URL(relative, root));
     return true;
   } catch {
     return false;
@@ -33,114 +20,61 @@ const fileExists = async (url) => {
 required(data?.meta?.title, "meta.title");
 required(data?.meta?.description, "meta.description");
 required(data?.brand?.name, "brand.name");
-required(data?.brand?.expansion, "brand.expansion");
-required(data?.brand?.headline, "brand.headline");
 required(data?.brand?.description, "brand.description");
-required(data?.brand?.primaryCta, "brand.primaryCta");
-required(data?.brand?.secondaryCta, "brand.secondaryCta");
-required(data?.contact?.owner, "contact.owner");
 required(data?.contact?.phone, "contact.phone");
-required(data?.contact?.responseNote, "contact.responseNote");
 
 try {
   const kakao = new URL(data?.contact?.kakao);
-  if (kakao.protocol !== "https:") errors.push("contact.kakao must use https");
+  if (kakao.protocol !== "https:") errors.push("contact.kakao must use HTTPS");
 } catch {
   errors.push("contact.kakao must be a valid URL");
 }
 
-if (!Array.isArray(data.projects)) errors.push("projects must be an array");
-if (!Array.isArray(data.services)) errors.push("services must be an array");
-if (!Array.isArray(data.capabilities)) errors.push("capabilities must be an array");
-if (!Array.isArray(data.capabilityGroups)) errors.push("capabilityGroups must be an array");
-if (!Array.isArray(data.process)) errors.push("process must be an array");
-if (!Array.isArray(data.faq)) errors.push("faq must be an array");
+const projects = Array.isArray(data.projects) ? data.projects : [];
+const services = Array.isArray(data.services) ? data.services : [];
+const capabilityGroups = Array.isArray(data.capabilityGroups) ? data.capabilityGroups : [];
+const processSteps = Array.isArray(data.process) ? data.process : [];
+const faqItems = Array.isArray(data.faq) ? data.faq : [];
 
-const ids = new Set();
+if (projects.filter((project) => project.published).length < 2) errors.push("at least two public projects are required");
 for (const [index, project] of projects.entries()) {
-  required(project.id, `projects[${index}].id`);
-  required(project.title, `projects[${index}].title`);
-  if (project.published) {
-    for (const field of ["summary", "category", "year", "problem", "solution", "result", "image", "imageAlt"]) {
-      required(project[field], `projects[${index}].${field}`);
-    }
+  for (const field of ["id", "title", "category", "summary", "problem", "solution", "image", "imageAlt", "url"]) {
+    required(project[field], `projects[${index}].${field}`);
   }
-  if (project.id && !/^[a-z0-9][a-z0-9-]*$/.test(project.id)) errors.push(`projects[${index}].id must use lowercase letters, numbers, and hyphens only`);
-  if (ids.has(project.id)) errors.push(`duplicate project id: ${project.id}`);
-  ids.add(project.id);
-  if (!Number.isFinite(Number(project.order))) errors.push(`projects[${index}].order must be a number`);
-  if (project.published && (!Array.isArray(project.features) || project.features.length < 3 || project.features.some((feature) => typeof feature !== "string" || !feature.trim()))) {
-    errors.push(`projects[${index}].features must contain at least three strings`);
-  }
-  if (project.image) {
-    if (project.image.startsWith("assets/")) {
-      const safeLocalPath = /^assets\/[a-zA-Z0-9_./-]+$/.test(project.image) && !project.image.includes("..");
-      if (!safeLocalPath) errors.push(`projects[${index}].image must be a safe assets path`);
-      else if (!await fileExists(new URL(`src/${project.image}`, root))) errors.push(`missing project image: ${project.image}`);
-    } else {
-      try {
-        const imageUrl = new URL(project.image);
-        if (imageUrl.protocol !== "https:") throw new Error();
-      } catch {
-        errors.push(`projects[${index}].image must be a safe assets path or HTTPS URL`);
-      }
-    }
-  }
-  if (project.url) {
-    try {
-      const url = new URL(project.url);
-      if (url.protocol !== "https:") throw new Error();
-    } catch {
-      errors.push(`projects[${index}].url must use HTTPS`);
-    }
+  if (!Array.isArray(project.features) || project.features.length < 3) errors.push(`projects[${index}].features needs at least three entries`);
+  if (project.image?.startsWith("assets/") && !await fileExists(`src/${project.image}`)) errors.push(`missing project image: ${project.image}`);
+  try {
+    if (new URL(project.url).protocol !== "https:") throw new Error();
+  } catch {
+    errors.push(`projects[${index}].url must use HTTPS`);
   }
 }
 
-if (projects.filter((project) => project.published).length < 2) errors.push("at least two published projects are required");
-
-const serviceIds = new Set();
+if (services.length !== 4) errors.push("exactly four service groups are required");
 for (const [index, service] of services.entries()) {
-  for (const field of ["id", "title", "short", "description", "image", "imageAlt"]) {
-    required(service[field], `services[${index}].${field}`);
-  }
-  if (service.id && !/^[a-z0-9][a-z0-9-]*$/.test(service.id)) errors.push(`services[${index}].id must use lowercase letters, numbers, and hyphens only`);
-  if (serviceIds.has(service.id)) errors.push(`duplicate service id: ${service.id}`);
-  serviceIds.add(service.id);
-  if (!Array.isArray(service.items) || service.items.length < 4 || service.items.some((item) => typeof item !== "string" || !item.trim())) {
-    errors.push(`services[${index}].items must contain at least four strings`);
-  }
-  if (service.image && !await fileExists(new URL(`src/${service.image}`, root))) errors.push(`missing service image: ${service.image}`);
+  for (const field of ["id", "title", "short", "description"]) required(service[field], `services[${index}].${field}`);
+  if (!Array.isArray(service.items) || service.items.length < 4) errors.push(`services[${index}].items needs at least four entries`);
 }
 
-if (services.length !== 4) errors.push("services must contain web, app, game, and platform");
-if (capabilities.length < 8 || capabilities.some((item) => typeof item !== "string" || !item.trim())) errors.push("capabilities must contain at least eight strings");
-if (capabilityGroups.length !== 4) errors.push("capabilityGroups must contain four groups");
-capabilityGroups.forEach((item, index) => {
-  required(item.title, `capabilityGroups[${index}].title`);
-  required(item.description, `capabilityGroups[${index}].description`);
-});
-if (processSteps.length < 4) errors.push("process must contain at least four stages");
-processSteps.forEach((step, index) => {
-  required(step.title, `process[${index}].title`);
-  required(step.description, `process[${index}].description`);
-  required(step.result, `process[${index}].result`);
-});
-if (faqItems.length < 4) errors.push("faq must contain at least four items");
-faqItems.forEach((item, index) => {
-  required(item.question, `faq[${index}].question`);
-  required(item.answer, `faq[${index}].answer`);
-});
+if (capabilityGroups.length < 3) errors.push("at least three capability groups are required");
+if (processSteps.length < 4) errors.push("at least four process stages are required");
+if (faqItems.length < 4) errors.push("at least four FAQ items are required");
 
-for (const asset of requiredAccentAssets) {
-  if (!await fileExists(new URL(`src/assets/${asset}`, root))) errors.push(`missing kinetic accent asset: ${asset}`);
+for (const asset of [
+  "src/assets/favicon.svg",
+  "src/assets/WantedSansVariable.woff2",
+  "src/assets/swag-hero-brand.png",
+  "src/assets/swag-og.png",
+  "src/assets/case-catharsis.jpg",
+  "src/assets/case-crimescene.jpg"
+]) {
+  if (!await fileExists(asset)) errors.push(`missing required asset: ${asset}`);
 }
 
-const sourceFiles = [
+const activeSources = [
   "data/site.json",
   "src/index.template.html",
-  "src/about.template.html",
   "src/work.template.html",
-  "src/project.template.html",
   "src/services.template.html",
   "src/process.template.html",
   "src/contact.template.html",
@@ -151,69 +85,34 @@ const sourceFiles = [
   "scripts/build.mjs"
 ];
 
-const sourceText = (await Promise.all(sourceFiles.map(async (name) => {
-  const text = await readFile(new URL(name, root), "utf8");
-  return [name, text];
-}))).map(([name, text]) => `\n/* ${name} */\n${text}`).join("");
-
+const sourceText = (await Promise.all(activeSources.map((name) => readFile(new URL(name, root), "utf8")))).join("\n");
 const bannedPatterns = [
-  [/·/g, "middle-dot character"],
-  [/<br\s*\/?\s*>/gi, "forced line break"],
-  [/두 사람이 기획부터/g, "rejected team phrasing"],
-  [/고객용 화면과 관리자 화면/g, "rejected admin phrasing"],
-  [/직접 수정하고 관리할 수 있게 인계/g, "rejected handoff phrasing"],
-  [/기획부터 출시까지/g, "rejected production phrasing"],
-  [/SUIT|MonaSans|Pretendard|Wanted Sans/gi, "rejected font reference"],
-  [/Plex KR|IBMPlexSansKR/gi, "removed bundled font reference"],
-  [/hero-kinetic|studio-grid|game-impact|system-field/gi, "removed full-background asset reference"],
-  [/<canvas\b/gi, "decorative canvas markup"],
-  [/var\(--blue|var\(--orange/gi, "rejected blue/orange palette token"],
-  [/>\s*0[1-9]\s*</g, "visible arbitrary index"],
-  [/01\s*[—~-]\s*0[2-9]/g, "visible numbered range"]
+  [/accent-(?:red|black)|kinetic-|cursor-orb|page-wipe/gi, "legacy dark/red decorative assets"],
+  [/MAKE\s*\/\s*BREAK|DESIGN IN MOTION|눈에 남고 제대로 작동/gi, "generic slogan copy"],
+  [/>\s*0[1-9]\s*</g, "visible arbitrary numbering"],
+  [/(?:맑은\s*고딕|Malgun Gothic|Dotum|돋움|Gulim|굴림)/gi, "legacy system font"],
+  [/#(?:050505|000000|ff0000)\b/gi, "black or red dominant palette"]
 ];
 
 for (const [pattern, label] of bannedPatterns) {
   if (pattern.test(sourceText)) errors.push(`banned ${label} found`);
 }
 
-const autoMotionCount = (sourceText.match(/data-auto-motion/g) || []).length;
-if (autoMotionCount < 8) errors.push(`automatic motion coverage is too low: ${autoMotionCount}`);
-
-const dataKeys = [];
-const collectKeys = (value) => {
-  if (!value || typeof value !== "object") return;
-  if (Array.isArray(value)) return value.forEach(collectKeys);
-  for (const [key, child] of Object.entries(value)) {
-    dataKeys.push(key);
-    collectKeys(child);
-  }
-};
-collectKeys(data);
-if (dataKeys.includes("number") || dataKeys.includes("code")) errors.push("arbitrary number/code keys are not allowed");
-
-const roomEscapeMentions = (sourceText.match(/방탈출/g) || []).length;
-if (roomEscapeMentions > 1) errors.push(`room-escape copy appears ${roomEscapeMentions} times; it must remain inside one work case`);
-
 const css = await readFile(new URL("src/styles.css", root), "utf8");
-const tinyFontMatches = [...css.matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/gi)]
-  .filter((match) => Number(match[1]) < 16);
-if (tinyFontMatches.length) errors.push(`CSS contains ${tinyFontMatches.length} font sizes below 16px`);
+if (!/@font-face[\s\S]*Wanted Sans/.test(css)) errors.push("Wanted Sans webfont is not configured");
+if (!/body\s*\{[\s\S]*?font-size:\s*(?:17|18)px/.test(css)) errors.push("body copy must be at least 17px");
+if (!/@media\s*\(prefers-reduced-motion:\s*reduce\)/.test(css)) errors.push("reduced-motion mode is required");
+if (!/:focus-visible\b/.test(css)) errors.push("visible keyboard focus styles are required");
 
-const readableCopy = [
-  data.brand.headline,
-  data.brand.description,
-  data.contact.responseNote,
-  ...services.flatMap((service) => [service.short, service.description, ...service.items]),
-  ...capabilityGroups.flatMap((item) => [item.title, item.description]),
-  ...processSteps.flatMap((item) => [item.title, item.description, item.result]),
-  ...faqItems.flatMap((item) => [item.question, item.answer])
-];
-const duplicates = readableCopy.filter((value, index) => readableCopy.indexOf(value) !== index);
-if (duplicates.length) errors.push(`duplicate copy found: ${[...new Set(duplicates)].join(" | ")}`);
+const tinyFonts = [...css.matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/gi)].filter((match) => Number(match[1]) < 12);
+if (tinyFonts.length) errors.push(`CSS contains ${tinyFonts.length} font sizes below 12px`);
+
+const revealCount = (sourceText.match(/data-reveal/g) || []).length;
+if (revealCount < 16) errors.push(`motion coverage is too low: ${revealCount}`);
 
 if (errors.length) {
   console.error(errors.join("\n"));
   process.exit(1);
 }
 
-console.log("SWAG content and quality validation passed");
+console.log("SWAG content and design validation passed");

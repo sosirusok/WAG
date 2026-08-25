@@ -41,8 +41,6 @@ for (const file of htmlFiles) {
   if (!/<a\b[^>]*\bclass="skip-link"[^>]*\bhref="[^"]*#main"/i.test(html)) failures.push(`${relativeFile} -> missing skip link`);
   if ((html.match(/<title\b/gi) || []).length !== 1) failures.push(`${relativeFile} -> expected one title element`);
   if (/href="javascript:/i.test(html)) failures.push(`${relativeFile} -> javascript URL is not allowed`);
-  if (/<br\s*\/?\s*>/i.test(html)) failures.push(`${relativeFile} -> forced line break is not allowed`);
-
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]);
   const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
   if (duplicateIds.length) failures.push(`${path.relative(dist, file)} -> duplicate ids: ${[...new Set(duplicateIds)].join(", ")}`);

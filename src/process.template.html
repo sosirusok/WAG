@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#050505">
+  <meta name="theme-color" content="#FBFAF6">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -15,6 +15,7 @@
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -22,48 +23,24 @@
 </head>
 <body id="top" data-page="process">
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
-  <div class="page-wipe" aria-hidden="true"></div>
-  <div class="cursor-orb" aria-hidden="true"></div>
   {{HEADER}}
   <main id="main">
-    <header class="process-hero" aria-labelledby="process-title" data-auto-motion>
-      <div class="kinetic-assembly kinetic-assembly-route kinetic-route-process" aria-hidden="true">
-        <img class="kinetic-piece kinetic-red-rip" src="assets/accent-red-rip.webp" alt="" fetchpriority="high" decoding="async">
-        <img class="kinetic-piece kinetic-black-burst" src="assets/accent-black-burst.webp" alt="" decoding="async">
-        <img class="kinetic-piece kinetic-red-stamp" src="assets/accent-red-stamp.webp" alt="" decoding="async">
-      </div>
-      <div class="process-hero-inner shell">
-        <p class="route-label reveal">PROCESS</p>
-        <h1 id="process-title" class="reveal">처음 이야기부터 공개까지</h1>
-        <p class="reveal">핵심 화면을 먼저 확인한 뒤 개발 항목과 공개 일정을 확정합니다.</p>
-      </div>
+    <header class="page-intro shell" data-reveal>
+      <p class="page-kicker"><i aria-hidden="true"></i>화면을 보며 방향을 맞춥니다</p>
+      <h1>진행 과정</h1>
+      <p class="page-description">긴 기획서를 먼저 요구하지 않습니다. 필요한 범위를 정하고 중요한 화면부터 확인한 뒤, 실제 기능을 연결합니다.</p>
     </header>
-
-    <section class="process-story shell" aria-label="제작 진행 방식" data-process-story>
-      <aside class="process-side" aria-hidden="true">
-        <span>진행 중</span>
-        <strong data-process-label>이야기 정리</strong>
-        <i><b data-process-bar></b></i>
-      </aside>
-      <div class="process-scenes">{{PROCESS}}</div>
+    <section class="process-flow shell" aria-label="프로젝트 진행 흐름">{{PROCESS_FLOW}}</section>
+    <section class="process-list shell">{{PROCESS}}</section>
+    <section class="aftercare shell" data-reveal>
+      <div><p>공개 이후</p><h2>직접 운영할 수 있도록 정리합니다.</h2></div>
+      <div><p>운영 주소와 관리자 화면을 함께 확인하고, 내용을 수정하거나 예약·주문 데이터를 확인하는 방법을 안내합니다.</p><p>운영 중 발견되는 수정 사항이나 새 기능은 기존 구조를 확인한 뒤 필요한 범위만 다시 협의합니다.</p></div>
     </section>
-
-    <section class="process-finish" aria-labelledby="process-finish-title" data-auto-motion>
-      <div class="kinetic-assembly kinetic-assembly-wide" aria-hidden="true">
-        <img class="kinetic-piece kinetic-white-tape" src="assets/accent-white-tape.webp" alt="" loading="lazy" decoding="async">
-        <img class="kinetic-piece kinetic-black-burst" src="assets/accent-black-burst.webp" alt="" loading="lazy" decoding="async">
+    <section class="contact-band" data-reveal>
+      <div class="shell">
+        <div><span>프로젝트 문의</span><h2>만들고 싶은 서비스가 있나요?</h2><p>필요한 화면과 기능을 간단히 알려주세요. 확인한 뒤 가능한 범위와 진행 방법부터 답변드릴게요.</p></div>
+        <div><a class="button light" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오로 문의하기 <i aria-hidden="true">↗</i></a><a class="phone-link" href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a></div>
       </div>
-      <div class="process-finish-inner shell">
-        <p class="reveal">LIVE</p>
-        <h2 id="process-finish-title" class="reveal">마지막은 시안이 아니라 실제 주소입니다.</h2>
-        <p class="reveal">주요 기능을 검수한 뒤 운영 주소에 배포합니다. 유지보수 항목과 기간은 공개 전에 정합니다.</p>
-      </div>
-    </section>
-
-    <section class="route-cta shell reveal" aria-labelledby="process-contact-title">
-      <p>시작하기</p>
-      <div><h2 id="process-contact-title">메모만 있어도 시작할 수 있습니다.</h2><p>현재 알고 있는 내용과 참고 사이트를 보내주세요.</p></div>
-      <a class="button button-dark magnetic" href="contact/">상담 준비하기 <i aria-hidden="true">→</i></a>
     </section>
   </main>
   {{FOOTER}}
