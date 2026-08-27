@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0a0a0a">
-  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#F8F8F6">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -15,7 +14,9 @@
   <meta property="og:image" content="{{OG_URL}}">
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
-  <link rel="icon" href="assets/swag-symbol-v4.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/swag-mark-v42.png" type="image/png">
+  <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/studio-hero-v42.webp" as="image" type="image/webp" fetchpriority="high">
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -25,32 +26,26 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <header class="page-hero page-hero-process" data-flash>
-      <img class="page-hero-material shutter" src="assets/texture-shutter-v1.webp" alt="" width="1800" height="600" data-parallax aria-hidden="true">
-      <img class="page-signal" src="assets/accent-signal-drag-v1.webp" alt="" width="1800" height="600" aria-hidden="true">
-      <div class="shell">
-        <p class="eyebrow" data-reveal>HOW WE WORK</p>
-        <h1 data-reveal data-impact-title data-echo="진행 방식">진행 방식</h1>
-        <p class="page-lead" data-reveal>범위를 먼저 정하고, 화면을 확인하고, 실제 주소에서 테스트한 뒤 공개합니다.</p>
-      </div>
-    </header>
-
-    <section class="process-run" aria-label="프로젝트 진행 흐름" data-marquee><div aria-hidden="true">{{PROCESS_FLOW}}{{PROCESS_FLOW}}</div></section>
-    <section class="process-story shell">{{PROCESS}}</section>
-
-    <section class="launch-note" data-flash>
-      <img src="assets/texture-toner-field-v1.webp" alt="" width="1400" height="933" loading="lazy" data-parallax aria-hidden="true">
-      <div class="shell" data-reveal>
-        <p>AFTER LAUNCH</p>
-        <h2 data-impact-title data-echo="공개 뒤에도 이어집니다.">공개 뒤에도 이어집니다.</h2>
-        <span>막 공개한 서비스에서 발견되는 오류를 바로 확인하고, 이후 수정이나 기능 추가는 필요한 만큼 이어갑니다.</span>
+    <section class="photo-intro process-intro">
+      <figure data-parallax><img src="assets/studio-hero-v42.webp" alt="두 명의 제작자가 화면을 함께 검토하는 밝은 작업실" width="1672" height="941" fetchpriority="high" decoding="async"><span class="image-scan" aria-hidden="true"></span></figure>
+      <div class="photo-intro-copy shell" data-reveal>
+        <p class="eyebrow">PROCESS</p>
+        <h1>진행 방식</h1>
+        <p>상담 · 기획 · 디자인 · 개발 · 검수 · 배포</p>
       </div>
     </section>
 
-    <section class="simple-cta shell" data-reveal>
-      <p>현재 준비된 내용부터 알려주세요.</p>
-      <a class="button button-accent" href="contact/">상담 시작하기 <i aria-hidden="true">↗</i></a>
+    <section class="process-editorial shell" aria-label="프로젝트 진행 과정">
+      <div class="process-line" aria-hidden="true"><i></i></div>
+      {{PROCESS}}
     </section>
+
+    <section class="after-launch shell" data-reveal>
+      <div><p class="eyebrow">AFTER LAUNCH</p><h2>배포 이후 지원</h2></div>
+      <div><p>운영 주소 · 관리자 화면 · 계정 · 콘텐츠 수정 방법</p><p>오류 수정 · 화면 보완 · 기능 추가</p></div>
+    </section>
+
+    {{CONTACT_STRIP}}
   </main>
   {{FOOTER}}
   <script src="app.js" defer></script>

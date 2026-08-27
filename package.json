@@ -7,6 +7,7 @@
     "build": "node scripts/build.mjs",
     "check": "node scripts/validate.mjs",
     "dev": "node scripts/preview.mjs",
+    "audit:visual": "node scripts/visual-audit.mjs",
     "verify": "node scripts/validate.mjs && node scripts/build.mjs && node scripts/audit-links.mjs"
   }
 }

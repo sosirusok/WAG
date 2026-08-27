@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f4f1ea">
+  <meta name="theme-color" content="#F8F8F6">
   <meta name="color-scheme" content="light">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
@@ -15,7 +15,9 @@
   <meta property="og:image" content="{{OG_URL}}">
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
-  <link rel="icon" href="assets/swag-symbol-v4.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/swag-mark-v42.png" type="image/png">
+  <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/studio-about-v42.webp" as="image" type="image/webp" fetchpriority="high">
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -25,39 +27,37 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <header class="page-hero page-hero-about" data-flash>
-      <img class="page-hero-material toner" src="assets/texture-toner-field-v1.webp" alt="" width="1400" height="933" data-parallax aria-hidden="true">
-      <img class="page-signal" src="assets/accent-signal-drag-v1.webp" alt="" width="1800" height="600" aria-hidden="true">
-      <div class="shell">
-        <p class="eyebrow" data-reveal>ABOUT SWAG</p>
-        <h1 data-reveal data-impact-title data-echo="스튜디오">스튜디오</h1>
-        <p class="page-lead" data-reveal>디자인만 멋진 사이트도, 기능만 돌아가는 서비스도 만들지 않습니다.</p>
-      </div>
-    </header>
-
-    <section class="about-statement shell" data-reveal>
-      <img src="assets/swag-symbol-v4.svg" alt="" width="100" height="100" aria-hidden="true">
-      <h2 data-impact-title data-echo="예쁜 시안에서 끝내지 않습니다.">예쁜 시안에서 끝내지 않습니다.</h2>
-      <div>
-        <p>SWAG는 웹사이트, 앱, 브라우저 게임과 운영 도구를 디자인하고 개발합니다. 브랜드의 인상과 실제 사용 흐름이 따로 놀지 않게 만듭니다.</p>
-        <p>화면을 먼저 보여드리고, 실제 휴대폰과 PC에서 직접 눌러본 뒤 어색한 곳을 고칩니다.</p>
+    <section class="photo-intro about-intro">
+      <figure data-parallax><img src="assets/studio-about-v42.webp" alt="유리문 너머 밝은 작업실에서 두 명의 프리랜서가 함께 화면을 확인하는 장면" width="1536" height="1024" fetchpriority="high" decoding="async"><span class="image-scan" aria-hidden="true"></span></figure>
+      <div class="photo-intro-copy shell" data-reveal>
+        <p class="eyebrow">ABOUT</p>
+        <h1>2인 프리랜서</h1>
+        <p>상담한 두 사람이 기획부터 배포까지 담당</p>
       </div>
     </section>
 
-    <section class="about-principles" data-flash>
-      <img src="assets/accent-signal-drag-v1.webp" alt="" width="1800" height="600" loading="lazy" aria-hidden="true">
-      <div class="shell">
-        <article data-reveal><p>CLARITY</p><h3>무엇을 해야 할지 바로 보이는 화면</h3></article>
-        <article data-reveal><p>RHYTHM</p><h3>멈춰 있는 장식보다 흐름을 만드는 움직임</h3></article>
-        <article data-reveal><p>DETAIL</p><h3>작은 화면에서도 잘리고 겹치지 않는 마무리</h3></article>
+    <section class="about-story shell">
+      <p class="about-lead" data-reveal>SWAG는 두 명이 운영하는 프리랜서 제작팀입니다. 상담한 사람이 기획하고 디자인하고 개발합니다. 검수와 배포까지 담당자가 바뀌지 않습니다.</p>
+      <div class="about-passages">
+        <article data-reveal><p class="eyebrow">DIRECT</p><h2>같은 담당자</h2><p>상담한 사람이 기획하고 디자인하고 개발합니다. 중간 영업 담당자와 재하청 팀은 없습니다.</p></article>
+        <article data-reveal><p class="eyebrow">PRICE</p><h2>합리적인 비용</h2><p>고정 패키지를 끼워 넣지 않고 필요한 화면과 기능으로 견적을 냅니다.</p></article>
+        <article data-reveal><p class="eyebrow">SPEED</p><h2>빠른 진행</h2><p>상담한 담당자가 확인한 내용을 바로 작업에 반영합니다.</p></article>
+        <article data-reveal><p class="eyebrow">HANDOFF</p><h2>두 사람 전담</h2><p>상담 내용을 다른 팀으로 넘기지 않고 검수와 배포까지 두 사람이 맡습니다.</p></article>
       </div>
     </section>
 
-    <section class="about-contact shell" data-reveal data-shutter>
-      <img src="assets/texture-shutter-v1.webp" alt="" width="1800" height="600" loading="lazy" aria-hidden="true">
-      <div><p>CONTACT</p><h2>다음 작업을 이야기해 주세요.</h2></div>
-      <div><a href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a><a href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 <i aria-hidden="true">↗</i></a></div>
+    <section class="about-route shell" data-reveal aria-labelledby="route-title">
+      <div><p class="eyebrow">WORKFLOW</p><h2 id="route-title">담당 과정</h2></div>
+      <p><span>상담</span><i></i><span>기획</span><i></i><span>디자인</span><i></i><span>개발</span><i></i><span>검수</span><i></i><span>배포</span></p>
     </section>
+
+    <section class="direct-contact shell" data-reveal>
+      <p class="eyebrow">DIRECT CONTACT</p>
+      <h2>김의현 / SWAG</h2>
+      <div><a class="text-link magnetic" href="tel:{{PHONE_DIGITS}}">{{PHONE}}</a><a class="text-link magnetic" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 <span aria-hidden="true">↗</span></a></div>
+    </section>
+
+    {{CONTACT_STRIP}}
   </main>
   {{FOOTER}}
   <script src="app.js" defer></script>

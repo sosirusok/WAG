@@ -28,7 +28,6 @@ const safeHttpUrl = (value = "") => {
 };
 
 const safeImage = (value = "") => {
-  if (!value) return "";
   if (/^assets\/[a-zA-Z0-9_./-]+$/.test(value) && !value.includes("..")) return value;
   return safeHttpUrl(value);
 };
@@ -37,7 +36,6 @@ const normalizedSiteUrl = (() => {
   const candidate = process.env.SITE_URL || "https://sosirusok.github.io/WAG/";
   try {
     const url = new URL(candidate);
-    if (!["http:", "https:"].includes(url.protocol)) throw new Error("unsupported SITE_URL protocol");
     return url.href.endsWith("/") ? url.href : `${url.href}/`;
   } catch {
     return "https://sosirusok.github.io/WAG/";
@@ -47,27 +45,26 @@ const normalizedSiteUrl = (() => {
 const pageUrl = (relative = "") => new URL(relative, normalizedSiteUrl).href;
 const kakaoUrl = safeHttpUrl(data.contact.kakao);
 const phoneDigits = data.contact.phone.replace(/\D/g, "");
-const ogUrl = pageUrl("assets/swag-og-v5.png");
-
+const ogUrl = pageUrl("assets/swag-og-v42.png");
 const publicProjects = data.projects
   .filter((project) => project.published)
   .sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
 
-const activeAttr = (active, key) => active === key ? ' aria-current="page"' : "";
 const navItems = [
   ["services", "제작 분야", "services/"],
   ["work", "프로젝트", "work/"],
   ["process", "진행 방식", "process/"],
-  ["about", "스튜디오", "about/"],
+  ["about", "소개", "about/"],
   ["contact", "견적 문의", "contact/"]
 ];
 
+const activeAttr = (active, key) => active === key ? ' aria-current="page"' : "";
 const renderNavLinks = (active, className = "") => navItems.map(([key, label, href]) =>
-  `<a class="${className}" href="${href}"${activeAttr(active, key)}>${label}</a>`
+  `<a${className ? ` class="${className}"` : ""} href="${href}"${activeAttr(active, key)}><span>${label}</span></a>`
 ).join("");
 
-const renderBrand = (footer = false) => `<a class="brand${footer ? " brand-footer" : ""}" href="./" aria-label="SWAG 홈">
-  <img src="assets/${footer ? "swag-lockup-light-v4.svg" : "swag-lockup-dark-v4.svg"}" alt="SWAG" width="500" height="100">
+const renderBrand = (modifier = "") => `<a class="brand${modifier ? ` ${modifier}` : ""}" href="./" aria-label="SWAG 홈">
+  <img src="assets/swag-signature-v42.png" alt="SWAG" width="1100" height="256">
 </a>`;
 
 const renderHeader = (active = "") => `
@@ -77,94 +74,100 @@ const renderHeader = (active = "") => `
       ${renderBrand()}
       <nav class="desktop-nav" aria-label="주요 메뉴">${renderNavLinks(active)}</nav>
       <details class="mobile-menu">
-        <summary aria-label="메뉴 열기"><span></span>메뉴</summary>
-        <nav aria-label="모바일 메뉴">${renderNavLinks(active)}</nav>
+        <summary aria-label="메뉴 열기"><span class="menu-glyph" aria-hidden="true"></span><b>MENU</b></summary>
+        <div class="mobile-menu-panel">
+          <p>WEB · APP · GAME · SYSTEM</p>
+          <nav aria-label="모바일 메뉴">${renderNavLinks(active)}</nav>
+          <a class="mobile-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a>
+        </div>
       </details>
     </div>
   </header>`;
 
 const renderFooter = (currentUrl = normalizedSiteUrl) => `
   <footer class="site-footer">
-    <div class="footer-top shell">
-      <div class="footer-brand">${renderBrand(true)}<p>웹사이트 · 앱 · 브라우저 게임 · 운영 시스템</p></div>
-      <nav class="footer-links" aria-label="하단 메뉴">${renderNavLinks("")}</nav>
-      <div class="footer-contact"><span>문의</span><a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a href="tel:${phoneDigits}">전화 ${escapeHtml(data.contact.phone)}</a></div>
+    <div class="footer-film" aria-hidden="true"><span>WEB · APP · GAME · SYSTEM ·</span><span>WEB · APP · GAME · SYSTEM ·</span></div>
+    <div class="footer-main shell">
+      <div>${renderBrand("brand-footer")}<p>2인 프리랜서 스튜디오</p></div>
+      <nav aria-label="하단 메뉴">${renderNavLinks("")}</nav>
+      <div class="footer-direct"><p>DIRECT</p><a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a href="tel:${phoneDigits}">김의현 ${escapeHtml(data.contact.phone)}</a></div>
     </div>
-    <div class="footer-bottom shell"><span>© <b data-year>2026</b> SWAG</span><a href="privacy.html">개인정보 처리 안내</a><a href="${escapeHtml(currentUrl)}#top">위로 ↑</a></div>
+    <div class="footer-bottom shell"><span>© <b data-year>2026</b> SWAG</span><a href="privacy.html">개인정보 처리 안내</a><a href="${escapeHtml(currentUrl)}#top">위로</a></div>
   </footer>`;
 
 const renderImage = (entry, options = {}) => {
   const image = safeImage(entry.image);
   if (!image) return '<div class="image-unavailable">이미지를 불러올 수 없습니다.</div>';
   const priority = options.priority ? ' fetchpriority="high"' : ' loading="lazy"';
-  return `<img src="${escapeHtml(image)}" alt="${escapeHtml(entry.imageAlt || entry.title)}" decoding="async"${priority}>`;
+  const className = options.className ? ` class="${escapeHtml(options.className)}"` : "";
+  return `<img${className} src="${escapeHtml(image)}" alt="${escapeHtml(entry.imageAlt || entry.title)}" width="${escapeHtml(options.width || 1536)}" height="${escapeHtml(options.height || 1024)}" decoding="async"${priority}>`;
 };
+
+const renderHomeFilm = () => {
+  const items = data.services.map((service, index) => `
+    <a class="film-shot film-shot-${index + 1}" href="services/#${escapeHtml(service.id)}" data-route-expand>
+      <figure>${renderImage(service, { width: service.id === "app" ? 1024 : 1536, height: service.id === "app" ? 1536 : 1024 })}<span class="film-burn" aria-hidden="true"></span></figure>
+      <p><b>${escapeHtml(service.title)}</b><span>${escapeHtml(service.short)}</span></p>
+    </a>`).join("");
+  return `<div class="film-track">${items}</div>`;
+};
+
+const renderServiceChapters = () => data.services.map((service, index) => `
+  <article class="service-chapter service-chapter-${index + 1}" id="${escapeHtml(service.id)}" data-reveal>
+    <figure class="service-visual" data-parallax>${renderImage(service, { width: service.id === "app" ? 1024 : 1536, height: service.id === "app" ? 1536 : 1024, priority: index === 0 })}<span class="image-scan" aria-hidden="true"></span></figure>
+    <div class="service-copy">
+      <p class="eyebrow">${escapeHtml(service.short)}</p>
+      <h2>${escapeHtml(service.title)}</h2>
+      <p class="service-description">${escapeHtml(service.description)}</p>
+      <ul>${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      <a class="text-link magnetic" href="contact/?type=${escapeHtml(service.id)}">이 분야로 문의 <span aria-hidden="true">↗</span></a>
+    </div>
+  </article>`).join("");
+
+const renderCapabilityFlow = () => data.capabilityGroups.map((item) => `
+  <span><b>${escapeHtml(item.title)}</b><em>${escapeHtml(item.description)}</em></span>`).join("");
 
 const renderWorkList = () => publicProjects.map((project, index) => {
   const external = safeHttpUrl(project.url);
-  const detailUrl = `work/${encodeURIComponent(project.id)}.html`;
   return `
-  <article class="case-study" data-reveal>
-    <a class="case-browser" href="${detailUrl}" aria-label="${escapeHtml(project.title)} 프로젝트 보기" data-shutter>
-      <figure>${renderImage(project, { priority: index === 0 })}</figure>
-      <span class="case-open" aria-hidden="true">OPEN PROJECT ↗</span>
+  <article class="case-study case-study-${index + 1}" data-reveal>
+    <a class="case-visual" href="${escapeHtml(external)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(project.title)} 운영 사이트 열기" data-parallax>
+      <figure>${renderImage(project, { priority: index === 0, width: 1600, height: 1000 })}<span class="image-scan" aria-hidden="true"></span></figure>
     </a>
     <div class="case-copy">
-      <p class="case-type">${escapeHtml(project.category)}</p>
+      <p class="eyebrow">${escapeHtml(project.category)} · ${escapeHtml(project.year)}</p>
       <h2>${escapeHtml(project.title)}</h2>
-      <p class="case-description">${escapeHtml(project.summary)}</p>
+      <p class="case-summary">${escapeHtml(project.summary)}</p>
       <dl><div><dt>제작 범위</dt><dd>${escapeHtml(project.problem)}</dd></div><div><dt>구현 내용</dt><dd>${escapeHtml(project.solution)}</dd></div></dl>
-      <ul>${project.features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}</ul>
-      <a class="case-link" href="${detailUrl}">프로젝트 보기 <i aria-hidden="true">↗</i></a>
-      ${external ? `<a class="case-link" href="${escapeHtml(external)}" target="_blank" rel="noopener noreferrer">운영 사이트에서 확인하기 <i aria-hidden="true">↗</i></a>` : ""}
+      <p class="case-features">${project.features.map(escapeHtml).join(" · ")}</p>
+      ${external ? `<a class="text-link magnetic" href="${escapeHtml(external)}" target="_blank" rel="noopener noreferrer">운영 사이트 <span aria-hidden="true">↗</span></a>` : ""}
     </div>
   </article>`;
 }).join("");
-
-const renderHomeProjects = () => publicProjects.map((project, index) => {
-  const detailUrl = `work/${encodeURIComponent(project.id)}.html`;
-  return `
-  <article class="home-project" data-reveal data-shutter>
-    <a class="home-project-media" href="${detailUrl}" aria-label="${escapeHtml(project.title)} 프로젝트 보기">
-      ${renderImage(project, { priority: index === 0 })}
-    </a>
-    <div class="home-project-copy">
-      <p>${escapeHtml(project.category)}</p>
-      <h3><a href="${detailUrl}">${escapeHtml(project.title)}</a></h3>
-      <span>${escapeHtml(project.summary)}</span>
-      <a class="text-link" href="${detailUrl}">프로젝트 보기 <i aria-hidden="true">↗</i></a>
-    </div>
-  </article>`;
-}).join("");
-
-const renderServiceChapters = () => data.services.map((service) => `
-  <article id="${escapeHtml(service.id)}" data-reveal data-service-scene data-title="${escapeHtml(service.title)}">
-    <header><p>${escapeHtml(service.short)}</p><h2 data-impact-title data-echo="${escapeHtml(service.title)}">${escapeHtml(service.title)}</h2><span>${escapeHtml(service.description)}</span></header>
-    <div class="service-body">
-      <ul class="service-list">${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-      <a class="service-link" href="contact/?type=${escapeHtml(service.id)}">견적 문의 <i aria-hidden="true">↗</i></a>
-    </div>
-  </article>`).join("");
-
-const renderCapabilityGrid = () => data.capabilityGroups.map((item) => `
-  <article><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description)}</p></article>`).join("");
 
 const renderPlannerTypes = () => data.services.map((service) => `
-  <button type="button" aria-pressed="false" data-brief-choice data-brief-key="${escapeHtml(service.id)}" data-brief-group="제작 종류" data-brief-value="${escapeHtml(service.title)}">${escapeHtml(service.title)}<small>${escapeHtml(service.short)}</small></button>`).join("");
+  <button type="button" aria-pressed="false" data-brief-choice data-brief-key="${escapeHtml(service.id)}" data-brief-group="제작 종류" data-brief-value="${escapeHtml(service.title)}"><span>${escapeHtml(service.title)}</span><small>${escapeHtml(service.short)}</small></button>`).join("");
 
 const renderPlannerFeatures = () => data.capabilities.map((item) => `
-  <button type="button" aria-pressed="false" data-brief-choice data-brief-group="필요 기능" data-brief-value="${escapeHtml(item)}">${escapeHtml(item)}</button>`).join("");
+  <button type="button" aria-pressed="false" data-brief-choice data-brief-group="필요 기능" data-brief-value="${escapeHtml(item)}"><span>${escapeHtml(item)}</span></button>`).join("");
 
 const renderProcess = () => data.process.map((item) => `
-  <article data-reveal data-title="${escapeHtml(item.title)}">
-    <div><h2 data-impact-title data-echo="${escapeHtml(item.title)}">${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description)}</p></div>
-    <p class="process-outcome">${escapeHtml(item.result)}</p>
+  <article data-reveal>
+    <div><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description)}</p></div>
+    <p class="process-output"><span>확인 항목</span>${escapeHtml(item.result)}</p>
   </article>`).join("");
-
-const renderProcessFlow = () => data.process.map((item) => `<span>${escapeHtml(item.title)}</span>`).join("");
 
 const renderFaq = () => data.faq.map((item) => `
   <details data-reveal><summary>${escapeHtml(item.question)}<span aria-hidden="true">+</span></summary><p>${escapeHtml(item.answer)}</p></details>`).join("");
+
+const renderContactStrip = () => `
+  <section class="contact-strip" data-reveal>
+    <div class="shell">
+      <p class="eyebrow">CONTACT</p>
+      <h2>견적 문의</h2>
+      <div><a class="text-link magnetic" href="contact/">내용 정리하기 <span aria-hidden="true">↗</span></a><a class="text-link magnetic" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 <span aria-hidden="true">↗</span></a><a href="tel:${phoneDigits}">${escapeHtml(data.contact.phone)}</a></div>
+    </div>
+  </section>`;
 
 const structuredData = JSON.stringify({
   "@context": "https://schema.org",
@@ -174,7 +177,7 @@ const structuredData = JSON.stringify({
   url: normalizedSiteUrl,
   telephone: data.contact.phone,
   areaServed: { "@type": "Country", name: "대한민국" },
-  makesOffer: ["웹사이트 제작", "모바일 앱 개발", "게임 개발", "디지털 서비스 개발"].map((name) => ({
+  makesOffer: ["웹사이트 제작", "모바일 앱 개발", "브라우저 게임 개발", "운영 시스템 개발"].map((name) => ({
     "@type": "Offer",
     itemOffered: { "@type": "Service", name, serviceType: name }
   }))
@@ -190,7 +193,8 @@ const commonTokens = {
   PHONE: data.contact.phone,
   PHONE_DIGITS: phoneDigits,
   OWNER: data.contact.owner,
-  RESPONSE_NOTE: data.contact.responseNote
+  RESPONSE_NOTE: data.contact.responseNote,
+  CONTACT_STRIP: renderContactStrip()
 };
 
 const fillTemplate = (template, tokens, rawKeys = new Set()) => Object.entries(tokens).reduce((html, [key, value]) => {
@@ -209,7 +213,7 @@ const writePage = async (templateName, outputPath, tokens, rawKeys = []) => {
   const target = path.join(output, outputPath);
   const html = fillTemplate(template, { ...commonTokens, ...tokens }, new Set(rawKeys))
     .replaceAll('href="styles.css"', `href="styles.css?v=${assetRevision}"`)
-    .replaceAll('src="app.js"', `src="app.js?v=${assetRevision}"`);
+    .replaceAll('src="app.js"', `src="app.js?v=${assetRevision}` + '"');
   const unresolved = html.match(/{{[A-Z0-9_]+}}/g);
   if (unresolved) throw new Error(`${outputPath} has unresolved template tokens: ${[...new Set(unresolved)].join(", ")}`);
   await mkdir(path.dirname(target), { recursive: true });
@@ -230,80 +234,55 @@ await writePage("index.template.html", "index.html", {
   HERO_HEADLINE: data.brand.headline,
   HERO_PRIMARY_CTA: data.brand.primaryCta,
   HERO_SECONDARY_CTA: data.brand.secondaryCta,
-  HOME_PROJECTS: renderHomeProjects()
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_PROJECTS"]);
-
-await writePage("work.template.html", "work/index.html", {
-  PAGE_TITLE: `프로젝트 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "SWAG의 공개 프로젝트와 담당 범위",
-  CANONICAL_URL: pageUrl("work/"),
-  HEADER: renderHeader("work"),
-  FOOTER: renderFooter(pageUrl("work/")),
-  WORK_CARDS: renderWorkList()
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "WORK_CARDS"]);
-
-for (const [index, project] of publicProjects.entries()) {
-  const next = publicProjects[(index + 1) % publicProjects.length];
-  const externalUrl = safeHttpUrl(project.url);
-  await writePage("project.template.html", `work/${project.id}.html`, {
-    PAGE_TITLE: `${project.title} | SWAG 프로젝트`,
-    PAGE_DESCRIPTION: project.summary,
-    OG_URL: pageUrl(project.image),
-    CANONICAL_URL: pageUrl(`work/${project.id}.html`),
-    HEADER: renderHeader("work"),
-    FOOTER: renderFooter(pageUrl(`work/${project.id}.html`)),
-    PROJECT_CATEGORY: project.category,
-    PROJECT_YEAR: project.year,
-    PROJECT_TITLE: project.title,
-    PROJECT_SUMMARY: project.summary,
-    PROJECT_IMAGE: renderImage(project, { priority: true }),
-    PROJECT_PROBLEM: project.problem,
-    PROJECT_SOLUTION: project.solution,
-    PROJECT_RESULT: project.result,
-    PROJECT_FEATURES: project.features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join(""),
-    PROJECT_EXTERNAL: externalUrl ? `<a class="text-link" href="${escapeHtml(externalUrl)}" target="_blank" rel="noopener noreferrer">운영 사이트 열기 <i aria-hidden="true">↗</i></a>` : "",
-    NEXT_PROJECT: next ? `<a class="button button-accent" href="work/${escapeHtml(next.id)}.html">${escapeHtml(next.title)} <i aria-hidden="true">↗</i></a>` : ""
-  }, ["STRUCTURED_DATA", "HEADER", "FOOTER", "PROJECT_IMAGE", "PROJECT_FEATURES", "PROJECT_EXTERNAL", "NEXT_PROJECT"]);
-}
+  HOME_FILM: renderHomeFilm()
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_FILM", "CONTACT_STRIP"]);
 
 await writePage("services.template.html", "services/index.html", {
   PAGE_TITLE: `제작 분야 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "웹사이트, 앱, 브라우저 게임과 운영 시스템 제작 분야",
+  PAGE_DESCRIPTION: "웹사이트, 앱, 브라우저 게임, 운영 시스템 제작",
   CANONICAL_URL: pageUrl("services/"),
   HEADER: renderHeader("services"),
   FOOTER: renderFooter(pageUrl("services/")),
   SERVICE_CHAPTERS: renderServiceChapters(),
-  CAPABILITY_GRID: renderCapabilityGrid()
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "SERVICE_CHAPTERS", "CAPABILITY_GRID"]);
+  CAPABILITY_FLOW: renderCapabilityFlow()
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "SERVICE_CHAPTERS", "CAPABILITY_FLOW", "CONTACT_STRIP"]);
+
+await writePage("work.template.html", "work/index.html", {
+  PAGE_TITLE: `프로젝트 | ${data.brand.name}`,
+  PAGE_DESCRIPTION: "SWAG 공개 프로젝트와 담당 범위",
+  CANONICAL_URL: pageUrl("work/"),
+  HEADER: renderHeader("work"),
+  FOOTER: renderFooter(pageUrl("work/")),
+  WORK_CASES: renderWorkList()
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "WORK_CASES", "CONTACT_STRIP"]);
 
 await writePage("process.template.html", "process/index.html", {
   PAGE_TITLE: `진행 방식 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "상담부터 기획, 디자인, 개발, 검수와 배포까지의 진행 방식",
+  PAGE_DESCRIPTION: "상담부터 기획, 디자인, 개발, 검수, 배포까지",
   CANONICAL_URL: pageUrl("process/"),
   HEADER: renderHeader("process"),
   FOOTER: renderFooter(pageUrl("process/")),
-  PROCESS_FLOW: renderProcessFlow(),
   PROCESS: renderProcess()
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "PROCESS_FLOW", "PROCESS"]);
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "PROCESS", "CONTACT_STRIP"]);
 
 await writePage("about.template.html", "about/index.html", {
-  PAGE_TITLE: `스튜디오 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "SWAG의 작업 방식과 제작 기준",
+  PAGE_TITLE: `소개 | ${data.brand.name}`,
+  PAGE_DESCRIPTION: "상담부터 배포까지 직접 맡는 SWAG 2인 프리랜서 스튜디오",
   CANONICAL_URL: pageUrl("about/"),
   HEADER: renderHeader("about"),
   FOOTER: renderFooter(pageUrl("about/"))
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER"]);
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "CONTACT_STRIP"]);
 
 await writePage("contact.template.html", "contact/index.html", {
   PAGE_TITLE: `견적 문의 | ${data.brand.name}`,
-  PAGE_DESCRIPTION: "SWAG 제작 견적 문의와 상담 내용 정리",
+  PAGE_DESCRIPTION: "SWAG 제작 견적 문의",
   CANONICAL_URL: pageUrl("contact/"),
   HEADER: renderHeader("contact"),
   FOOTER: renderFooter(pageUrl("contact/")),
   PLANNER_TYPES: renderPlannerTypes(),
   PLANNER_FEATURES: renderPlannerFeatures(),
   FAQ: renderFaq()
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "PLANNER_TYPES", "PLANNER_FEATURES", "FAQ"]);
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "PLANNER_TYPES", "PLANNER_FEATURES", "FAQ", "CONTACT_STRIP"]);
 
 await writePage("privacy.template.html", "privacy.html", {
   PAGE_TITLE: "개인정보 처리 안내 | SWAG",
@@ -311,7 +290,7 @@ await writePage("privacy.template.html", "privacy.html", {
   CANONICAL_URL: pageUrl("privacy.html"),
   HEADER: renderHeader(""),
   FOOTER: renderFooter(pageUrl("privacy.html"))
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER"]);
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "CONTACT_STRIP"]);
 
 await writePage("404.template.html", "404.html", {
   HEADER: renderHeader(""),
@@ -320,34 +299,7 @@ await writePage("404.template.html", "404.html", {
 
 await cp(path.join(source, "styles.css"), path.join(output, "styles.css"));
 await cp(path.join(source, "app.js"), path.join(output, "app.js"));
-for (const asset of [
-  "accent-signal-drag-v1.webp",
-  "swag-og-v5.png",
-  "swag-lockup-dark-v4.svg",
-  "swag-lockup-light-v4.svg",
-  "swag-symbol-v4.svg",
-  "swag-grotesk-v1.woff2",
-  "swag-grotesk-LICENSE.txt",
-  "texture-ink-drag-v1.webp",
-  "texture-xerox-rip-v1.webp",
-  "texture-shutter-v1.webp",
-  "texture-toner-field-v1.webp",
-  "case-catharsis.jpg",
-  "case-crimescene.jpg"
-]) {
-  await cp(path.join(source, "assets", asset), path.join(output, "assets", asset));
-}
-
-const version = {
-  commitSha: process.env.GITHUB_SHA || "local",
-  builtAt: new Date().toISOString(),
-  contentUpdatedAt: data.meta.updatedAt
-};
-await writeFile(path.join(output, "version.json"), JSON.stringify(version, null, 2));
+await cp(path.join(source, "assets"), path.join(output, "assets"), { recursive: true });
 await writeFile(path.join(output, ".nojekyll"), "");
-await writeFile(path.join(output, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${pageUrl("sitemap.xml")}\n`);
 
-const sitemapEntries = ["", "services/", "work/", ...publicProjects.map((project) => `work/${project.id}.html`), "process/", "about/", "contact/", "privacy.html"];
-await writeFile(path.join(output, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${sitemapEntries.map((entry) => `<url><loc>${escapeHtml(pageUrl(entry))}</loc></url>`).join("")}</urlset>\n`);
-
-console.log(`Built SWAG to ${output}`);
+console.log(`Built SWAG v${data.meta.version} for ${normalizedSiteUrl}`);

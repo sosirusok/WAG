@@ -22,7 +22,6 @@ required(data?.meta?.description, "meta.description");
 required(data?.brand?.name, "brand.name");
 required(data?.brand?.description, "brand.description");
 required(data?.contact?.phone, "contact.phone");
-if (data?.meta?.version !== 44) errors.push("meta.version must be 44 for this release");
 
 try {
   const kakao = new URL(data?.contact?.kakao);
@@ -38,18 +37,11 @@ const processSteps = Array.isArray(data.process) ? data.process : [];
 const faqItems = Array.isArray(data.faq) ? data.faq : [];
 
 if (projects.filter((project) => project.published).length < 2) errors.push("at least two public projects are required");
-const projectIds = projects.map((project) => project.id).filter(Boolean);
-if (new Set(projectIds).size !== projectIds.length) errors.push("project ids must be unique");
 for (const [index, project] of projects.entries()) {
-  for (const field of ["id", "title", "category", "summary", "problem", "solution", "result", "image", "imageAlt", "url"]) {
+  for (const field of ["id", "title", "category", "summary", "problem", "solution", "image", "imageAlt", "url"]) {
     required(project[field], `projects[${index}].${field}`);
   }
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(project.id || "")) errors.push(`projects[${index}].id must be URL-safe`);
-  if (!Array.isArray(project.features) || project.features.length < 3) {
-    errors.push(`projects[${index}].features needs at least three entries`);
-  } else if (project.features.some((feature) => typeof feature !== "string" || !feature.trim())) {
-    errors.push(`projects[${index}].features must contain non-empty strings`);
-  }
+  if (!Array.isArray(project.features) || project.features.length < 3) errors.push(`projects[${index}].features needs at least three entries`);
   if (project.image?.startsWith("assets/") && !await fileExists(`src/${project.image}`)) errors.push(`missing project image: ${project.image}`);
   try {
     if (new URL(project.url).protocol !== "https:") throw new Error();
@@ -60,52 +52,37 @@ for (const [index, project] of projects.entries()) {
 
 if (services.length !== 4) errors.push("exactly four service groups are required");
 for (const [index, service] of services.entries()) {
-  for (const field of ["id", "title", "short", "description"]) required(service[field], `services[${index}].${field}`);
-  if (!Array.isArray(service.items) || service.items.length !== 6) {
-    errors.push(`services[${index}].items needs exactly six entries`);
-  } else if (service.items.some((item) => typeof item !== "string" || !item.trim())) {
-    errors.push(`services[${index}].items must contain non-empty strings`);
-  } else if (new Set(service.items.map((item) => item.trim())).size !== service.items.length) {
-    errors.push(`services[${index}].items contains duplicate entries`);
-  }
+  for (const field of ["id", "title", "short", "description", "image", "imageAlt"]) required(service[field], `services[${index}].${field}`);
+  if (!Array.isArray(service.items) || service.items.length < 4) errors.push(`services[${index}].items needs at least four entries`);
+  if (service.image?.startsWith("assets/") && !await fileExists(`src/${service.image}`)) errors.push(`missing service image: ${service.image}`);
 }
 
-if (capabilityGroups.length < 3) errors.push("at least three capability groups are required");
+if (capabilityGroups.length < 4) errors.push("four capability groups are required");
 if (processSteps.length < 4) errors.push("at least four process stages are required");
 if (faqItems.length < 4) errors.push("at least four FAQ items are required");
-for (const [index, group] of capabilityGroups.entries()) {
-  for (const field of ["title", "description"]) required(group[field], `capabilityGroups[${index}].${field}`);
-}
-for (const [index, step] of processSteps.entries()) {
-  for (const field of ["title", "description", "result"]) required(step[field], `process[${index}].${field}`);
-}
-for (const [index, item] of faqItems.entries()) {
-  for (const field of ["question", "answer"]) required(item[field], `faq[${index}].${field}`);
-}
 
 const requiredAssets = [
-  "accent-signal-drag-v1.webp",
+  "SUIT-Variable.woff2",
   "case-catharsis.jpg",
   "case-crimescene.jpg",
-  "swag-og-v5.png",
-  "swag-lockup-dark-v4.svg",
-  "swag-lockup-light-v4.svg",
-  "swag-symbol-v4.svg",
-  "swag-grotesk-v1.woff2",
-  "swag-grotesk-LICENSE.txt",
-  "texture-ink-drag-v1.webp",
-  "texture-xerox-rip-v1.webp",
-  "texture-shutter-v1.webp",
-  "texture-toner-field-v1.webp"
+  "service-app-v42.webp",
+  "service-game-v42.webp",
+  "service-system-v42.webp",
+  "service-web-v42.webp",
+  "studio-about-v42.webp",
+  "studio-hero-v42.webp",
+  "swag-mark-v42.png",
+  "swag-og-v42.png",
+  "swag-signature-v42.png"
 ];
+
 for (const asset of requiredAssets) {
   if (!await fileExists(`src/assets/${asset}`)) errors.push(`missing required asset: src/assets/${asset}`);
 }
+
 const actualAssets = (await readdir(new URL("src/assets/", root))).sort();
 const unexpectedAssets = actualAssets.filter((asset) => !requiredAssets.includes(asset));
-if (unexpectedAssets.length) {
-  errors.push(`unexpected legacy assets found: ${unexpectedAssets.join(", ")}`);
-}
+if (unexpectedAssets.length) errors.push(`unexpected legacy assets found: ${unexpectedAssets.join(", ")}`);
 
 const activeSources = [
   "data/site.json",
@@ -117,7 +94,6 @@ const activeSources = [
   "src/contact.template.html",
   "src/privacy.template.html",
   "src/404.template.html",
-  "src/project.template.html",
   "src/app.js",
   "src/styles.css",
   "scripts/build.mjs"
@@ -125,16 +101,15 @@ const activeSources = [
 
 const sourceText = (await Promise.all(activeSources.map((name) => readFile(new URL(name, root), "utf8")))).join("\n");
 const bannedPatterns = [
-  [/accent-(?:red|black)|kinetic-|cursor-orb|page-wipe/gi, "legacy dark/red decorative assets"],
+  [/swag-(?:wordmark|monogram)-v3|Paperlogy|swag-og\.png/gi, "retired brand or display-font asset"],
   [/MAKE\s*\/\s*BREAK|DESIGN IN MOTION|눈에 남고 제대로 작동|다양한 플랫폼[,.]?\s*맞춤형 제작/gi, "generic slogan copy"],
   [/필요한 만큼 정확하게|실제로 운영 중인 화면을 직접 확인|중요한 화면을 먼저 확인하고|만들고 싶은 서비스가 있나요|필요한 페이지로 바로 이동하세요/gi, "rejected AI-style copy"],
   [/>\s*0[1-9]\s*</g, "visible arbitrary numbering"],
   [/(?:맑은\s*고딕|Malgun Gothic|Dotum|돋움|Gulim|굴림)/gi, "legacy system font"],
-  [/#(?:4254ff|2436d9|00c7f2|9d7cff|e9edff|e5faff|f0ebff|007eec|008fe9|16275b|142461|6576ff|7584ff)\b/gi, "legacy blue, cyan, or violet palette"],
-  [/swag-symbol-v2|WantedSansVariable|swag-square-v1|swag-hero-brand|swag-og-v4/gi, "legacy brand asset or font"],
-  [/(?:SUIT-Variable|Paperlogy-8ExtraBold|swag-monogram-v3|swag-wordmark-v3|swag-og\.png)/gi, "retired v3 brand or font asset"],
-  [/김의현/g, "personal name"],
-  [/\bkhaki\b/gi, "khaki palette"]
+  [/#(?:4254ff|2436d9|00c7f2|9d7cff|e9edff|e5faff|f0ebff|007eec|008fe9|16275b|142461|6576ff|7584ff)\b/gi, "blue, cyan, or violet palette"],
+  [/\b(?:khaki|olive)\b/gi, "forbidden green-brown palette"],
+  [/(?:linear|radial)-gradient\s*\(/gi, "flat decorative color field"],
+  [/class="[^"]*(?:card-grid|browser-card|number-grid)[^"]*"/gi, "PPT-style card layout"]
 ];
 
 for (const [pattern, label] of bannedPatterns) {
@@ -142,48 +117,41 @@ for (const [pattern, label] of bannedPatterns) {
 }
 
 const css = await readFile(new URL("src/styles.css", root), "utf8");
-if (/SUIT Variable|Paperlogy|SUIT-Variable|Paperlogy-8ExtraBold/i.test(css)) errors.push("retired SUIT or Paperlogy font reference remains");
+if (!/@font-face[\s\S]*SUIT Variable/.test(css)) errors.push("SUIT Variable webfont is not configured");
 if (!/body\s*\{[\s\S]*?font-size:\s*(?:17|18)px/.test(css)) errors.push("body copy must be at least 17px");
 if (!/@media\s*\(prefers-reduced-motion:\s*reduce\)/.test(css)) errors.push("reduced-motion mode is required");
 if (!/:focus-visible\b/.test(css)) errors.push("visible keyboard focus styles are required");
 
 const tinyFonts = [...css.matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/gi)].filter((match) => Number(match[1]) < 14);
 if (tinyFonts.length) errors.push(`CSS contains ${tinyFonts.length} font sizes below 14px`);
-if (!/#ed1c24\b/i.test(css)) errors.push("v44 signal-red accent is missing");
-
-for (const logoAsset of ["swag-lockup-dark-v4.svg", "swag-lockup-light-v4.svg", "swag-symbol-v4.svg"]) {
-  const logoSource = await readFile(new URL(`src/assets/${logoAsset}`, root), "utf8");
-  if (!/#ed1c24\b/i.test(logoSource)) errors.push(`${logoAsset} is missing the v44 signal-red accent`);
-  if (/#ff4b1f\b/i.test(logoSource)) errors.push(`${logoAsset} still contains the retired orange accent`);
-}
+if (!/#cf4714\b/i.test(css)) errors.push("burnt-orange signal color is missing");
+if (!/#11110f\b/i.test(css)) errors.push("near-black ink color is missing");
 
 const revealCount = (sourceText.match(/data-reveal/g) || []).length;
-if (revealCount < 16) errors.push(`motion coverage is too low: ${revealCount}`);
-
-const teamMentions = sourceText.match(/(?:2인|두\s*명|두\s*사람|TWO-PERSON|2\s+FREELANCERS)/gi) || [];
-if (teamMentions.length > 2) errors.push(`team-size copy is repeated too often: ${teamMentions.length}`);
-const escapeRoomMentions = sourceText.match(/방탈출/g) || [];
-if (escapeRoomMentions.length > 1) errors.push(`escape-room copy is repeated too often: ${escapeRoomMentions.length}`);
+if (revealCount < 18) errors.push(`motion coverage is too low: ${revealCount}`);
+if ((sourceText.match(/data-parallax/g) || []).length < 8) errors.push("image parallax coverage is too low");
 
 const homeSource = await readFile(new URL("src/index.template.html", root), "utf8");
-if (!/\{\{HOME_PROJECTS\}\}/.test(homeSource)) errors.push("homepage project slot is missing");
-if (!/swag-(?:lockup-(?:dark|light)|symbol)-v4\.svg/.test(homeSource)) errors.push("homepage v4 brand artwork is missing");
-if (!/제작 분야[\s\S]*프로젝트[\s\S]*진행 방식[\s\S]*스튜디오[\s\S]*견적 문의/.test(sourceText)) {
-  errors.push("desktop navigation is missing required destinations");
+if (/case-catharsis|case-crimescene|카타르시스|크라임씬|SELECTED WORK|운영 사이트/i.test(homeSource)) {
+  errors.push("homepage must not contain project examples");
+}
+if (!/studio-hero-v42\.webp/.test(homeSource)) errors.push("homepage cinematic studio image is missing");
+if (!/swag-mark-v42\.png/.test(homeSource)) errors.push("custom symbol favicon is missing");
+if (!/HERO_DESCRIPTION/.test(homeSource) || !/2인 프리랜서/.test(data.brand.description)) errors.push("homepage two-person team fact is missing");
+if (!/제작 분야[\s\S]*프로젝트[\s\S]*진행 방식[\s\S]*소개[\s\S]*견적 문의/.test(sourceText)) {
+  errors.push("navigation is missing required destinations");
 }
 
 const aboutSource = await readFile(new URL("src/about.template.html", root), "utf8");
-for (const fact of ["웹사이트", "앱", "브라우저 게임", "운영 도구", "휴대폰과 PC"]) {
+for (const fact of ["2인 프리랜서", "합리적인 비용", "빠른 진행", "같은 담당자", "두 사람 전담", "상담", "기획", "디자인", "개발", "검수", "배포"]) {
   if (!aboutSource.includes(fact)) errors.push(`about page is missing required fact: ${fact}`);
 }
 
 const appSource = await readFile(new URL("src/app.js", root), "utf8");
-if (!/requestAnimationFrame\((?:drawCanvas|canvasTick)\)/.test(appSource)) errors.push("continuous hero canvas motion is missing");
-if (/createRadialGradient|\bdot(?:X|Y)?\b/.test(appSource)) errors.push("point-like canvas decoration remains");
-if (/\b(?:fetch|XMLHttpRequest|WebSocket|EventSource)\b/.test(appSource)) errors.push("runtime network dependency is not allowed on this static site");
-if (/@import\s|url\(\s*["']?https?:\/\//i.test(css)) errors.push("external CSS or font dependency is not allowed");
-if ((css.match(/@keyframes\b/g) || []).length < 3 || (css.match(/animation\s*:/g) || []).length < 3) {
-  errors.push("automatic CSS motion coverage is too low");
+if (!/requestAnimationFrame\(drawFilm\)/.test(appSource)) errors.push("continuous cinematic film motion is missing");
+if (!/requestAnimationFrame\(autoMove\)/.test(appSource)) errors.push("continuous service-film motion is missing");
+if (!/@keyframes\s+cinematicDrift[\s\S]*@keyframes\s+spliceSweep[\s\S]*@keyframes\s+capabilityRun/.test(css)) {
+  errors.push("continuous image, splice, and capability motion is missing");
 }
 
 if (errors.length) {

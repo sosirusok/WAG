@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f4f1ea">
-  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#F8F8F6">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -15,7 +14,9 @@
   <meta property="og:image" content="{{OG_URL}}">
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
-  <link rel="icon" href="assets/swag-symbol-v4.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/swag-mark-v42.png" type="image/png">
+  <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/service-web-v42.webp" as="image" type="image/webp" fetchpriority="high">
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -25,34 +26,28 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <header class="page-hero page-hero-services" data-flash>
-      <img class="page-hero-material toner" src="assets/texture-toner-field-v1.webp" alt="" width="1400" height="933" data-parallax aria-hidden="true">
-      <img class="page-signal" src="assets/accent-signal-drag-v1.webp" alt="" width="1800" height="600" aria-hidden="true">
-      <div class="shell">
-        <p class="eyebrow" data-reveal>WHAT WE BUILD</p>
-        <h1 data-reveal data-impact-title data-echo="제작 분야">제작 분야</h1>
-        <p class="page-lead" data-reveal>소개 사이트, 쇼핑몰, 앱, 웹게임, 업무 도구. 필요한 조합으로 디자인하고 개발합니다.</p>
+    <section class="editorial-intro services-intro">
+      <div class="intro-copy shell" data-reveal>
+        <p class="eyebrow">WEB · APP · GAME · SYSTEM</p>
+        <h1>제작 분야</h1>
+        <p>기획 · 디자인 · 개발 · 배포</p>
       </div>
-    </header>
-
-    <nav class="service-ribbon" aria-label="제작 분야 바로가기" data-marquee>
-      <div><a href="services/#web">웹사이트</a><i></i><a href="services/#app">모바일 앱</a><i></i><a href="services/#game">브라우저 게임</a><i></i><a href="services/#platform">운영 시스템</a><i></i><a aria-hidden="true" tabindex="-1" href="services/#web">웹사이트</a><i aria-hidden="true"></i><a aria-hidden="true" tabindex="-1" href="services/#app">모바일 앱</a><i aria-hidden="true"></i><a aria-hidden="true" tabindex="-1" href="services/#game">브라우저 게임</a><i aria-hidden="true"></i><a aria-hidden="true" tabindex="-1" href="services/#platform">운영 시스템</a><i aria-hidden="true"></i></div>
-    </nav>
-
-    <section class="service-detail shell">{{SERVICE_CHAPTERS}}</section>
-
-    <section class="capability-field" data-flash>
-      <img src="assets/accent-signal-drag-v1.webp" alt="" width="1800" height="600" loading="lazy" aria-hidden="true">
-      <div class="shell">
-        <header data-reveal><p>CONNECTED FEATURES</p><h2 data-impact-title data-echo="필요한 기능을 한 흐름으로">필요한 기능을 한 흐름으로</h2></header>
-        <div>{{CAPABILITY_GRID}}</div>
+      <div class="intro-collage" aria-hidden="true">
+        <figure class="intro-wide" data-parallax><img src="assets/service-web-v42.webp" alt="" width="1536" height="1024" fetchpriority="high" decoding="async"></figure>
+        <figure class="intro-tall" data-parallax><img src="assets/service-app-v42.webp" alt="" width="1024" height="1536" loading="eager" decoding="async"></figure>
       </div>
+      <nav class="chapter-jump shell" aria-label="제작 분야 바로가기"><a href="services/#web">웹사이트</a><a href="services/#app">앱 · 웹앱</a><a href="services/#game">브라우저 게임</a><a href="services/#platform">운영 시스템</a></nav>
     </section>
 
-    <section class="simple-cta shell" data-reveal>
-      <p>원하는 형태가 목록에 없어도 괜찮습니다.</p>
-      <a class="button button-dark" href="contact/">가능 여부 확인하기 <i aria-hidden="true">↗</i></a>
+    <section class="service-editorial">{{SERVICE_CHAPTERS}}</section>
+
+    <section class="capability-flow" aria-labelledby="capability-title" data-reveal>
+      <div class="shell"><p class="eyebrow">FUNCTIONS</p><h2 id="capability-title">연동 기능</h2></div>
+      <div class="capability-marquee"><div>{{CAPABILITY_FLOW}}{{CAPABILITY_FLOW}}</div></div>
+      <p class="shell capability-note">결제 · 지도 · 알림 · 앱스토어는 필요한 계정과 심사 일정을 먼저 확인합니다.</p>
     </section>
+
+    {{CONTACT_STRIP}}
   </main>
   {{FOOTER}}
   <script src="app.js" defer></script>
