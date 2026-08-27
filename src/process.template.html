@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#F8F8F6">
+  <meta name="theme-color" content="#f3f5fa">
+  <meta name="color-scheme" content="light">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -14,9 +15,10 @@
   <meta property="og:image" content="{{OG_URL}}">
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
-  <link rel="icon" href="assets/swag-mark-v42.png" type="image/png">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/studio-hero-v46.webp" as="image" type="image/webp" fetchpriority="high">
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -26,14 +28,14 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <section class="photo-intro process-intro">
-      <figure data-parallax><img src="assets/studio-hero-v46.webp" alt="얼굴이 보이지 않는 두 제작자가 노트북과 태블릿으로 화면을 검토하는 밝은 작업실" width="1536" height="864" fetchpriority="high" decoding="async"><span class="image-scan" aria-hidden="true"></span></figure>
-      <div class="photo-intro-copy shell" data-reveal>
-        <p class="eyebrow">PROCESS</p>
+    <header class="page-intro process-intro">
+      <div class="page-intro-backdrop" aria-hidden="true"><i class="hero-blob hero-blob-1"></i><i class="hero-grid"></i></div>
+      <div class="intro-copy shell" data-reveal>
+        <p class="eyebrow"><span class="pulse-dot" aria-hidden="true"></span>PROCESS</p>
         <h1>진행 방식</h1>
-        <p>상담 · 기획 · 디자인 · 개발 · 검수 · 배포</p>
+        <p class="section-lead">상담 · 기획 · 디자인 · 개발 · 검수 · 배포, 단계마다 확인할 결과가 있습니다.</p>
       </div>
-    </section>
+    </header>
 
     <section class="process-editorial shell" aria-label="프로젝트 진행 과정">
       <div class="process-line" aria-hidden="true"><i></i></div>
@@ -42,7 +44,10 @@
 
     <section class="after-launch shell" data-reveal>
       <div><p class="eyebrow">AFTER LAUNCH</p><h2>배포 이후 지원</h2></div>
-      <div><p>운영 주소 · 관리자 화면 · 계정 · 콘텐츠 수정 방법</p><p>오류 수정 · 화면 보완 · 기능 추가</p></div>
+      <div class="after-launch-cards">
+        <p><b>인계</b>운영 주소 · 관리자 화면 · 계정 · 콘텐츠 수정 방법</p>
+        <p><b>유지</b>오류 수정 · 화면 보완 · 기능 추가</p>
+      </div>
     </section>
 
     {{CONTACT_STRIP}}

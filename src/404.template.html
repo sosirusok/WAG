@@ -3,11 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#F8F8F6">
+  <meta name="theme-color" content="#f3f5fa">
+  <meta name="color-scheme" content="light">
   <meta name="description" content="요청한 페이지를 찾을 수 없습니다. SWAG 메인으로 이동해 주세요.">
   <meta name="robots" content="noindex,follow">
   <base href="{{SITE_URL}}">
-  <link rel="icon" href="assets/swag-mark-v42.png" type="image/png">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <title>페이지를 찾을 수 없습니다 | SWAG</title>
@@ -17,9 +20,11 @@
   <a class="skip-link" href="404.html#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main" class="not-found shell">
-    <p class="eyebrow">404 / NOT FOUND</p>
+    <p class="not-found-code" aria-hidden="true"><span>4</span><span class="nf-zero"><i></i></span><span>4</span></p>
+    <p class="eyebrow">NOT FOUND</p>
     <h1>페이지를 찾을 수 없습니다</h1>
-    <a class="text-link magnetic" href="./">메인으로 돌아가기 <span aria-hidden="true">↗</span></a>
+    <p class="section-lead">주소가 바뀌었거나 삭제된 페이지예요.</p>
+    <a class="btn btn-primary magnetic" href="./">메인으로 돌아가기 <span aria-hidden="true">→</span></a>
   </main>
   {{FOOTER}}
   <script src="app.js" defer></script>

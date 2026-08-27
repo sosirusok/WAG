@@ -1,9 +1,12 @@
 const root = document.documentElement;
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const finePointer = window.matchMedia("(pointer: fine)").matches;
 
 document.querySelectorAll("[data-year]").forEach((item) => {
   item.textContent = String(new Date().getFullYear());
 });
+
+/* ------------------------------------------------------ reveal on scroll */
 
 root.classList.add("motion-ready");
 const revealItems = [...document.querySelectorAll("[data-reveal]")];
@@ -36,8 +39,10 @@ window.requestAnimationFrame(() => {
   window.requestAnimationFrame(() => document.body.classList.add("is-loaded"));
 });
 
+/* ----------------------------------------------------- inertia wheel scroll */
+
 const smoothWheelEnabled = !reducedMotion
-  && window.matchMedia("(pointer: fine)").matches
+  && finePointer
   && window.matchMedia("(min-width: 901px)").matches;
 
 if (smoothWheelEnabled) {
@@ -96,6 +101,8 @@ if (smoothWheelEnabled) {
   });
 }
 
+/* --------------------------------------- scroll progress, parallax, header */
+
 const header = document.querySelector("[data-header]");
 const parallaxItems = [...document.querySelectorAll("[data-parallax]")];
 const processSection = document.querySelector(".process-editorial");
@@ -137,6 +144,8 @@ paintScroll();
 window.addEventListener("scroll", requestScrollPaint, { passive: true });
 window.addEventListener("resize", requestScrollPaint, { passive: true });
 
+/* ------------------------------------------------------------ mobile menu */
+
 const mobileMenu = document.querySelector(".mobile-menu");
 const mobileMenuToggle = mobileMenu?.querySelector("summary");
 
@@ -154,6 +163,12 @@ const syncMobileMenu = () => {
 };
 
 mobileMenu?.addEventListener("toggle", syncMobileMenu);
+mobileMenuToggle?.addEventListener("click", (event) => {
+  // details toggles asynchronously; flip it ourselves so aria state updates in the same task
+  event.preventDefault();
+  mobileMenu.open = !mobileMenu.open;
+  syncMobileMenu();
+});
 syncMobileMenu();
 
 document.querySelectorAll(".mobile-menu nav a").forEach((link) => {
@@ -167,6 +182,8 @@ document.addEventListener("keydown", (event) => {
 window.matchMedia("(min-width: 901px)").addEventListener("change", (event) => {
   if (event.matches) closeMobileMenu();
 });
+
+/* -------------------------------------------------- hero pointer parallax */
 
 const impactHero = document.querySelector("[data-impact-hero]");
 const heroPhoto = document.querySelector("[data-hero-photo]");
@@ -194,6 +211,8 @@ impactHero?.addEventListener("pointerleave", () => {
   if (!pointerFrame) pointerFrame = window.requestAnimationFrame(paintHeroPointer);
 }, { passive: true });
 
+/* ------------------------------------------------ hero particle constellation */
+
 const canvas = document.querySelector("[data-film-canvas]");
 
 if (canvas) {
@@ -202,6 +221,19 @@ if (canvas) {
   let canvasHeight = 1;
   let animationFrame = 0;
   let heroVisible = true;
+  let particles = [];
+
+  const seedParticles = () => {
+    const count = Math.max(24, Math.min(54, Math.round(canvasWidth / 30)));
+    particles = Array.from({ length: count }, (_, index) => ({
+      x: Math.random() * canvasWidth,
+      y: Math.random() * canvasHeight,
+      vx: (Math.random() - .5) * .22,
+      vy: (Math.random() - .5) * .18,
+      radius: 1.1 + Math.random() * 1.9,
+      green: index % 4 === 0
+    }));
+  };
 
   const resizeCanvas = () => {
     const bounds = canvas.getBoundingClientRect();
@@ -211,39 +243,46 @@ if (canvas) {
     canvas.width = Math.round(canvasWidth * ratio);
     canvas.height = Math.round(canvasHeight * ratio);
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    seedParticles();
   };
 
-  const drawFilm = (time = 0) => {
+  const drawFilm = () => {
     context.clearRect(0, 0, canvasWidth, canvasHeight);
+    const linkDistance = Math.min(150, canvasWidth * .12 + 70);
 
-    const travel = ((time * .05) % (canvasWidth + 500)) - 250;
-    context.strokeStyle = "rgba(207,71,20,.28)";
+    particles.forEach((particle) => {
+      particle.x += particle.vx;
+      particle.y += particle.vy;
+      if (particle.x < -20) particle.x = canvasWidth + 20;
+      if (particle.x > canvasWidth + 20) particle.x = -20;
+      if (particle.y < -20) particle.y = canvasHeight + 20;
+      if (particle.y > canvasHeight + 20) particle.y = -20;
+    });
+
     context.lineWidth = 1;
-    context.beginPath();
-    context.moveTo(travel, 0);
-    context.lineTo(travel + 72, canvasHeight);
-    context.stroke();
-
-    context.strokeStyle = "rgba(255,255,255,.44)";
-    context.beginPath();
-    context.moveTo(travel + 10, 0);
-    context.lineTo(travel + 82, canvasHeight);
-    context.stroke();
-
-    for (let row = 0; row < 5; row += 1) {
-      const base = canvasHeight * (.18 + row * .16);
-      const phase = time * (.00016 + row * .000018);
-      context.beginPath();
-      for (let step = 0; step <= 48; step += 1) {
-        const x = canvasWidth * (step / 48);
-        const y = base + Math.sin(step * .32 + phase + row) * (4 + row * 1.4);
-        if (step === 0) context.moveTo(x, y);
-        else context.lineTo(x, y);
+    for (let first = 0; first < particles.length; first += 1) {
+      for (let second = first + 1; second < particles.length; second += 1) {
+        const a = particles[first];
+        const b = particles[second];
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const distance = Math.hypot(dx, dy);
+        if (distance > linkDistance) continue;
+        const alpha = (1 - distance / linkDistance) * .16;
+        context.strokeStyle = a.green || b.green ? `rgba(24, 172, 104, ${alpha})` : `rgba(33, 69, 230, ${alpha})`;
+        context.beginPath();
+        context.moveTo(a.x, a.y);
+        context.lineTo(b.x, b.y);
+        context.stroke();
       }
-      context.strokeStyle = row === 2 ? "rgba(207,71,20,.12)" : "rgba(17,17,15,.065)";
-      context.lineWidth = row === 2 ? 1.2 : .7;
-      context.stroke();
     }
+
+    particles.forEach((particle) => {
+      context.fillStyle = particle.green ? "rgba(24, 172, 104, .5)" : "rgba(33, 69, 230, .42)";
+      context.beginPath();
+      context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+      context.fill();
+    });
 
     if (!reducedMotion && !document.hidden && heroVisible) animationFrame = window.requestAnimationFrame(drawFilm);
     else animationFrame = 0;
@@ -268,13 +307,121 @@ if (canvas) {
   document.addEventListener("visibilitychange", syncFilm);
   window.addEventListener("resize", () => {
     resizeCanvas();
-    if (reducedMotion) drawFilm(0);
+    if (reducedMotion) drawFilm();
   }, { passive: true });
 
   resizeCanvas();
-  if (reducedMotion) drawFilm(0);
+  if (reducedMotion) drawFilm();
   else animationFrame = window.requestAnimationFrame(drawFilm);
 }
+
+/* ------------------------------------------------------ headline rotator */
+
+const rotator = document.querySelector("[data-rotator]");
+
+if (rotator) {
+  let words = [];
+  try {
+    words = JSON.parse(rotator.dataset.rotatorWords || "[]");
+  } catch {
+    words = [];
+  }
+  if (words.length > 1 && !reducedMotion) {
+    const probe = document.createElement("span");
+    probe.style.cssText = "position:absolute;visibility:hidden;white-space:nowrap;";
+    probe.className = rotator.className;
+    rotator.parentElement?.append(probe);
+    let widest = 0;
+    words.forEach((word) => {
+      probe.textContent = word;
+      widest = Math.max(widest, probe.offsetWidth);
+    });
+    probe.remove();
+    if (widest) rotator.style.minWidth = `${Math.ceil(widest) + 2}px`;
+
+    let index = 0;
+    window.setInterval(() => {
+      if (document.hidden) return;
+      rotator.classList.add("is-out");
+      window.setTimeout(() => {
+        index = (index + 1) % words.length;
+        rotator.textContent = words[index];
+        rotator.classList.remove("is-out");
+        rotator.classList.add("is-in");
+        window.setTimeout(() => rotator.classList.remove("is-in"), 460);
+      }, 260);
+    }, 2600);
+  }
+}
+
+/* ------------------------------------------------------------- count up */
+
+const countItems = [...document.querySelectorAll("[data-count]")];
+
+if (countItems.length) {
+  const animateCount = (item) => {
+    const target = Number(item.dataset.count) || 0;
+    if (reducedMotion) {
+      item.textContent = String(target);
+      return;
+    }
+    const start = performance.now();
+    const duration = 1300;
+    const step = (now) => {
+      const linear = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - linear, 3);
+      item.textContent = String(Math.round(target * eased));
+      if (linear < 1) window.requestAnimationFrame(step);
+      else item.textContent = String(target);
+    };
+    window.requestAnimationFrame(step);
+  };
+
+  if ("IntersectionObserver" in window && !reducedMotion) {
+    const countObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        animateCount(entry.target);
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.4 });
+    countItems.forEach((item) => countObserver.observe(item));
+  } else {
+    countItems.forEach(animateCount);
+  }
+}
+
+/* ------------------------------------------------------------ card tilt */
+
+if (!reducedMotion && finePointer) {
+  document.querySelectorAll("[data-tilt]").forEach((card) => {
+    let tiltFrame = 0;
+    let rx = 0;
+    let ry = 0;
+
+    const paintTilt = () => {
+      card.style.setProperty("--tilt-x", `${rx}deg`);
+      card.style.setProperty("--tilt-y", `${ry}deg`);
+      tiltFrame = 0;
+    };
+
+    card.addEventListener("pointermove", (event) => {
+      if (event.pointerType === "touch") return;
+      const bounds = card.getBoundingClientRect();
+      ry = ((event.clientX - bounds.left) / bounds.width - .5) * 7;
+      rx = ((event.clientY - bounds.top) / bounds.height - .5) * -6;
+      if (!tiltFrame) tiltFrame = window.requestAnimationFrame(paintTilt);
+    }, { passive: true });
+
+    card.addEventListener("pointerleave", () => {
+      rx = 0;
+      ry = 0;
+      if (!tiltFrame) tiltFrame = window.requestAnimationFrame(paintTilt);
+    }, { passive: true });
+  });
+}
+
+/* --------------------------------------------- three opposing marquee rows */
 
 const motionStage = document.querySelector("[data-motion-stage]");
 
@@ -376,6 +523,8 @@ if (motionStage) {
   syncMotionRows();
 }
 
+/* ------------------------------------------------- draggable service film */
+
 const filmWindow = document.querySelector("[data-drag-film]");
 
 if (filmWindow) {
@@ -435,6 +584,8 @@ if (filmWindow) {
   window.addEventListener("pagehide", () => window.cancelAnimationFrame(autoFrame), { once: true });
 }
 
+/* ------------------------------------------------- route expand transition */
+
 document.querySelectorAll("[data-route-expand]").forEach((link) => {
   link.addEventListener("click", (event) => {
     if (reducedMotion || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -466,7 +617,7 @@ document.querySelectorAll("[data-route-expand]").forEach((link) => {
       fill: "forwards"
     });
     const expansion = layer.animate([
-      { left: `${bounds.left}px`, top: `${bounds.top}px`, width: `${bounds.width}px`, height: `${bounds.height}px`, borderRadius: "0px" },
+      { left: `${bounds.left}px`, top: `${bounds.top}px`, width: `${bounds.width}px`, height: `${bounds.height}px`, borderRadius: "22px" },
       { left: "0px", top: "0px", width: "100vw", height: "100svh", borderRadius: "0px" }
     ], {
       duration: 620,
@@ -485,7 +636,9 @@ document.querySelectorAll("[data-route-expand]").forEach((link) => {
   });
 });
 
-if (!reducedMotion && window.matchMedia("(pointer: fine)").matches) {
+/* --------------------------------------------------------- magnetic links */
+
+if (!reducedMotion && finePointer) {
   document.querySelectorAll(".magnetic").forEach((link) => {
     link.addEventListener("pointermove", (event) => {
       const bounds = link.getBoundingClientRect();
@@ -498,6 +651,8 @@ if (!reducedMotion && window.matchMedia("(pointer: fine)").matches) {
     });
   });
 }
+
+/* ----------------------------------------------------------- brief builder */
 
 const briefBuilder = document.querySelector("[data-brief-builder]");
 
@@ -526,6 +681,9 @@ if (briefBuilder) {
     if (note?.value.trim()) lines.push(`요청 내용: ${note.value.trim()}`);
     if (schedule?.value.trim()) lines.push(`희망 시기: ${schedule.value.trim()}`);
     summary.textContent = lines.join("\n");
+    summary.classList.remove("summary-flash");
+    void summary.offsetWidth;
+    summary.classList.add("summary-flash");
   };
 
   choiceButtons.forEach((button) => {
@@ -550,10 +708,12 @@ if (briefBuilder) {
   copyButton?.addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(summary.textContent);
-      copyButton.textContent = "복사 완료";
+      copyButton.textContent = "복사 완료 ✓";
+      copyButton.classList.add("is-copied");
       status.textContent = "카카오 대화창에 붙여 넣을 수 있습니다.";
       window.setTimeout(() => {
         copyButton.textContent = "내용 복사하기";
+        copyButton.classList.remove("is-copied");
         status.textContent = "";
       }, 2200);
     } catch {

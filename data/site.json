@@ -1,17 +1,17 @@
 {
   "meta": {
-    "version": 46,
-    "updatedAt": "2026-08-27T13:30:40+09:00",
-    "title": "SWAG | 웹사이트·앱 제작 스튜디오",
-    "description": "웹사이트 · 앱 · 브라우저 게임 · 운영 시스템 제작. 상담한 두 사람이 기획부터 배포까지 담당합니다."
+    "version": 47,
+    "updatedAt": "2026-08-27T20:00:00+09:00",
+    "title": "SWAG | 시스템 · 웹 · 앱 · 게임 외주 제작",
+    "description": "시스템 · 웹사이트 · 앱 · 브라우저 게임 외주 제작. 상담한 두 사람이 기획부터 배포까지 끝까지 담당합니다."
   },
   "brand": {
     "name": "SWAG",
-    "expansion": "WEB · APP · GAME · SYSTEM",
+    "expansion": "SYSTEM · WEBSITE · APP · GAME",
     "headline": "웹 · 앱 · 게임 · 운영 시스템",
     "description": "2인 프리랜서 스튜디오",
     "primaryCta": "견적 문의",
-    "secondaryCta": "제작 분야"
+    "secondaryCta": "프로젝트 보기"
   },
   "contact": {
     "owner": "SWAG",
@@ -45,36 +45,28 @@
       "id": "web",
       "title": "웹사이트",
       "short": "브랜드 · 예약 · 커머스",
-      "description": "기업 소개 · 예약 · 판매 · 콘텐츠 관리",
-      "image": "assets/service-web-v42.webp",
-      "imageAlt": "밝은 스튜디오에서 모니터와 태블릿, 휴대전화로 반응형 웹사이트를 확인하는 제작자",
+      "description": "기업 소개부터 예약, 판매, 콘텐츠 관리까지 필요한 화면을 반응형으로 만듭니다.",
       "items": ["기업과 브랜드 사이트", "제품과 캠페인 페이지", "쇼핑몰과 콘텐츠 서비스", "반응형 화면과 접근성", "콘텐츠 관리와 검색", "검색 노출과 배포"]
     },
     {
       "id": "app",
       "title": "앱 · 웹앱",
       "short": "회원 · 알림 · 현장 사용",
-      "description": "고객용 앱 · 현장용 웹앱",
-      "image": "assets/service-app-v42.webp",
-      "imageAlt": "밝은 실내에서 실제 휴대전화로 모바일 앱을 테스트하는 장면",
+      "description": "고객용 앱과 현장용 웹앱을 로그인, 알림, 스토어 배포까지 이어서 만듭니다.",
       "items": ["iOS와 Android 앱", "PWA와 모바일 웹 서비스", "로그인과 프로필", "푸시 알림", "위치와 지도", "스토어 배포와 업데이트"]
     },
     {
       "id": "game",
       "title": "브라우저 게임",
       "short": "이벤트 · 미니게임 · 실시간",
-      "description": "이벤트 · 교육 · 참여형 콘텐츠",
-      "image": "assets/service-game-v42.webp",
-      "imageAlt": "밝은 작업실에서 두 명이 대형 화면과 노트북으로 브라우저 게임을 테스트하는 장면",
+      "description": "설치 없이 바로 즐기는 이벤트 게임과 참여형 콘텐츠를 만듭니다.",
       "items": ["웹과 모바일 게임", "프로모션과 이벤트 게임", "교육용 인터랙티브 콘텐츠", "점수와 순위", "참여 기록과 보상", "기기별 성능 최적화"]
     },
     {
       "id": "platform",
       "title": "운영 시스템",
       "short": "예약 · 주문 · 관리자",
-      "description": "회원 · 주문 · 예약 · 운영 데이터",
-      "image": "assets/service-system-v42.webp",
-      "imageAlt": "밝은 인쇄 작업실에서 모니터와 태블릿으로 운영 데이터를 확인하는 두 사람",
+      "description": "회원, 주문, 예약과 운영 데이터를 한 화면에서 관리하는 시스템을 만듭니다.",
       "items": ["회원과 권한", "상품 · 주문 · 결제", "콘텐츠와 파일 관리", "검색과 데이터 처리", "통계와 운영 화면", "외부 API와 AI 연동"]
     }
   ],
