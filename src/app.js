@@ -276,6 +276,106 @@ if (canvas) {
   else animationFrame = window.requestAnimationFrame(drawFilm);
 }
 
+const motionStage = document.querySelector("[data-motion-stage]");
+
+if (motionStage) {
+  const motionRibbon = motionStage.closest(".motion-ribbon");
+  const motionToggle = motionRibbon?.querySelector("[data-motion-toggle]");
+  const motionToggleLabel = motionToggle?.querySelector("[data-motion-toggle-label]");
+  const motionRows = [...motionStage.querySelectorAll("[data-motion-row]")].map((row) => {
+    const track = row.querySelector(".motion-track");
+    const leadSet = row.querySelector("[data-motion-set]");
+    if (!track || !leadSet) return null;
+    return {
+      row,
+      track,
+      leadSet,
+      speed: Number(row.dataset.speed) || 0,
+      distance: 0,
+      offset: 0,
+      initialized: false
+    };
+  }).filter(Boolean);
+
+  let motionFrame = 0;
+  let motionVisible = true;
+  let motionPaused = false;
+  let previousMotionTime = 0;
+
+  const measureMotionRows = () => {
+    motionRows.forEach((item) => {
+      const distance = item.leadSet.offsetWidth;
+      if (distance <= 0) return;
+      item.distance = distance;
+      if (!item.initialized) {
+        item.offset = item.speed > 0 ? -distance : 0;
+        item.initialized = true;
+      } else {
+        while (item.offset < -distance) item.offset += distance;
+        while (item.offset > 0) item.offset -= distance;
+      }
+      item.track.style.transform = `translate3d(${item.offset}px, 0, 0)`;
+    });
+  };
+
+  const moveMotionRows = (time = 0) => {
+    motionFrame = 0;
+    if (reducedMotion || document.hidden || !motionVisible) return;
+    const delta = Math.min(50, time - previousMotionTime || 16) / 1000;
+    previousMotionTime = time;
+
+    motionRows.forEach((item) => {
+      if (!item.distance) return;
+      item.offset += item.speed * delta;
+      if (item.speed < 0 && item.offset <= -item.distance) item.offset += item.distance;
+      if (item.speed > 0 && item.offset >= 0) item.offset -= item.distance;
+      item.track.style.transform = `translate3d(${item.offset}px, 0, 0)`;
+    });
+
+    motionFrame = window.requestAnimationFrame(moveMotionRows);
+  };
+
+  const syncMotionRows = () => {
+    const shouldMove = !reducedMotion && !motionPaused && !document.hidden && motionVisible;
+    motionRibbon?.classList.toggle("is-moving", shouldMove);
+    if (shouldMove && !motionFrame) {
+      previousMotionTime = 0;
+      motionFrame = window.requestAnimationFrame(moveMotionRows);
+    }
+    if (!shouldMove && motionFrame) {
+      window.cancelAnimationFrame(motionFrame);
+      motionFrame = 0;
+    }
+  };
+
+  motionToggle?.addEventListener("click", () => {
+    motionPaused = !motionPaused;
+    motionToggle.setAttribute("aria-pressed", String(motionPaused));
+    motionToggle.setAttribute("aria-label", motionPaused ? "움직임 다시 시작" : "움직임 일시정지");
+    if (motionToggleLabel) motionToggleLabel.textContent = motionPaused ? "움직임 다시 시작" : "움직임 일시정지";
+    syncMotionRows();
+  });
+
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(([entry]) => {
+      motionVisible = entry.isIntersecting;
+      syncMotionRows();
+    }, { rootMargin: "160px 0px" }).observe(motionStage);
+  }
+
+  if ("ResizeObserver" in window) new ResizeObserver(measureMotionRows).observe(motionStage);
+  else window.addEventListener("resize", measureMotionRows, { passive: true });
+
+  document.addEventListener("visibilitychange", syncMotionRows);
+  window.addEventListener("pagehide", () => {
+    if (motionFrame) window.cancelAnimationFrame(motionFrame);
+  }, { once: true });
+
+  measureMotionRows();
+  if (document.fonts?.ready) document.fonts.ready.then(measureMotionRows);
+  syncMotionRows();
+}
+
 const filmWindow = document.querySelector("[data-drag-film]");
 
 if (filmWindow) {

@@ -112,6 +112,18 @@ const renderHomeFilm = () => {
   return `<div class="film-track">${items}</div>`;
 };
 
+const homeMotionRows = [
+  ["웹사이트", "반응형", "브랜드", "예약", "쇼핑몰", "콘텐츠 관리", "검색", "배포", "유지보수", "접근성"],
+  ["모바일 앱", "웹앱", "회원", "로그인", "결제", "알림", "지도", "스토어 배포", "현장 사용", "업데이트"],
+  ["브라우저 게임", "운영 시스템", "대시보드", "주문", "통계", "관리자", "데이터", "외부 API", "권한", "자동화"]
+];
+
+const renderMotionRows = () => homeMotionRows.map((items, index) => {
+  const words = items.map((item) => `<span class="motion-word">${escapeHtml(item)}</span>`).join("");
+  const speed = [27, -21, 24][index];
+  return `<div class="motion-row motion-row-${index + 1}" data-motion-row data-speed="${speed}"><div class="motion-track"><div class="motion-set" data-motion-set>${words}</div><div class="motion-set" aria-hidden="true">${words}</div></div></div>`;
+}).join("");
+
 const renderServiceChapters = () => data.services.map((service, index) => `
   <article class="service-chapter service-chapter-${index + 1}" id="${escapeHtml(service.id)}" data-reveal>
     <figure class="service-visual" data-parallax>${renderImage(service, { width: service.id === "app" ? 1024 : 1536, height: service.id === "app" ? 1536 : 1024, priority: index === 0 })}<span class="image-scan" aria-hidden="true"></span></figure>
@@ -234,8 +246,9 @@ await writePage("index.template.html", "index.html", {
   HERO_HEADLINE: data.brand.headline,
   HERO_PRIMARY_CTA: data.brand.primaryCta,
   HERO_SECONDARY_CTA: data.brand.secondaryCta,
-  HOME_FILM: renderHomeFilm()
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_FILM", "CONTACT_STRIP"]);
+  HOME_FILM: renderHomeFilm(),
+  MOTION_ROWS: renderMotionRows()
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HOME_FILM", "MOTION_ROWS", "CONTACT_STRIP"]);
 
 await writePage("services.template.html", "services/index.html", {
   PAGE_TITLE: `제작 분야 | ${data.brand.name}`,

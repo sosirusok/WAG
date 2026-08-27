@@ -2,7 +2,7 @@
 
 SWAG 2인 프리랜서 스튜디오의 정적 웹사이트입니다. 웹사이트, 앱·웹앱, 브라우저 게임, 운영 시스템 제작 범위와 진행 방식, 스튜디오 소개, 견적 문의를 분리된 페이지에서 안내합니다.
 
-현재 작업 기준은 `v45`입니다. 배포 대상은 ChatGPT Sites가 아니라 GitHub 저장소와 GitHub Pages입니다.
+현재 작업 기준은 `v46`입니다. 배포 대상은 ChatGPT Sites가 아니라 GitHub 저장소와 GitHub Pages입니다.
 
 ## 공개 주소와 배포
 
@@ -10,7 +10,6 @@ SWAG 2인 프리랜서 스튜디오의 정적 웹사이트입니다. 웹사이�
 - 저장소: <https://github.com/sosirusok/WAG>
 - 배포 브랜치: `main`
 - 배포 방식: `.github/workflows/pages.yml`이 검증, 정적 빌드, 로컬 참조 감사를 통과한 `dist/`만 GitHub Pages에 배포
-- v45 공개 검증 커밋: `48c68a26d1729527fc31098abeadcdf0b02f0f76`
 
 ## 페이지 구성
 
@@ -38,23 +37,23 @@ SWAG 2인 프리랜서 스튜디오의 정적 웹사이트입니다. 웹사이�
 - 데스크톱은 제작 분야, 프로젝트, 진행 방식, 소개, 견적 문의를 각각 노출하고 작은 화면에서만 메뉴로 전환
 - 큰 제목 하나로 화면을 채우지 않고 사진, 짧은 정보, 여백, 이동 흐름으로 위계를 구성
 
-`dev.rederx.com`에서는 콘텐츠와 색을 가져오지 않고 움직임과 배치 원리만 참고했습니다. 관성형 휠 스크롤, 유리 질감 내비게이션, 모바일 메뉴의 clip/stagger 등장, 계속 움직이는 이미지 행, 서비스 이미지에서 다음 화면으로 이어지는 expand 전환을 프로젝트 코드로 독립 구현했습니다. 모션 감소 설정에서는 장식 움직임을 줄이고 콘텐츠를 즉시 표시합니다.
+`dev.rederx.com`에서는 콘텐츠와 색을 가져오지 않고 움직임과 배치 원리만 참고했습니다. 관성형 휠 스크롤, 유리 질감 내비게이션, 모바일 메뉴의 clip/stagger 등장, 서로 반대 방향으로 흐르는 3개 행, 계속 움직이는 이미지 행, 서비스 이미지에서 다음 화면으로 이어지는 expand 전환을 프로젝트 코드로 독립 구현했습니다. 3개 행에는 일시정지 버튼이 있으며 모션 감소 설정에서는 중복 행과 자동 이동을 정지합니다.
 
 ## 이미지와 로고
 
-로고와 사진은 이 프로젝트를 위해 생성한 뒤 선택·크롭·압축한 전용 자산입니다. 생성 원본 묶음의 폴더명 `v42`는 최초 생성 배치 식별자이며, 현재 사이트 릴리스 기준은 `v45`입니다.
+로고와 사진은 이 프로젝트를 위해 생성한 뒤 선택·크롭·압축한 전용 자산입니다. 로고와 서비스 사진의 `v42`, 새 홈 사진의 `v46`은 생성 배치 식별자이며 현재 사이트 릴리스 기준은 `v46`입니다.
 
 | 용도 | 생성 원본 | 배포 자산 |
 | --- | --- | --- |
 | SWAG 시그니처 로고 | `creative-sources/v42/swag-signature-master.png` | `src/assets/swag-signature-v42.png`, `src/assets/swag-mark-v42.png`, `src/assets/swag-og-v42.png` |
-| 홈 스튜디오 장면 | `creative-sources/v42/studio-hero-master.png` | `src/assets/studio-hero-v42.webp` |
+| 홈 스튜디오 장면 | `creative-sources/v46/studio-hero-master.png` | `src/assets/studio-hero-v46.webp` |
 | 소개 장면 | `creative-sources/v42/studio-about-master.png` | `src/assets/studio-about-v42.webp` |
 | 웹사이트 제작 | `creative-sources/v42/service-web-master.png` | `src/assets/service-web-v42.webp` |
 | 앱 제작 | `creative-sources/v42/service-app-master.png` | `src/assets/service-app-v42.webp` |
 | 브라우저 게임 제작 | `creative-sources/v42/service-game-master.png` | `src/assets/service-game-v42.webp` |
 | 운영 시스템 제작 | `creative-sources/v42/service-system-master.png` | `src/assets/service-system-v42.webp` |
 
-사진 생성 기준은 밝은 자연광, 실제 2인 제작 환경, 자연스러운 장비와 손동작, 검정·오프화이트·작은 burnt-orange입니다. 파랑·카키·올리브, 미스터리·방탈출 분위기, 유리 조형물, 공중 UI, 카드 모형, 과장된 스톡 사진 연출은 제외했습니다. 로고는 굵은 색 글자 대신 검정 잉크 질감의 S/W 결합 심벌, 음각과 음영, 작은 orange registration slash로 설계했습니다.
+사진 생성 기준은 밝은 자연광, 실제 2인 제작 환경, 자연스러운 장비와 손동작, 검정·오프화이트·작은 burnt-orange입니다. 홈 사진은 두 사람의 뒤쪽에서 촬영한 구도로 얼굴이 보이지 않고, 제목이 놓이는 왼쪽에는 밝고 낮은 밀도의 여백을 확보했습니다. 파랑·카키·올리브, 미스터리·방탈출 분위기, 유리 조형물, 공중 UI, 카드 모형, 과장된 스톡 사진 연출은 제외했습니다. 로고는 굵은 색 글자 대신 검정 잉크 질감의 S/W 결합 심벌, 음각과 음영, 작은 orange registration slash로 설계했습니다.
 
 ## 콘텐츠와 소스 구조
 
@@ -89,6 +88,6 @@ $env:AUDIT_BASE_URL="http://127.0.0.1:4173/"
 npm run audit:visual
 ```
 
-감사는 320×812, 390×844, 844×390, 768×1024, 1100×900, 1440×1000에서 실행합니다. v45 공개 주소 재검증은 48개 화면 조합과 상호작용을 합쳐 **1330/1330 assertions**를 통과했습니다.
+감사는 320×812, 390×844, 844×390, 768×1024, 1100×900, 1440×1000에서 실행합니다. v46 로컬 빌드는 48개 화면 조합, 문의·메뉴 상호작용, 3개 행의 방향·속도·일시정지·모션 감소 검사를 합쳐 **1621/1621 assertions**를 통과했습니다.
 
 검증 결과와 아직 다시 확인할 항목은 [QUALITY-CHECKLIST.md](QUALITY-CHECKLIST.md)에 기록합니다.

@@ -18,7 +18,7 @@
   <link rel="canonical" href="{{CANONICAL_URL}}">
   <link rel="icon" href="assets/swag-mark-v42.png" type="image/png">
   <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/studio-hero-v42.webp" as="image" type="image/webp" fetchpriority="high">
+  <link rel="preload" href="assets/studio-hero-v46.webp" as="image" type="image/webp" fetchpriority="high">
   <link rel="preload" href="assets/swag-signature-v42.png" as="image" type="image/png">
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
@@ -31,11 +31,12 @@
   <main id="main">
     <section class="cinematic-hero" data-impact-hero>
       <figure class="hero-photo" data-hero-photo>
-        <img src="assets/studio-hero-v42.webp" alt="밝은 스튜디오에서 두 명의 제작자가 모니터와 휴대전화로 웹사이트를 확인하는 장면" width="1672" height="941" fetchpriority="high" decoding="async">
+        <img src="assets/studio-hero-v46.webp" alt="밝은 스튜디오에서 얼굴이 보이지 않는 두 제작자가 노트북과 태블릿으로 화면을 확인하는 장면" width="1536" height="864" fetchpriority="high" decoding="async">
       </figure>
       <canvas class="film-canvas" data-film-canvas aria-hidden="true"></canvas>
       <div class="film-grain" aria-hidden="true"></div>
       <div class="film-splice" aria-hidden="true"></div>
+      <div class="hero-copy-field" aria-hidden="true"></div>
       <div class="hero-facts shell">
         <p class="hero-label" data-reveal>{{HERO_DESCRIPTION}}</p>
         <h1 data-reveal>{{HERO_HEADLINE}}</h1>
@@ -44,7 +45,15 @@
           <div><a class="text-link magnetic" href="services/">{{HERO_SECONDARY_CTA}} <span aria-hidden="true">↗</span></a><a class="text-link magnetic" href="contact/">{{HERO_PRIMARY_CTA}} <span aria-hidden="true">↗</span></a></div>
         </div>
       </div>
-      <a class="scroll-cue" href="./#scope"><span>SCROLL</span><i aria-hidden="true"></i></a>
+      <a class="scroll-cue" href="./#motion"><span>SCROLL</span><i aria-hidden="true"></i></a>
+    </section>
+
+    <section class="motion-ribbon" id="motion" aria-labelledby="motion-ribbon-title">
+      <h2 class="sr-only" id="motion-ribbon-title">제작 범위</h2>
+      <button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false" aria-label="움직임 일시정지"><span aria-hidden="true"></span><b class="sr-only" data-motion-toggle-label>움직임 일시정지</b></button>
+      <div class="motion-ribbon-stage" data-motion-stage>
+        {{MOTION_ROWS}}
+      </div>
     </section>
 
     <section class="home-scope" id="scope" aria-labelledby="scope-title">

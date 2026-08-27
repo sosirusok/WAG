@@ -70,7 +70,7 @@ const requiredAssets = [
   "service-system-v42.webp",
   "service-web-v42.webp",
   "studio-about-v42.webp",
-  "studio-hero-v42.webp",
+  "studio-hero-v46.webp",
   "swag-mark-v42.png",
   "swag-og-v42.png",
   "swag-signature-v42.png"
@@ -135,9 +135,11 @@ const homeSource = await readFile(new URL("src/index.template.html", root), "utf
 if (/case-catharsis|case-crimescene|카타르시스|크라임씬|SELECTED WORK|운영 사이트/i.test(homeSource)) {
   errors.push("homepage must not contain project examples");
 }
-if (!/studio-hero-v42\.webp/.test(homeSource)) errors.push("homepage cinematic studio image is missing");
+if (!/studio-hero-v46\.webp/.test(homeSource)) errors.push("homepage face-free studio image is missing");
 if (!/swag-mark-v42\.png/.test(homeSource)) errors.push("custom symbol favicon is missing");
 if (!/HERO_DESCRIPTION/.test(homeSource) || !/2인 프리랜서/.test(data.brand.description)) errors.push("homepage two-person team fact is missing");
+if (!/data-motion-stage/.test(homeSource)) errors.push("homepage three-row motion stage is missing");
+if (!/data-motion-toggle/.test(homeSource)) errors.push("three-row motion pause control is missing");
 if (!/제작 분야[\s\S]*프로젝트[\s\S]*진행 방식[\s\S]*소개[\s\S]*견적 문의/.test(sourceText)) {
   errors.push("navigation is missing required destinations");
 }
@@ -148,8 +150,11 @@ for (const fact of ["2인 프리랜서", "합리적인 비용", "빠른 진행",
 }
 
 const appSource = await readFile(new URL("src/app.js", root), "utf8");
+const buildSource = await readFile(new URL("scripts/build.mjs", root), "utf8");
 if (!/requestAnimationFrame\(drawFilm\)/.test(appSource)) errors.push("continuous cinematic film motion is missing");
 if (!/requestAnimationFrame\(autoMove\)/.test(appSource)) errors.push("continuous service-film motion is missing");
+if (!/requestAnimationFrame\(moveMotionRows\)/.test(appSource)) errors.push("continuous three-row motion is missing");
+if (!/\[27,\s*-21,\s*24\]/.test(buildSource)) errors.push("three-row opposing motion speeds are missing");
 if (!/@keyframes\s+cinematicDrift[\s\S]*@keyframes\s+spliceSweep[\s\S]*@keyframes\s+capabilityRun/.test(css)) {
   errors.push("continuous image, splice, and capability motion is missing");
 }
