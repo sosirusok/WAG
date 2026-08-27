@@ -55,7 +55,7 @@ for (const [index, project] of projects.entries()) {
   }
 }
 
-if (services.length !== 4) errors.push("exactly four service groups are required");
+if (services.length < 4 || services.length > 6) errors.push(`four to six service groups are required, found ${services.length}`);
 for (const [index, service] of services.entries()) {
   for (const field of ["id", "title", "short", "description"]) required(service[field], `services[${index}].${field}`);
   if (!Array.isArray(service.items) || service.items.length < 4) errors.push(`services[${index}].items needs at least four entries`);
