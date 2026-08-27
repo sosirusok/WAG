@@ -979,69 +979,6 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 .motion-ribbon .section-head h2 { color: #fff; }
 .motion-ribbon .section-lead { color: rgba(230, 236, 255, .72); }
 
-/* 정체를 알 수 없는 아이콘 버튼 대신, 하는 일이 적힌 라벨 달린 컨트롤 */
-.motion-toggle {
-  position: absolute;
-  top: clamp(18px, 2.6vw, 30px);
-  right: clamp(20px, 3vw, 36px);
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  min-height: 44px;
-  padding: 8px 18px 8px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--dark-line);
-  background: rgba(255, 255, 255, .07);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  color: rgba(238, 242, 255, .82);
-  font-size: 14px;
-  font-weight: 700;
-  transition: background-color .25s, border-color .25s, color .25s;
-}
-
-.motion-toggle:hover { background: rgba(255, 255, 255, .15); border-color: rgba(91, 223, 156, .5); color: #fff; }
-
-.motion-toggle > b { font-weight: 700; }
-
-.motion-toggle > span {
-  position: relative;
-  flex: 0 0 auto;
-  width: 14px;
-  height: 16px;
-}
-
-.motion-toggle > span::before,
-.motion-toggle > span::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  border-radius: 2px;
-  background: #fff;
-  transition: all .3s var(--ease-out);
-}
-
-.motion-toggle > span::before { left: 1px; }
-.motion-toggle > span::after { right: 1px; }
-
-.motion-toggle[aria-pressed="true"] > span::before {
-  left: 0;
-  width: 0;
-  height: 0;
-  top: 0;
-  bottom: auto;
-  border-radius: 0;
-  background: transparent;
-  border-left: 13px solid #fff;
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;
-}
-
-.motion-toggle[aria-pressed="true"] > span::after { opacity: 0; }
-
 .motion-ribbon-stage { display: grid; gap: clamp(14px, 2vw, 22px); }
 
 .motion-row {
@@ -1236,6 +1173,9 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   line-height: 1.32;
   color: transparent;
   -webkit-text-stroke: 1px rgba(255, 255, 255, .26);
+  /* 양끝을 흐리게 잘라 글자가 중간에서 뚝 끊긴 것처럼 보이지 않게 한다 */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
 }
 
 .footer-film span { animation: capabilityRun 30s linear infinite; }
@@ -2532,29 +2472,41 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 
 /* ------------------------------------------------------- 모션 감소 설정 */
 
+/* 위치가 계속 바뀌는 연출(전정기관을 자극하는 움직임)만 정지하고,
+   자리 이동이 없는 밝기·색 전환은 남겨 화면이 완전히 죽어 보이지 않게 한다. */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: .01ms !important;
-  }
-
   html { scroll-behavior: auto; }
-  .motion-set[aria-hidden="true"] { display: none; }
+
+  .hero-blob,
+  .hero-window,
+  .hero-phone,
+  .hero-chip,
+  .scroll-cue i,
+  .not-found-code,
+  .nf-zero i,
   .capability-marquee > div,
   .footer-film span,
   .footer-film-glow span,
-  .footer-film-glow { animation: none; }
-  .footer-film-glow { display: none; }
+  .card-sheen,
+  .mk-float,
+  .mk-sprite,
+  .mk-coins circle,
+  .mk-trend,
+  .mk-chat,
+  .mk-spark-a,
+  .mk-spark-b,
+  .loading-mark img { animation: none !important; }
+
+  .motion-set[aria-hidden="true"] { display: none; }
   .image-scan { display: none; }
-  .js [data-reveal] { opacity: 1; transform: none; filter: none; clip-path: none; }
   .case-visual img { transform: none; }
   .hero-visual { transform: none; }
   .scroll-progress { transition: none; }
 
-  /* 연출 레이어 전부 정지 */
+  /* 등장은 자리 이동 없이 밝아지기만 */
+  .js [data-reveal] { transform: none !important; filter: none !important; clip-path: none !important; }
+
+  /* 커서 추적·화면 전체를 덮는 연출은 정지 */
   .intro-curtain,
   .cursor-layer,
   .route-curtain,
@@ -2572,4 +2524,7 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   .about-passages article { transform: none; }
 
   .js:not(.intro-done) [data-page="home"] .hero-visual { opacity: 1; transform: none; }
+
+  /* 푸터 글자 위 그라디언트는 자리 이동이 아니라 색 전환이므로 천천히 유지 */
+  .footer-film-glow { animation-duration: 11s; }
 }
