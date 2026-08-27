@@ -99,9 +99,11 @@ const renderHeader = (active = "") => `
     </div>
   </header>`;
 
+const filmWords = "<span>SYSTEM · WEBSITE · APP · GAME ·&nbsp;</span><span>SYSTEM · WEBSITE · APP · GAME ·&nbsp;</span>";
+
 const renderFooter = (currentUrl = normalizedSiteUrl) => `
-  <footer class="site-footer">
-    <div class="footer-film" aria-hidden="true"><span>SYSTEM · WEBSITE · APP · GAME ·&nbsp;</span><span>SYSTEM · WEBSITE · APP · GAME ·&nbsp;</span></div>
+  <footer class="site-footer" data-spotlight>
+    <div class="footer-film" aria-hidden="true">${filmWords}<div class="footer-film-glow">${filmWords}</div></div>
     <div class="footer-main shell">
       <div class="footer-brand">${renderBrand("brand-footer", true)}<p>시스템 · 웹 · 앱 · 게임 외주 제작<br>2인 프리랜서 스튜디오</p></div>
       <nav aria-label="하단 메뉴">${renderNavLinks("")}</nav>
@@ -170,6 +172,11 @@ const mockups = {
 
 const rotatorWords = data.services.map((service) => service.title);
 
+const renderPreloader = () => `
+  <div class="intro-curtain" data-preloader aria-hidden="true">
+    <div class="intro-mark">${logoWhiteSvg}<span class="intro-bar"></span></div>
+  </div>`;
+
 const renderHero = () => `
   <section class="hero" data-impact-hero>
     <div class="hero-backdrop" aria-hidden="true"><i class="hero-blob hero-blob-1"></i><i class="hero-blob hero-blob-2"></i><i class="hero-blob hero-blob-3"></i><i class="hero-grid"></i></div>
@@ -177,7 +184,7 @@ const renderHero = () => `
     <div class="hero-inner shell">
       <div class="hero-copy">
         <p class="hero-eyebrow" data-reveal><span class="pulse-dot" aria-hidden="true"></span>${escapeHtml(data.brand.expansion)}</p>
-        <h1 data-reveal>필요한 건 <span class="hero-rotator"><b class="rotator-word" data-rotator data-rotator-words="${escapeHtml(JSON.stringify(rotatorWords))}">${escapeHtml(rotatorWords[0])}</b></span><br>만드는 건 SWAG</h1>
+        <h1 data-reveal data-split>필요한 건 <span class="hero-rotator"><b class="rotator-word" data-rotator data-rotator-words="${escapeHtml(JSON.stringify(rotatorWords))}">${escapeHtml(rotatorWords[0])}</b></span><br>만드는 건 SWAG</h1>
         <p class="hero-lead" data-reveal>상담한 두 사람이 기획 · 디자인 · 개발 · 검수 · 배포를 끝까지 맡는 ${escapeHtml(data.brand.description)}입니다.</p>
         <div class="hero-actions" data-reveal>
           <a class="btn btn-primary magnetic" href="contact/">${escapeHtml(data.brand.primaryCta)} <span aria-hidden="true">→</span></a>
@@ -222,7 +229,7 @@ const statTiles = [
 ];
 
 const renderStats = () => statTiles.map((stat, index) => `
-  <article class="stat-tile stat-tile-${index + 1}" data-reveal>
+  <article class="stat-tile stat-tile-${index + 1}" data-reveal="flip">
     <p class="stat-value"><b data-count="${stat.value}">0</b><span>${escapeHtml(stat.unit)}</span></p>
     <p class="stat-label">${escapeHtml(stat.label)}</p>
     <p class="stat-note">${escapeHtml(stat.note)}</p>
@@ -276,11 +283,11 @@ const renderMotionRows = () => stackRows.map((icons, index) => {
 /* -------------------------------------------------------------- services */
 
 const renderServiceChapters = () => data.services.map((service, index) => `
-  <article class="service-chapter service-chapter-${index + 1}" id="${escapeHtml(service.id)}" data-reveal>
+  <article class="service-chapter service-chapter-${index + 1}" id="${escapeHtml(service.id)}" data-reveal="flip">
     <figure class="service-visual" data-tilt>${mockups[service.id] || mockups.web}<span class="card-sheen" aria-hidden="true"></span></figure>
     <div class="service-copy">
       <p class="eyebrow">${escapeHtml(service.short)}</p>
-      <h2>${escapeHtml(service.title)}</h2>
+      <h2 data-split>${escapeHtml(service.title)}</h2>
       <p class="service-description">${escapeHtml(service.description)}</p>
       <ul class="check-list">${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
       <a class="btn btn-primary magnetic" href="contact/?type=${escapeHtml(service.id)}">이 분야로 문의 <span aria-hidden="true">→</span></a>
@@ -303,14 +310,14 @@ const renderImage = (entry, options = {}) => {
 const renderWorkList = () => publicProjects.map((project, index) => {
   const external = safeHttpUrl(project.url);
   return `
-  <article class="case-study case-study-${index + 1}" data-reveal>
+  <article class="case-study case-study-${index + 1}" data-reveal="flip">
     <a class="case-visual" href="${escapeHtml(external)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(project.title)} 운영 사이트 열기" data-parallax>
       <span class="browser-chrome" aria-hidden="true"><i></i><i></i><i></i><b>${escapeHtml((external || "").replace(/^https?:\/\//, "").replace(/\/$/, ""))}</b></span>
-      <figure>${renderImage(project, { priority: index === 0, width: 1600, height: 1000 })}<span class="image-scan" aria-hidden="true"></span></figure>
+      <figure data-reveal="mask">${renderImage(project, { priority: index === 0, width: 1600, height: 1000 })}<span class="image-scan" aria-hidden="true"></span></figure>
     </a>
     <div class="case-copy">
       <p class="eyebrow">${escapeHtml(project.category)} · ${escapeHtml(project.year)}</p>
-      <h2>${escapeHtml(project.title)}</h2>
+      <h2 data-split>${escapeHtml(project.title)}</h2>
       <p class="case-summary">${escapeHtml(project.summary)}</p>
       <dl><div><dt>제작 범위</dt><dd>${escapeHtml(project.problem)}</dd></div><div><dt>구현 내용</dt><dd>${escapeHtml(project.solution)}</dd></div></dl>
       <p class="case-features">${project.features.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</p>
@@ -332,12 +339,12 @@ const renderPlannerFeatures = () => data.capabilities.map((item) => `
 const renderProcess = () => data.process.map((item, index) => `
   <article data-reveal>
     <span class="process-index" aria-hidden="true"><i></i></span>
-    <div class="process-body"><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description)}</p></div>
+    <div class="process-body"><h2 data-split>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description)}</p></div>
     <p class="process-output"><span>확인 항목</span>${escapeHtml(item.result)}</p>
   </article>`).join("");
 
 const renderProcessPreview = () => data.process.map((item, index) => `
-  <li class="process-step" data-reveal>
+  <li class="process-step" data-reveal="flip">
     <span class="process-step-no" aria-hidden="true"></span>
     <b>${escapeHtml(item.title)}</b>
     <span class="process-step-note">${escapeHtml(item.result)}</span>
@@ -348,10 +355,10 @@ const renderFaq = () => data.faq.map((item) => `
 
 const renderContactStrip = () => `
   <section class="contact-strip" data-reveal>
-    <div class="shell">
+    <div class="shell" data-spotlight>
       <div class="contact-strip-glow" aria-hidden="true"></div>
       <p class="eyebrow">CONTACT</p>
-      <h2>아이디어만 있어도 충분해요</h2>
+      <h2 data-split>아이디어만 있어도 충분해요</h2>
       <p class="contact-strip-lead">제작 종류와 필요한 기능만 알려 주세요. 견적과 일정을 안내해 드립니다.</p>
       <div class="contact-strip-actions"><a class="btn btn-invert magnetic" href="contact/">문의 내용 정리하기 <span aria-hidden="true">→</span></a><a class="btn btn-outline-invert magnetic" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a class="contact-strip-tel" href="tel:${phoneDigits}">${escapeHtml(data.contact.phone)}</a></div>
     </div>
@@ -420,12 +427,13 @@ await writePage("index.template.html", "index.html", {
   HEADER: renderHeader("home"),
   FOOTER: renderFooter(normalizedSiteUrl),
   BRAND_EXPANSION: data.brand.expansion,
+  PRELOADER: renderPreloader(),
   HERO: renderHero(),
   STATS: renderStats(),
   HOME_FILM: renderHomeFilm(),
   MOTION_ROWS: renderMotionRows(),
   PROCESS_PREVIEW: renderProcessPreview()
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HERO", "STATS", "HOME_FILM", "MOTION_ROWS", "PROCESS_PREVIEW", "CONTACT_STRIP"]);
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "PRELOADER", "HERO", "STATS", "HOME_FILM", "MOTION_ROWS", "PROCESS_PREVIEW", "CONTACT_STRIP"]);
 
 await writePage("services.template.html", "services/index.html", {
   PAGE_TITLE: `제작 분야 | ${data.brand.name}`,

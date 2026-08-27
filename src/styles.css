@@ -278,6 +278,15 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   box-shadow: 0 6px 26px rgba(13, 21, 48, .06);
 }
 
+/* 아래로 빠르게 내리면 헤더가 숨고, 멈추거나 올리면 다시 나온다 */
+.site-header {
+  transform: translateY(0);
+  transition: background-color .3s, box-shadow .3s, border-color .3s, backdrop-filter .3s, transform .45s var(--ease-out);
+}
+
+.site-header.is-hidden { transform: translateY(-100%); }
+.menu-open .site-header.is-hidden { transform: none; }
+
 .scroll-progress {
   position: absolute;
   top: 0;
@@ -1185,6 +1194,7 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 }
 
 .footer-film {
+  position: relative;
   display: flex;
   white-space: nowrap;
   padding-block: clamp(20px, 3vw, 34px) 0;
@@ -1193,10 +1203,34 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   letter-spacing: -.02em;
   line-height: 1;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, .13);
+  -webkit-text-stroke: 1px rgba(255, 255, 255, .22);
 }
 
 .footer-film span { animation: capabilityRun 30s linear infinite; }
+
+/* 윤곽선 글자 위로 브랜드 그라디언트가 훑고 지나간다 */
+.footer-film-glow {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  white-space: nowrap;
+  padding-block: clamp(20px, 3vw, 34px) 0;
+  -webkit-text-stroke: 0;
+  background: linear-gradient(100deg, transparent 34%, #5bdf9c 44%, #7aa2ff 52%, transparent 62%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 280% 100%;
+  animation: filmSweep 6.5s var(--ease-out) infinite;
+  pointer-events: none;
+}
+
+.footer-film-glow span { animation: capabilityRun 30s linear infinite; }
+
+@keyframes filmSweep {
+  0% { background-position: 190% 0; }
+  55%, 100% { background-position: -90% 0; }
+}
 
 @keyframes capabilityRun {
   from { transform: translate3d(0, 0, 0); }
@@ -2068,6 +2102,310 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 .route-expand-layer .mock { height: 100%; object-fit: contain; }
 .route-leaving main { opacity: .6; transition: opacity .5s; }
 
+/* ======================================================================
+   연출 레이어 — 인트로 커튼, 단어 등장, 커서, 스포트라이트, 리플, 전환
+   ====================================================================== */
+
+/* --------------------------------------------------------- 인트로 커튼 */
+
+.intro-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: grid;
+  place-items: center;
+  background: var(--dark);
+  transition: opacity .5s var(--ease-out);
+}
+
+.intro-curtain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 60% at 20% 20%, rgba(33, 69, 230, .5), transparent 60%),
+    radial-gradient(50% 50% at 85% 85%, rgba(22, 184, 120, .3), transparent 60%);
+  animation: heroDrift 8s ease-in-out infinite alternate;
+}
+
+.intro-mark {
+  position: relative;
+  display: grid;
+  gap: 22px;
+  justify-items: center;
+}
+
+.intro-mark .brand-svg { width: clamp(200px, 34vw, 320px); height: auto; }
+
+/* 로고가 그려지듯 등장 */
+.intro-mark .lg-line {
+  opacity: 0;
+  animation: introLine .6s var(--ease-out) forwards;
+}
+
+.intro-mark .lg-line:nth-of-type(2) { animation-delay: .1s; }
+.intro-mark .lg-line:nth-of-type(3) { animation-delay: .2s; }
+
+.intro-mark .lg-word {
+  opacity: 0;
+  animation: introWord .7s var(--ease-out) .18s forwards;
+}
+
+.intro-mark .lg-blade,
+.intro-mark .lg-swoosh {
+  opacity: 0;
+  animation: introWord .6s var(--ease-out) .5s forwards;
+}
+
+.intro-mark .lg-orbit {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: logoOrbit .9s var(--ease-out) .34s forwards;
+}
+
+@keyframes introLine {
+  from { opacity: 0; transform: translateX(-50px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes introWord {
+  from { opacity: 0; transform: translateY(18px) scale(.96); }
+  to { opacity: 1; transform: none; }
+}
+
+.intro-bar {
+  position: relative;
+  width: clamp(160px, 26vw, 240px);
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .12);
+  overflow: hidden;
+}
+
+.intro-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  background: var(--grad);
+  transform-origin: left;
+  animation: introBar 1.5s var(--ease-out) forwards;
+}
+
+@keyframes introBar {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* 커튼이 위로 걷히면서 본문 공개 */
+.intro-curtain.is-done {
+  animation: introLift .85s cubic-bezier(.76, 0, .24, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes introLift {
+  to { clip-path: inset(0 0 100% 0); }
+}
+
+.intro-curtain.is-done .intro-mark { animation: introMarkOut .45s var(--ease-out) forwards; }
+
+@keyframes introMarkOut {
+  to { opacity: 0; transform: translateY(-26px) scale(.94); }
+}
+
+/* 커튼이 걷힌 뒤 히어로가 따라 올라온다 */
+.js [data-page="home"] .hero-copy > *,
+.js [data-page="home"] .hero-visual {
+  transition: opacity .9s var(--ease-out), transform .9s var(--ease-out);
+}
+
+/* intro-done 는 <html> 에 붙으므로 루트에서 판정한다 */
+.js:not(.intro-done) [data-page="home"] .hero-visual {
+  opacity: 0;
+  transform: translateY(40px) scale(.96);
+}
+
+/* --------------------------------------------------- 제목 단어 분해 등장 */
+
+[data-split].is-split .word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(.9em) rotate(4deg);
+  filter: blur(6px);
+  transition:
+    opacity .75s var(--ease-out),
+    transform .75s var(--ease-out),
+    filter .75s var(--ease-out);
+  transition-delay: calc(var(--wi, 0) * 65ms);
+  will-change: transform, opacity, filter;
+}
+
+[data-split].words-in .word {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+/* 로테이터는 분해 대상이 아니므로 같은 타이밍으로 따라오게 */
+[data-split].is-split .hero-rotator {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(.9em);
+  filter: blur(6px);
+  transition: opacity .75s var(--ease-out) .1s, transform .75s var(--ease-out) .1s, filter .75s var(--ease-out) .1s;
+}
+
+[data-split].words-in .hero-rotator {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+/* --------------------------------------------------------- 커스텀 커서 */
+
+.cursor-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 480;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+.cursor-layer.is-live { opacity: 1; }
+
+.cursor-ring,
+.cursor-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.cursor-ring {
+  width: 38px;
+  height: 38px;
+  border: 1.5px solid rgba(33, 69, 230, .55);
+  transition: width .3s var(--ease-out), height .3s var(--ease-out), background-color .3s, border-color .3s;
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--blue);
+  transition: width .25s var(--ease-out), height .25s var(--ease-out), opacity .25s;
+}
+
+.cursor-layer.is-hover .cursor-ring {
+  width: 62px;
+  height: 62px;
+  background: rgba(33, 69, 230, .1);
+  border-color: rgba(91, 223, 156, .8);
+}
+
+.cursor-layer.is-hover .cursor-dot { width: 0; height: 0; opacity: 0; }
+.cursor-layer.is-down .cursor-ring { width: 30px; height: 30px; background: rgba(91, 223, 156, .2); }
+.cursor-layer.is-text .cursor-ring { width: 3px; height: 32px; border-radius: 2px; background: var(--blue); }
+
+/* 커서를 켠 화면에서는 기본 커서를 숨겨 몰입도를 높인다 */
+@media (min-width: 901px) and (pointer: fine) {
+  .js body:has(.cursor-layer.is-live),
+  .js body:has(.cursor-layer.is-live) a,
+  .js body:has(.cursor-layer.is-live) button,
+  .js body:has(.cursor-layer.is-live) summary { cursor: none; }
+  .js body:has(.cursor-layer.is-live) input,
+  .js body:has(.cursor-layer.is-live) textarea { cursor: none; }
+}
+
+/* --------------------------------------------------------- 스포트라이트 */
+
+[data-spotlight] { position: relative; }
+
+[data-spotlight]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .45s var(--ease-out);
+  background: radial-gradient(420px circle at var(--spot-x, 50%) var(--spot-y, 50%), rgba(91, 223, 156, .16), transparent 62%);
+}
+
+[data-spotlight].is-lit::after { opacity: 1; }
+
+/* ------------------------------------------------------------- 클릭 리플 */
+
+.btn,
+.choice-lines button,
+.stack-tile,
+.chapter-jump a { position: relative; overflow: hidden; }
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: radial-gradient(circle, rgba(91, 223, 156, .5), rgba(33, 69, 230, .1) 60%, transparent 70%);
+  pointer-events: none;
+  animation: rippleOut .65s var(--ease-out) forwards;
+}
+
+.btn-primary .ripple,
+.btn-invert .ripple { background: radial-gradient(circle, rgba(255, 255, 255, .55), transparent 70%); }
+
+@keyframes rippleOut {
+  to { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+/* ---------------------------------------------------------- 페이지 커튼 */
+
+.route-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 460;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  pointer-events: none;
+}
+
+.route-curtain i {
+  background: var(--dark);
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+.route-curtain.is-closing { pointer-events: all; }
+.route-curtain.is-closing i { animation: curtainUp .5s cubic-bezier(.76, 0, .24, 1) forwards; }
+.route-curtain.is-closing i:nth-child(2) { animation-delay: .06s; }
+.route-curtain.is-closing i:nth-child(3) { animation-delay: .12s; }
+
+@keyframes curtainUp {
+  to { transform: scaleY(1); }
+}
+
+/* --------------------------------------------- 스크롤 속도 반응 요소 */
+
+.service-card,
+.stat-tile,
+.process-step,
+.case-study,
+.about-passages article {
+  transform: skewY(var(--card-skew, 0deg));
+}
+
+.motion-ready .service-card,
+.motion-ready .stat-tile,
+.motion-ready .process-step,
+.motion-ready .about-passages article {
+  --card-skew: var(--scroll-skew, 0deg);
+  transition: transform .5s var(--ease-out), box-shadow .35s var(--ease-out), border-color .3s;
+}
+
+.service-card {
+  transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) skewY(var(--card-skew, 0deg));
+}
+
 /* --------------------------------------------------------------- 리빌 모션 */
 
 .js [data-reveal] {
@@ -2081,9 +2419,26 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 .js [data-reveal="right"] { transform: translateX(34px); }
 .js [data-reveal="zoom"] { transform: scale(.94) translateY(14px); }
 
+.js [data-reveal="flip"] {
+  transform: perspective(1200px) rotateX(-16deg) translateY(46px) scale(.96);
+  transform-origin: center top;
+  filter: blur(4px);
+  transition: opacity .9s var(--ease-out), transform .9s var(--ease-out), filter .9s var(--ease-out);
+  transition-delay: calc(var(--reveal-order, 0) * 90ms);
+}
+
+.js [data-reveal="mask"] {
+  transform: none;
+  clip-path: inset(0 0 100% 0);
+  transition: opacity .9s var(--ease-out), clip-path 1s var(--ease-out);
+  transition-delay: calc(var(--reveal-order, 0) * 80ms);
+}
+
 .js [data-reveal].is-visible {
   opacity: 1;
   transform: none;
+  filter: blur(0);
+  clip-path: inset(0 0 -10% 0);
 }
 
 /* ------------------------------------------------------------ 반응형 */
@@ -2154,10 +2509,32 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   html { scroll-behavior: auto; }
   .motion-set[aria-hidden="true"] { display: none; }
   .capability-marquee > div,
-  .footer-film span { animation: none; }
+  .footer-film span,
+  .footer-film-glow span,
+  .footer-film-glow { animation: none; }
+  .footer-film-glow { display: none; }
   .image-scan { display: none; }
-  .js [data-reveal] { opacity: 1; transform: none; }
+  .js [data-reveal] { opacity: 1; transform: none; filter: none; clip-path: none; }
   .case-visual img { transform: none; }
   .hero-visual { transform: none; }
   .scroll-progress { transition: none; }
+
+  /* 연출 레이어 전부 정지 */
+  .intro-curtain,
+  .cursor-layer,
+  .route-curtain,
+  .ripple { display: none !important; }
+
+  [data-spotlight]::after { display: none; }
+  [data-split].is-split .word,
+  [data-split].is-split .hero-rotator { opacity: 1; transform: none; filter: none; }
+  .site-header.is-hidden { transform: none; }
+
+  .service-card,
+  .stat-tile,
+  .process-step,
+  .case-study,
+  .about-passages article { transform: none; }
+
+  .js:not(.intro-done) [data-page="home"] .hero-visual { opacity: 1; transform: none; }
 }

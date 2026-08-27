@@ -107,6 +107,9 @@ const header = document.querySelector("[data-header]");
 const parallaxItems = [...document.querySelectorAll("[data-parallax]")];
 const processSection = document.querySelector(".process-editorial");
 let scrollFrame = 0;
+let previousScrollY = window.scrollY;
+let scrollVelocity = 0;
+let headerIdleTimer = 0;
 
 const paintScroll = () => {
   const scrollTop = window.scrollY;
@@ -114,6 +117,24 @@ const paintScroll = () => {
   const progress = distance > 0 ? Math.min(1, Math.max(0, scrollTop / distance)) : 0;
   root.style.setProperty("--scroll-progress", String(progress));
   header?.classList.toggle("is-scrolled", scrollTop > 20);
+
+  const rawVelocity = scrollTop - previousScrollY;
+  previousScrollY = scrollTop;
+  scrollVelocity += (rawVelocity - scrollVelocity) * .28;
+  if (!reducedMotion) {
+    const clamped = Math.max(-40, Math.min(40, scrollVelocity));
+    root.style.setProperty("--scroll-velocity", clamped.toFixed(2));
+    root.style.setProperty("--scroll-skew", `${(clamped * .045).toFixed(3)}deg`);
+    root.style.setProperty("--scroll-stretch", String(1 + Math.min(.05, Math.abs(clamped) * .0012)));
+
+    // 아래로 빠르게 내릴 때만 헤더를 감추고, 멈추거나 올리면 반드시 되돌린다
+    if (header && !root.classList.contains("menu-open")) {
+      if (scrollTop > 260 && rawVelocity > 6) header.classList.add("is-hidden");
+      else if (rawVelocity < -2 || scrollTop < 200) header.classList.remove("is-hidden");
+      window.clearTimeout(headerIdleTimer);
+      headerIdleTimer = window.setTimeout(() => header.classList.remove("is-hidden"), 420);
+    }
+  }
 
   if (!reducedMotion) {
     const viewportCenter = window.innerHeight / 2;
@@ -471,11 +492,14 @@ if (motionStage) {
     const delta = Math.min(50, time - previousMotionTime || 16) / 1000;
     previousMotionTime = time;
 
+    // scrolling fast pushes every row along its own direction — the wall reacts to you
+    const boost = 1 + Math.min(2.6, Math.abs(scrollVelocity) * .06);
+
     motionRows.forEach((item) => {
       if (!item.distance) return;
-      item.offset += item.speed * delta;
-      if (item.speed < 0 && item.offset <= -item.distance) item.offset += item.distance;
-      if (item.speed > 0 && item.offset >= 0) item.offset -= item.distance;
+      item.offset += item.speed * boost * delta;
+      while (item.speed < 0 && item.offset <= -item.distance) item.offset += item.distance;
+      while (item.speed > 0 && item.offset >= 0) item.offset -= item.distance;
       item.track.style.transform = `translate3d(${item.offset}px, 0, 0)`;
     });
 
@@ -719,5 +743,208 @@ if (briefBuilder) {
     } catch {
       status.textContent = "내용을 직접 선택해 복사해 주세요.";
     }
+  });
+}
+
+/* ======================================================================
+   여기부터 연출 레이어 — 인트로, 글자 분해 등장, 커서, 스포트라이트, 리플
+   ====================================================================== */
+
+/* ----------------------------------------------------------- 인트로 커튼 */
+
+const preloader = document.querySelector("[data-preloader]");
+
+if (preloader) {
+  if (reducedMotion) {
+    preloader.remove();
+    root.classList.add("intro-done");
+  } else {
+    let dismissed = false;
+    const dismissIntro = () => {
+      if (dismissed) return;
+      dismissed = true;
+      preloader.classList.add("is-done");
+      root.classList.add("intro-done");
+      window.setTimeout(() => preloader.remove(), 1000);
+    };
+    window.addEventListener("load", () => window.setTimeout(dismissIntro, 620), { once: true });
+    window.setTimeout(dismissIntro, 2400);
+  }
+} else {
+  root.classList.add("intro-done");
+}
+
+/* ------------------------------------------------- 제목 단어 분해 등장 */
+
+const splitWords = (element) => {
+  const pieces = [];
+  [...element.childNodes].forEach((node) => {
+    if (node.nodeType !== Node.TEXT_NODE) {
+      pieces.push(node);
+      return;
+    }
+    node.textContent.split(/(\s+)/).forEach((part) => {
+      if (!part) return;
+      if (/^\s+$/.test(part)) {
+        pieces.push(document.createTextNode(part));
+        return;
+      }
+      const word = document.createElement("span");
+      word.className = "word";
+      word.textContent = part;
+      pieces.push(word);
+    });
+  });
+  element.replaceChildren(...pieces);
+  element.querySelectorAll(".word").forEach((word, index) => {
+    word.style.setProperty("--wi", String(index));
+  });
+  element.classList.add("is-split");
+};
+
+const splitTargets = [...document.querySelectorAll("[data-split]")];
+
+if (!reducedMotion && splitTargets.length) {
+  splitTargets.forEach(splitWords);
+  if ("IntersectionObserver" in window) {
+    const splitObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("words-in");
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.2, rootMargin: "0px 0px -8%" });
+    splitTargets.forEach((item) => splitObserver.observe(item));
+    window.setTimeout(() => splitTargets.forEach((item) => item.classList.add("words-in")), 1600);
+  } else {
+    splitTargets.forEach((item) => item.classList.add("words-in"));
+  }
+}
+
+/* ------------------------------------------------------------ 커스텀 커서 */
+
+if (finePointer && !reducedMotion && window.matchMedia("(min-width: 901px)").matches) {
+  const layer = document.createElement("div");
+  layer.className = "cursor-layer";
+  layer.setAttribute("aria-hidden", "true");
+  layer.innerHTML = '<i class="cursor-ring"></i><i class="cursor-dot"></i>';
+  document.body.append(layer);
+
+  const ring = layer.querySelector(".cursor-ring");
+  const dot = layer.querySelector(".cursor-dot");
+  let pointerX = window.innerWidth / 2;
+  let pointerY = window.innerHeight / 2;
+  let ringX = pointerX;
+  let ringY = pointerY;
+  let cursorFrame = 0;
+
+  const paintCursor = () => {
+    ringX += (pointerX - ringX) * .18;
+    ringY += (pointerY - ringY) * .18;
+    ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+    dot.style.transform = `translate3d(${pointerX}px, ${pointerY}px, 0) translate(-50%, -50%)`;
+    cursorFrame = window.requestAnimationFrame(paintCursor);
+  };
+
+  document.addEventListener("pointermove", (event) => {
+    if (event.pointerType === "touch") return;
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    if (!layer.classList.contains("is-live")) layer.classList.add("is-live");
+  }, { passive: true });
+
+  document.addEventListener("pointerover", (event) => {
+    const target = event.target instanceof Element
+      ? event.target.closest("a, button, summary, input, textarea, [data-tilt], .stack-tile")
+      : null;
+    layer.classList.toggle("is-hover", Boolean(target));
+    layer.classList.toggle("is-text", Boolean(target && target.matches("input, textarea")));
+  }, { passive: true });
+
+  document.addEventListener("pointerdown", () => layer.classList.add("is-down"), { passive: true });
+  document.addEventListener("pointerup", () => layer.classList.remove("is-down"), { passive: true });
+  document.addEventListener("pointerleave", () => layer.classList.remove("is-live"), { passive: true });
+
+  cursorFrame = window.requestAnimationFrame(paintCursor);
+  window.addEventListener("pagehide", () => window.cancelAnimationFrame(cursorFrame), { once: true });
+}
+
+/* ------------------------------------------------- 어두운 구역 스포트라이트 */
+
+if (!reducedMotion && finePointer) {
+  document.querySelectorAll("[data-spotlight]").forEach((section) => {
+    let spotFrame = 0;
+    let spotX = 50;
+    let spotY = 50;
+
+    const paintSpot = () => {
+      section.style.setProperty("--spot-x", `${spotX}%`);
+      section.style.setProperty("--spot-y", `${spotY}%`);
+      spotFrame = 0;
+    };
+
+    section.addEventListener("pointermove", (event) => {
+      if (event.pointerType === "touch") return;
+      const bounds = section.getBoundingClientRect();
+      spotX = ((event.clientX - bounds.left) / bounds.width) * 100;
+      spotY = ((event.clientY - bounds.top) / bounds.height) * 100;
+      section.classList.add("is-lit");
+      if (!spotFrame) spotFrame = window.requestAnimationFrame(paintSpot);
+    }, { passive: true });
+
+    section.addEventListener("pointerleave", () => section.classList.remove("is-lit"), { passive: true });
+  });
+}
+
+/* ------------------------------------------------------------ 클릭 리플 */
+
+if (!reducedMotion) {
+  document.querySelectorAll(".btn, .choice-lines button, .stack-tile, .chapter-jump a").forEach((target) => {
+    target.addEventListener("pointerdown", (event) => {
+      const bounds = target.getBoundingClientRect();
+      const ripple = document.createElement("span");
+      ripple.className = "ripple";
+      const size = Math.max(bounds.width, bounds.height) * 2.2;
+      ripple.style.width = `${size}px`;
+      ripple.style.height = `${size}px`;
+      ripple.style.left = `${event.clientX - bounds.left}px`;
+      ripple.style.top = `${event.clientY - bounds.top}px`;
+      target.append(ripple);
+      window.setTimeout(() => ripple.remove(), 700);
+    }, { passive: true });
+  });
+}
+
+/* ------------------------------------------ 내부 이동 시 커튼 전환 */
+
+if (!reducedMotion) {
+  const curtain = document.createElement("div");
+  curtain.className = "route-curtain";
+  curtain.setAttribute("aria-hidden", "true");
+  curtain.innerHTML = "<i></i><i></i><i></i>";
+  document.body.append(curtain);
+
+  document.querySelectorAll("a[href]").forEach((link) => {
+    if (link.hasAttribute("data-route-expand") || link.target === "_blank") return;
+    link.addEventListener("click", (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      let destination;
+      try {
+        destination = new URL(link.href, window.location.href);
+      } catch {
+        return;
+      }
+      if (destination.origin !== window.location.origin) return;
+      if (destination.pathname === window.location.pathname) return;
+      if (/^(?:tel:|mailto:)/i.test(link.getAttribute("href") || "")) return;
+
+      event.preventDefault();
+      curtain.classList.add("is-closing");
+      window.setTimeout(() => window.location.assign(destination.href), 560);
+    });
+  });
+
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) curtain.classList.remove("is-closing");
   });
 }
