@@ -105,7 +105,7 @@ const renderFooter = (currentUrl = normalizedSiteUrl) => `
   <footer class="site-footer" data-spotlight>
     <div class="footer-film" aria-hidden="true">${filmWords}<div class="footer-film-glow">${filmWords}</div></div>
     <div class="footer-main shell">
-      <div class="footer-brand">${renderBrand("brand-footer", true)}<p>시스템 · 웹 · 앱 · 게임 외주 제작<br>2인 프리랜서 스튜디오</p></div>
+      <div class="footer-brand">${renderBrand("brand-footer", true)}<p>웹 · 앱 · 게임 · AI · 운영 시스템 외주 제작<br>2인 프리랜서 스튜디오</p></div>
       <nav aria-label="하단 메뉴">${renderNavLinks("")}</nav>
       <div class="footer-direct"><p>DIRECT</p><a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a href="tel:${phoneDigits}">김의현 ${escapeHtml(data.contact.phone)}</a></div>
     </div>
@@ -151,6 +151,29 @@ const mockups = {
     <g class="mk-terrain"><rect x="20" y="150" width="280" height="14" rx="7" class="mk-ground"/><rect x="56" y="126" width="30" height="24" rx="6" class="mk-block"/><rect x="150" y="112" width="30" height="38" rx="6" class="mk-block"/><rect x="238" y="130" width="30" height="20" rx="6" class="mk-block"/></g>
     <g class="mk-sprite"><circle cx="110" cy="100" r="14" class="mk-hero-dot"/><circle cx="105" cy="96" r="2.6" class="mk-eye"/><circle cx="115" cy="96" r="2.6" class="mk-eye"/></g>
     <g class="mk-coins"><circle cx="170" cy="80" r="6" class="mk-coin"/><circle cx="192" cy="70" r="6" class="mk-coin"/><circle cx="214" cy="80" r="6" class="mk-coin"/></g>
+  </svg>`,
+  ai: `<svg class="mock mock-ai" viewBox="0 0 320 210" aria-hidden="true" focusable="false">
+    <rect class="mk-frame" x="4" y="4" width="312" height="202" rx="14"/>
+    <rect x="20" y="20" width="60" height="12" rx="6" class="mk-ink"/>
+    <g class="mk-chat">
+      <rect x="20" y="46" width="150" height="34" rx="12" class="mk-bubble-user"/>
+      <rect x="32" y="56" width="90" height="6" rx="3" class="mk-line"/>
+      <rect x="32" y="68" width="118" height="6" rx="3" class="mk-line"/>
+    </g>
+    <g class="mk-chat mk-chat-late">
+      <rect x="108" y="92" width="192" height="58" rx="12" class="mk-bubble-ai"/>
+      <rect x="120" y="104" width="140" height="6" rx="3" class="mk-line-soft"/>
+      <rect x="120" y="118" width="168" height="6" rx="3" class="mk-line-soft"/>
+      <rect x="120" y="132" width="104" height="6" rx="3" class="mk-line-soft"/>
+    </g>
+    <g class="mk-spark">
+      <path d="M78 104 L84 118 L98 124 L84 130 L78 144 L72 130 L58 124 L72 118 Z" class="mk-spark-a"/>
+      <path d="M50 138 L53 146 L61 149 L53 152 L50 160 L47 152 L39 149 L47 146 Z" class="mk-spark-b"/>
+    </g>
+    <rect x="20" y="168" width="240" height="24" rx="12" class="mk-prompt"/>
+    <rect x="32" y="177" width="96" height="6" rx="3" class="mk-line"/>
+    <circle cx="284" cy="180" r="14" class="mk-send"/>
+    <path d="M278 180 L290 180 M285 175 L290 180 L285 185" class="mk-send-arrow"/>
   </svg>`,
   platform: `<svg class="mock mock-platform" viewBox="0 0 320 210" aria-hidden="true" focusable="false">
     <rect class="mk-frame" x="4" y="4" width="312" height="202" rx="14"/>

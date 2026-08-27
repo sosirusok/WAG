@@ -289,7 +289,7 @@ for (const viewport of viewports) {
   await interactionPage.locator("[data-brief-schedule]").fill("9월 시작");
   const summaryText = await interactionPage.locator("[data-brief-summary]").innerText();
   addAssertion(interactionAssertions, `${interactionPrefix}:summary-type`, summaryText.includes("웹사이트"), summaryText);
-  addAssertion(interactionAssertions, `${interactionPrefix}:summary-multiselect`, summaryText.includes("모바일 앱") && summaryText.includes("브라우저 게임"), summaryText);
+  addAssertion(interactionAssertions, `${interactionPrefix}:summary-multiselect`, summaryText.includes("모바일 앱") && summaryText.includes("게임"), summaryText);
   addAssertion(interactionAssertions, `${interactionPrefix}:summary-note`, summaryText.includes("브랜드 사이트를 새로 만들고 싶습니다"), summaryText);
   addAssertion(interactionAssertions, `${interactionPrefix}:summary-schedule`, summaryText.includes("9월 시작"), summaryText);
   await interactionPage.locator("[data-brief-copy]").click();
