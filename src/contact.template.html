@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#F8F8F6">
+  <meta name="theme-color" content="#f3f5fa">
+  <meta name="color-scheme" content="light">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -14,9 +15,10 @@
   <meta property="og:image" content="{{OG_URL}}">
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
-  <link rel="icon" href="assets/swag-mark-v42.png" type="image/png">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/service-app-v42.webp" as="image" type="image/webp" fetchpriority="high">
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -26,28 +28,32 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <section class="contact-intro shell">
-      <div data-reveal><p class="eyebrow">CONTACT</p><h1>견적 문의</h1><p>제작 종류 · 필요한 기능 · 참고 자료 · 희망 일정</p></div>
-      <figure data-parallax data-reveal><img src="assets/service-app-v42.webp" alt="밝은 공간에서 휴대전화 앱을 테스트하는 장면" width="1024" height="1536" fetchpriority="high" decoding="async"><span class="image-scan" aria-hidden="true"></span></figure>
-    </section>
+    <header class="page-intro contact-intro">
+      <div class="page-intro-backdrop" aria-hidden="true"><i class="hero-blob hero-blob-1"></i><i class="hero-grid"></i></div>
+      <div class="intro-copy shell" data-reveal>
+        <p class="eyebrow"><span class="pulse-dot" aria-hidden="true"></span>CONTACT</p>
+        <h1>견적 문의</h1>
+        <p class="section-lead">{{RESPONSE_NOTE}} — 아래에서 고르면 상담 내용이 완성됩니다.</p>
+      </div>
+    </header>
 
     <section class="brief-builder shell" data-brief-builder>
       <div class="brief-fields">
-        <fieldset data-reveal><legend>제작 종류</legend><p>하나만 선택</p><div class="choice-lines choice-types">{{PLANNER_TYPES}}</div></fieldset>
-        <fieldset data-reveal><legend>필요 기능</legend><p>필요한 항목 모두 선택</p><div class="choice-lines choice-features">{{PLANNER_FEATURES}}</div></fieldset>
-        <fieldset data-reveal><legend>준비 상태</legend><div class="choice-lines">
+        <fieldset data-reveal><legend><span class="step-badge" aria-hidden="true">1</span>제작 종류</legend><p>하나만 선택</p><div class="choice-lines choice-types">{{PLANNER_TYPES}}</div></fieldset>
+        <fieldset data-reveal><legend><span class="step-badge" aria-hidden="true">2</span>필요 기능</legend><p>필요한 항목 모두 선택</p><div class="choice-lines choice-features">{{PLANNER_FEATURES}}</div></fieldset>
+        <fieldset data-reveal><legend><span class="step-badge" aria-hidden="true">3</span>준비 상태</legend><div class="choice-lines">
           <button type="button" aria-pressed="false" data-brief-choice data-brief-group="준비 상태" data-brief-value="아이디어만 있음"><span>아이디어만 있음</span></button>
           <button type="button" aria-pressed="false" data-brief-choice data-brief-group="준비 상태" data-brief-value="참고 사이트 있음"><span>참고 사이트 있음</span></button>
           <button type="button" aria-pressed="false" data-brief-choice data-brief-group="준비 상태" data-brief-value="기획안 있음"><span>기획안 있음</span></button>
           <button type="button" aria-pressed="false" data-brief-choice data-brief-group="준비 상태" data-brief-value="기존 서비스 수정"><span>기존 서비스 수정</span></button>
         </div></fieldset>
-        <fieldset data-reveal><legend>추가 요청</legend><p>현재 상황 · 희망 시기</p><label class="brief-field"><span>요청 내용</span><textarea rows="5" maxlength="600" data-brief-note placeholder="예: 기존 사이트 전면 개편 / 모바일 우선"></textarea></label><label class="brief-field"><span>희망 시기</span><input type="text" maxlength="100" autocomplete="off" data-brief-schedule placeholder="예: 9월 시작 / 일정 협의"></label></fieldset>
+        <fieldset data-reveal><legend><span class="step-badge" aria-hidden="true">4</span>추가 요청</legend><p>현재 상황 · 희망 시기</p><label class="brief-field"><span>요청 내용</span><textarea rows="5" maxlength="600" data-brief-note placeholder="예: 기존 사이트 전면 개편 / 모바일 우선"></textarea></label><label class="brief-field"><span>희망 시기</span><input type="text" maxlength="100" autocomplete="off" data-brief-schedule placeholder="예: 9월 시작 / 일정 협의"></label></fieldset>
       </div>
       <aside class="brief-summary" data-reveal>
-        <p class="eyebrow">상담할 내용</p>
+        <p class="brief-summary-title"><span class="pulse-dot" aria-hidden="true"></span>상담할 내용</p>
         <pre data-brief-summary aria-live="polite" aria-atomic="true">고른 내용이 여기에 표시됩니다.</pre>
-        <button type="button" data-brief-copy>내용 복사하기</button>
-        <a class="text-link magnetic" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 상담 열기 <span aria-hidden="true">↗</span></a>
+        <button type="button" class="btn btn-primary" data-brief-copy>내용 복사하기</button>
+        <a class="btn btn-kakao magnetic" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 상담 열기 ↗</a>
         <p class="brief-status" data-brief-status role="status" aria-live="polite"></p>
       </aside>
     </section>
@@ -55,12 +61,12 @@
     <section class="direct-contact shell" data-reveal>
       <p class="eyebrow">DIRECT CONTACT</p>
       <h2>카카오 · 전화</h2>
-      <div><a class="text-link magnetic" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 <span aria-hidden="true">↗</span></a><a class="text-link magnetic" href="tel:{{PHONE_DIGITS}}">김의현 {{PHONE}}</a></div>
+      <div><a class="btn btn-ghost magnetic" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a class="btn btn-ghost magnetic" href="tel:{{PHONE_DIGITS}}">김의현 {{PHONE}}</a></div>
     </section>
 
     <section class="faq shell" data-reveal>
-      <header><p class="eyebrow">FAQ</p><h2>자주 묻는 질문</h2></header>
-      <div>{{FAQ}}</div>
+      <header class="section-head"><p class="eyebrow">FAQ</p><h2>자주 묻는 질문</h2></header>
+      <div class="faq-list">{{FAQ}}</div>
     </section>
   </main>
   {{FOOTER}}

@@ -156,7 +156,7 @@ for (const viewport of viewports) {
           if (smaller > 0 && area / smaller > .42) overlaps.push({ first: a.textContent.trim().slice(0, 44), second: b.textContent.trim().slice(0, 44), ratio: Number((area / smaller).toFixed(2)) });
         }
       }
-      const brandOverflow = [...document.querySelectorAll(".brand img")].map((image) => {
+      const brandOverflow = [...document.querySelectorAll(".brand img, .brand svg")].map((image) => {
         const frame = image.closest(".brand").getBoundingClientRect();
         const rect = image.getBoundingClientRect();
         return { width: rect.width, height: rect.height, frameWidth: frame.width, frameHeight: frame.height, overflow: rect.width > frame.width + 2 || rect.height > frame.height + 2 };

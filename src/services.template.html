@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#F8F8F6">
+  <meta name="theme-color" content="#f3f5fa">
+  <meta name="color-scheme" content="light">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -14,9 +15,10 @@
   <meta property="og:image" content="{{OG_URL}}">
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
-  <link rel="icon" href="assets/swag-mark-v42.png" type="image/png">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/service-web-v42.webp" as="image" type="image/webp" fetchpriority="high">
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -26,23 +28,20 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <section class="editorial-intro services-intro">
+    <section class="page-intro services-intro">
+      <div class="page-intro-backdrop" aria-hidden="true"><i class="hero-blob hero-blob-1"></i><i class="hero-grid"></i></div>
       <div class="intro-copy shell" data-reveal>
-        <p class="eyebrow">WEB · APP · GAME · SYSTEM</p>
+        <p class="eyebrow"><span class="pulse-dot" aria-hidden="true"></span>SYSTEM · WEBSITE · APP · GAME</p>
         <h1>제작 분야</h1>
-        <p>기획 · 디자인 · 개발 · 배포</p>
-      </div>
-      <div class="intro-collage" aria-hidden="true">
-        <figure class="intro-wide" data-parallax><img src="assets/service-web-v42.webp" alt="" width="1536" height="1024" fetchpriority="high" decoding="async"></figure>
-        <figure class="intro-tall" data-parallax><img src="assets/service-app-v42.webp" alt="" width="1024" height="1536" loading="eager" decoding="async"></figure>
+        <p class="section-lead">기획 · 디자인 · 개발 · 배포까지, 분야별로 맡는 범위입니다.</p>
       </div>
       <nav class="chapter-jump shell" aria-label="제작 분야 바로가기"><a href="services/#web">웹사이트</a><a href="services/#app">앱 · 웹앱</a><a href="services/#game">브라우저 게임</a><a href="services/#platform">운영 시스템</a></nav>
     </section>
 
-    <section class="service-editorial">{{SERVICE_CHAPTERS}}</section>
+    <section class="service-editorial shell">{{SERVICE_CHAPTERS}}</section>
 
     <section class="capability-flow" aria-labelledby="capability-title" data-reveal>
-      <div class="shell"><p class="eyebrow">FUNCTIONS</p><h2 id="capability-title">연동 기능</h2></div>
+      <div class="section-head shell"><p class="eyebrow">FUNCTIONS</p><h2 id="capability-title">연동 기능</h2></div>
       <div class="capability-marquee"><div>{{CAPABILITY_FLOW}}{{CAPABILITY_FLOW}}</div></div>
       <p class="shell capability-note">결제 · 지도 · 알림 · 앱스토어는 필요한 계정과 심사 일정을 먼저 확인합니다.</p>
     </section>

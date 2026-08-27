@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#F8F8F6">
+  <meta name="theme-color" content="#f3f5fa">
   <meta name="color-scheme" content="light">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
@@ -16,10 +16,10 @@
   <meta name="twitter:card" content="summary_large_image">
   <base href="{{SITE_URL}}">
   <link rel="canonical" href="{{CANONICAL_URL}}">
-  <link rel="icon" href="assets/swag-mark-v42.png" type="image/png">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="preload" href="assets/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/studio-hero-v46.webp" as="image" type="image/webp" fetchpriority="high">
-  <link rel="preload" href="assets/swag-signature-v42.png" as="image" type="image/png">
   <link rel="stylesheet" href="styles.css">
   <title>{{PAGE_TITLE}}</title>
   <script>document.documentElement.classList.add("js")</script>
@@ -29,52 +29,62 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <section class="cinematic-hero" data-impact-hero>
-      <figure class="hero-photo" data-hero-photo>
-        <img src="assets/studio-hero-v46.webp" alt="밝은 스튜디오에서 얼굴이 보이지 않는 두 제작자가 노트북과 태블릿으로 화면을 확인하는 장면" width="1536" height="864" fetchpriority="high" decoding="async">
-      </figure>
-      <canvas class="film-canvas" data-film-canvas aria-hidden="true"></canvas>
-      <div class="film-grain" aria-hidden="true"></div>
-      <div class="film-splice" aria-hidden="true"></div>
-      <div class="hero-copy-field" aria-hidden="true"></div>
-      <div class="hero-facts shell">
-        <p class="hero-label" data-reveal>{{HERO_DESCRIPTION}}</p>
-        <h1 data-reveal>{{HERO_HEADLINE}}</h1>
-        <div class="hero-direct" data-reveal>
-          <p>상담 · 기획 · 디자인 · 개발 · 검수 · 배포</p>
-          <div><a class="text-link magnetic" href="services/">{{HERO_SECONDARY_CTA}} <span aria-hidden="true">↗</span></a><a class="text-link magnetic" href="contact/">{{HERO_PRIMARY_CTA}} <span aria-hidden="true">↗</span></a></div>
-        </div>
+    {{HERO}}
+
+    <section class="home-stats" id="stats" aria-labelledby="stats-title">
+      <div class="shell">
+        <h2 class="sr-only" id="stats-title">숫자로 보는 SWAG</h2>
+        <div class="stat-grid">{{STATS}}</div>
       </div>
-      <a class="scroll-cue" href="./#motion"><span>SCROLL</span><i aria-hidden="true"></i></a>
     </section>
 
-    <section class="motion-ribbon" id="motion" aria-labelledby="motion-ribbon-title">
-      <h2 class="sr-only" id="motion-ribbon-title">제작 범위</h2>
+    <section class="home-scope" id="scope" aria-labelledby="scope-title">
+      <header class="section-head shell" data-reveal>
+        <p class="eyebrow">{{BRAND_EXPANSION}}</p>
+        <h2 id="scope-title">제작 분야</h2>
+        <p class="section-lead">필요한 화면과 기능에 맞는 분야를 골라 문의할 수 있어요.</p>
+        <a class="btn btn-ghost magnetic" href="services/">전체 보기 <span aria-hidden="true">→</span></a>
+      </header>
+      <div class="film-window" data-drag-film tabindex="-1">{{HOME_FILM}}</div>
+      <p class="film-hint shell" aria-hidden="true">← 옆으로 넘겨 보세요 →</p>
+    </section>
+
+    <section class="motion-ribbon" id="stack" aria-labelledby="stack-title">
+      <div class="section-head shell" data-reveal>
+        <p class="eyebrow eyebrow-invert">TECH STACK</p>
+        <h2 id="stack-title">이런 기술로 만듭니다</h2>
+        <p class="section-lead">화면부터 서버 · 데이터 · 배포 인프라까지 프로젝트에 맞는 도구를 고릅니다.</p>
+      </div>
       <button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false" aria-label="움직임 일시정지"><span aria-hidden="true"></span><b class="sr-only" data-motion-toggle-label>움직임 일시정지</b></button>
       <div class="motion-ribbon-stage" data-motion-stage>
         {{MOTION_ROWS}}
       </div>
     </section>
 
-    <section class="home-scope" id="scope" aria-labelledby="scope-title">
-      <header class="shell" data-reveal>
-        <p class="eyebrow">{{BRAND_EXPANSION}}</p>
-        <h2 id="scope-title">제작 분야</h2>
-        <a class="text-link magnetic" href="services/">전체 보기 <span aria-hidden="true">↗</span></a>
-      </header>
-      <div class="film-window" data-drag-film>{{HOME_FILM}}</div>
+    <section class="home-process" aria-labelledby="home-process-title">
+      <div class="shell">
+        <header class="section-head" data-reveal>
+          <p class="eyebrow">PROCESS</p>
+          <h2 id="home-process-title">진행 방식</h2>
+          <a class="btn btn-ghost magnetic" href="process/">자세히 보기 <span aria-hidden="true">→</span></a>
+        </header>
+        <ol class="process-preview">{{PROCESS_PREVIEW}}</ol>
+      </div>
     </section>
 
     <section class="home-studio" aria-labelledby="studio-title">
-      <figure data-parallax data-reveal>
-        <img src="assets/studio-about-v42.webp" alt="유리문 너머 밝은 작업실에서 두 명이 앱 화면을 함께 확인하는 장면" width="1536" height="1024" loading="lazy" decoding="async">
-        <span class="image-scan" aria-hidden="true"></span>
-      </figure>
-      <div class="studio-note shell" data-reveal>
-        <p class="eyebrow">ABOUT</p>
-        <h2 id="studio-title">2인 프리랜서</h2>
-        <p>상담한 두 사람이 기획부터 배포까지 담당</p>
-        <a class="text-link magnetic" href="about/">소개 보기 <span aria-hidden="true">↗</span></a>
+      <div class="shell home-studio-card" data-reveal>
+        <div class="studio-note">
+          <p class="eyebrow">ABOUT</p>
+          <h2 id="studio-title">2인 프리랜서 스튜디오</h2>
+          <p>상담한 두 사람이 기획부터 배포까지 담당합니다. 중간 영업도, 재하청도 없습니다.</p>
+          <a class="btn btn-ghost magnetic" href="about/">소개 보기 <span aria-hidden="true">→</span></a>
+        </div>
+        <ul class="studio-points" aria-label="작업 방식">
+          <li data-reveal><b>같은 담당자</b><span>상담한 사람이 직접 개발</span></li>
+          <li data-reveal><b>합리적인 비용</b><span>필요한 화면과 기능으로 견적</span></li>
+          <li data-reveal><b>빠른 진행</b><span>확인한 내용을 바로 반영</span></li>
+        </ul>
       </div>
     </section>
 
