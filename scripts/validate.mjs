@@ -163,7 +163,7 @@ const appSource = await readFile(new URL("src/app.js", root), "utf8");
 if (!/requestAnimationFrame\(drawFilm\)/.test(appSource)) errors.push("continuous hero canvas motion is missing");
 if (!/requestAnimationFrame\(autoMove\)/.test(appSource)) errors.push("continuous service-film motion is missing");
 if (!/requestAnimationFrame\(moveMotionRows\)/.test(appSource)) errors.push("continuous three-row motion is missing");
-for (const keyframe of ["heroDrift", "capabilityRun", "imageScan", "floatChip", "wordIn", "menuIn"]) {
+for (const keyframe of ["heroBeam", "capabilityRun", "imageScan", "floatChip", "wordIn", "menuIn", "codeIn"]) {
   if (!new RegExp(`@keyframes\\s+${keyframe}\\b`).test(css)) errors.push(`missing @keyframes ${keyframe}`);
 }
 

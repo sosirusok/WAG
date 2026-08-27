@@ -245,7 +245,8 @@ if (canvas) {
   let particles = [];
 
   const seedParticles = () => {
-    const count = Math.max(24, Math.min(54, Math.round(canvasWidth / 30)));
+    // 연결선 계산은 입자 수의 제곱에 비례하므로 개수를 줄이는 게 가장 효과가 크다
+    const count = Math.max(16, Math.min(30, Math.round(canvasWidth / 54)));
     particles = Array.from({ length: count }, (_, index) => ({
       x: Math.random() * canvasWidth,
       y: Math.random() * canvasHeight,
@@ -267,9 +268,19 @@ if (canvas) {
     seedParticles();
   };
 
-  const drawFilm = () => {
+  let lastDraw = 0;
+
+  const drawFilm = (now = 0) => {
+    // 파티클은 30fps 로 충분하다. 나머지 프레임 예산은 스크롤에 양보한다.
+    if (now - lastDraw < 32) {
+      if (!reducedMotion && !document.hidden && heroVisible) animationFrame = window.requestAnimationFrame(drawFilm);
+      else animationFrame = 0;
+      return;
+    }
+    lastDraw = now;
+
     context.clearRect(0, 0, canvasWidth, canvasHeight);
-    const linkDistance = Math.min(150, canvasWidth * .12 + 70);
+    const linkDistance = Math.min(130, canvasWidth * .1 + 60);
 
     particles.forEach((particle) => {
       particle.x += particle.vx;
@@ -289,8 +300,8 @@ if (canvas) {
         const dy = a.y - b.y;
         const distance = Math.hypot(dx, dy);
         if (distance > linkDistance) continue;
-        const alpha = (1 - distance / linkDistance) * .16;
-        context.strokeStyle = a.green || b.green ? `rgba(24, 172, 104, ${alpha})` : `rgba(33, 69, 230, ${alpha})`;
+        const alpha = (1 - distance / linkDistance) * .22;
+        context.strokeStyle = a.green || b.green ? `rgba(120, 240, 180, ${alpha})` : `rgba(150, 180, 255, ${alpha})`;
         context.beginPath();
         context.moveTo(a.x, a.y);
         context.lineTo(b.x, b.y);
@@ -299,7 +310,7 @@ if (canvas) {
     }
 
     particles.forEach((particle) => {
-      context.fillStyle = particle.green ? "rgba(24, 172, 104, .5)" : "rgba(33, 69, 230, .42)";
+      context.fillStyle = particle.green ? "rgba(120, 240, 180, .6)" : "rgba(160, 190, 255, .5)";
       context.beginPath();
       context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
       context.fill();
@@ -893,6 +904,26 @@ if (!reducedMotion && finePointer) {
 
     section.addEventListener("pointerleave", () => section.classList.remove("is-lit"), { passive: true });
   });
+}
+
+/* ------------------------------------------- 화면 밖 구역 애니메이션 정지 */
+
+/* 측정 결과 실행 중이던 애니메이션 28개가 전부 화면 밖이었다.
+   보이는 구역만 재생하면 효과는 그대로 두고 프레임 예산만 되찾는다. */
+const motionScopes = [...document.querySelectorAll("[data-motion-scope]")];
+
+if (motionScopes.length && "IntersectionObserver" in window) {
+  motionScopes.forEach((scope) => scope.classList.add("is-idle"));
+  const scopeObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      entry.target.classList.toggle("is-idle", !entry.isIntersecting);
+      // 히어로 코드 편집기는 처음 보일 때 한 번만 타이핑한다
+      if (entry.isIntersecting) entry.target.classList.add("is-typing");
+    });
+  }, { rootMargin: "120px 0px" });
+  motionScopes.forEach((scope) => scopeObserver.observe(scope));
+} else {
+  motionScopes.forEach((scope) => scope.classList.add("is-typing"));
 }
 
 /* ------------------------------------------------------------ 클릭 리플 */
