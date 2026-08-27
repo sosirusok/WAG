@@ -144,7 +144,6 @@ if (!/HERO/.test(homeSource)) errors.push("homepage hero block is missing");
 if (!/favicon\.svg/.test(homeSource)) errors.push("brand favicon is missing");
 if (!/2인 프리랜서/.test(data.brand.description)) errors.push("two-person team fact is missing");
 if (!/data-motion-stage/.test(homeSource)) errors.push("homepage three-row motion stage is missing");
-if (!/data-motion-toggle/.test(homeSource)) errors.push("three-row motion pause control is missing");
 if (!/제작 분야[\s\S]*프로젝트[\s\S]*진행 방식[\s\S]*소개[\s\S]*견적 문의/.test(sourceText)) {
   errors.push("navigation is missing required destinations");
 }

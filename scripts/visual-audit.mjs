@@ -207,12 +207,7 @@ for (const viewport of viewports) {
       const before = await page.evaluate(() => [...document.querySelectorAll(".motion-track")].map((track) => new DOMMatrix(getComputedStyle(track).transform).m41));
       await page.waitForTimeout(520);
       const after = await page.evaluate(() => [...document.querySelectorAll(".motion-track")].map((track) => new DOMMatrix(getComputedStyle(track).transform).m41));
-      await page.locator("[data-motion-toggle]").click();
-      await page.waitForTimeout(80);
-      const pausedBefore = await page.evaluate(() => [...document.querySelectorAll(".motion-track")].map((track) => new DOMMatrix(getComputedStyle(track).transform).m41));
-      await page.waitForTimeout(260);
-      const pausedAfter = await page.evaluate(() => [...document.querySelectorAll(".motion-track")].map((track) => new DOMMatrix(getComputedStyle(track).transform).m41));
-      motionInspection = await page.evaluate(({ before, after, pausedBefore, pausedAfter }) => ({
+      motionInspection = await page.evaluate(({ before, after }) => ({
         rows: document.querySelectorAll("[data-motion-row]").length,
         sets: document.querySelectorAll(".motion-set").length,
         speeds: [...document.querySelectorAll("[data-motion-row]")].map((row) => Number(row.dataset.speed)),
@@ -220,10 +215,11 @@ for (const viewport of viewports) {
         before,
         after,
         deltas: after.map((value, index) => value - before[index]),
-        pausedDeltas: pausedAfter.map((value, index) => value - pausedBefore[index]),
-        paused: document.querySelector("[data-motion-toggle]")?.getAttribute("aria-pressed")
-      }), { before, after, pausedBefore, pausedAfter });
-      await page.locator("[data-motion-toggle]").click();
+        onscreen: [...document.querySelectorAll(".motion-track")].every((track) => {
+          const rect = track.getBoundingClientRect();
+          return rect.right > 8 && rect.left < window.innerWidth - 8;
+        })
+      }), { before, after });
     }
 
     const assertions = [];
@@ -259,7 +255,7 @@ for (const viewport of viewports) {
     addAssertion(assertions, `${prefix}:motion-speeds`, route.page !== "home" || motionInspection?.speeds.join(",") === "27,-21,24", motionInspection?.speeds.join(",") || "missing");
     addAssertion(assertions, `${prefix}:motion-equal-loops`, route.page !== "home" || motionInspection?.setWidths.every(([first, second]) => Math.abs(first - second) <= 1), JSON.stringify(motionInspection?.setWidths || []));
     addAssertion(assertions, `${prefix}:motion-directions`, route.page !== "home" || (motionInspection?.deltas[0] > 0 && motionInspection?.deltas[1] < 0 && motionInspection?.deltas[2] > 0), JSON.stringify(motionInspection?.deltas || []));
-    addAssertion(assertions, `${prefix}:motion-pause`, route.page !== "home" || (motionInspection?.paused === "true" && motionInspection?.pausedDeltas.every((delta) => Math.abs(delta) < .2)), JSON.stringify(motionInspection?.pausedDeltas || []));
+    addAssertion(assertions, `${prefix}:motion-rows-onscreen`, route.page !== "home" || motionInspection?.onscreen === true, String(motionInspection?.onscreen));
 
     const errors = assertions.filter((item) => !item.passed).map((item) => `${item.id}${item.evidence ? ` (${item.evidence})` : ""}`);
     const screenshotWanted = screenshotMode !== "none" && (viewport.width === 320 || viewport.width === 1440 || errors.length > 0 || screenshotMode === "all");
@@ -345,12 +341,17 @@ const reducedInspection = await reducedPage.evaluate(({ before, after }) => ({
   mediaMatches: matchMedia("(prefers-reduced-motion: reduce)").matches,
   before,
   after,
-  duplicateDisplays: [...document.querySelectorAll('.motion-set[aria-hidden="true"]')].map((set) => getComputedStyle(set).display)
+  duplicateDisplays: [...document.querySelectorAll('.motion-set[aria-hidden="true"]')].map((set) => getComputedStyle(set).display),
+  rowsOnscreen: [...document.querySelectorAll(".motion-track")].map((track) => {
+    const rect = track.getBoundingClientRect();
+    return rect.right > 8 && rect.left < window.innerWidth - 8;
+  })
 }), { before: reducedBefore, after: reducedAfter });
 const reducedAssertions = [];
 addAssertion(reducedAssertions, "reduced-motion:media", reducedInspection.mediaMatches, String(reducedInspection.mediaMatches));
 addAssertion(reducedAssertions, "reduced-motion:static-tracks", reducedInspection.before.join("|") === reducedInspection.after.join("|"), `${reducedInspection.before.join("|")} / ${reducedInspection.after.join("|")}`);
 addAssertion(reducedAssertions, "reduced-motion:no-duplicates", reducedInspection.duplicateDisplays.every((display) => display === "none"), reducedInspection.duplicateDisplays.join(","));
+addAssertion(reducedAssertions, "reduced-motion:rows-onscreen", reducedInspection.rowsOnscreen.length === 3 && reducedInspection.rowsOnscreen.every(Boolean), JSON.stringify(reducedInspection.rowsOnscreen));
 const reducedErrors = reducedAssertions.filter((item) => !item.passed).map((item) => `${item.id}${item.evidence ? ` (${item.evidence})` : ""}`);
 results.push({ viewport: "mobile-390-reduced", route: "/", inspection: reducedInspection, assertions: reducedAssertions, errors: reducedErrors });
 if (reducedErrors.length) failed = true;

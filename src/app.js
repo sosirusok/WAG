@@ -448,8 +448,6 @@ const motionStage = document.querySelector("[data-motion-stage]");
 
 if (motionStage) {
   const motionRibbon = motionStage.closest(".motion-ribbon");
-  const motionToggle = motionRibbon?.querySelector("[data-motion-toggle]");
-  const motionToggleLabel = motionToggle?.querySelector("[data-motion-toggle-label]");
   const motionRows = [...motionStage.querySelectorAll("[data-motion-row]")].map((row) => {
     const track = row.querySelector(".motion-track");
     const leadSet = row.querySelector("[data-motion-set]");
@@ -467,7 +465,6 @@ if (motionStage) {
 
   let motionFrame = 0;
   let motionVisible = true;
-  let motionPaused = false;
   let previousMotionTime = 0;
 
   const measureMotionRows = () => {
@@ -475,6 +472,16 @@ if (motionStage) {
       const distance = item.leadSet.offsetWidth;
       if (distance <= 0) return;
       item.distance = distance;
+
+      // 모션 감소 모드에서는 복제 세트를 숨기므로 트랙 폭이 한 세트뿐이다.
+      // 이때 음수 오프셋을 주면 행 전체가 화면 왼쪽 밖으로 밀려 사라진다.
+      if (reducedMotion) {
+        item.offset = 0;
+        item.initialized = true;
+        item.track.style.transform = "none";
+        return;
+      }
+
       if (!item.initialized) {
         item.offset = item.speed > 0 ? -distance : 0;
         item.initialized = true;
@@ -507,7 +514,7 @@ if (motionStage) {
   };
 
   const syncMotionRows = () => {
-    const shouldMove = !reducedMotion && !motionPaused && !document.hidden && motionVisible;
+    const shouldMove = !reducedMotion && !document.hidden && motionVisible;
     motionRibbon?.classList.toggle("is-moving", shouldMove);
     if (shouldMove && !motionFrame) {
       previousMotionTime = 0;
@@ -518,14 +525,6 @@ if (motionStage) {
       motionFrame = 0;
     }
   };
-
-  motionToggle?.addEventListener("click", () => {
-    motionPaused = !motionPaused;
-    motionToggle.setAttribute("aria-pressed", String(motionPaused));
-    motionToggle.setAttribute("aria-label", motionPaused ? "움직임 다시 시작" : "움직임 일시정지");
-    if (motionToggleLabel) motionToggleLabel.textContent = motionPaused ? "움직임 다시 시작" : "움직임 일시정지";
-    syncMotionRows();
-  });
 
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(([entry]) => {
