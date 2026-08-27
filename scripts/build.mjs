@@ -102,7 +102,7 @@ const renderHeader = (active = "") => `
 const filmWords = "<span>SYSTEM · WEBSITE · APP · GAME ·&nbsp;</span><span>SYSTEM · WEBSITE · APP · GAME ·&nbsp;</span>";
 
 const renderFooter = (currentUrl = normalizedSiteUrl) => `
-  <footer class="site-footer" data-spotlight>
+  <footer class="site-footer" data-motion-scope data-spotlight>
     <div class="footer-film" aria-hidden="true">${filmWords}<div class="footer-film-glow">${filmWords}</div></div>
     <div class="footer-main shell">
       <div class="footer-brand">${renderBrand("brand-footer", true)}<p>웹 · 앱 · 게임 · AI · 운영 시스템 외주 제작<br>2인 프리랜서 스튜디오</p></div>
@@ -200,9 +200,41 @@ const renderPreloader = () => `
     <div class="intro-mark">${logoWhiteSvg}<span class="intro-bar"></span></div>
   </div>`;
 
+const codeLines = [
+  [["kw","export"],["sp"," "],["kw","async"],["sp"," "],["kw","function"],["sp"," "],["fn","ship"],["pn","(brief)"],["sp"," "],["pn","{"]],
+  [["sp","  "],["kw","const"],["sp"," "],["vr","plan"],["sp"," = "],["kw","await"],["sp"," "],["fn","consult"],["pn","(brief)"],["pn",";"],["sp","   "],["cm","// 상담"]],
+  [["sp","  "],["kw","const"],["sp"," "],["vr","ui"],["sp"," = "],["kw","await"],["sp"," "],["fn","design"],["pn","(plan)"],["pn",";"],["sp","     "],["cm","// 기획 · 디자인"]],
+  [["sp","  "],["kw","const"],["sp"," "],["vr","app"],["sp"," = "],["kw","await"],["sp"," "],["fn","build"],["pn","(ui, {"]],
+  [["sp","    "],["pr","web"],["pn",": "],["bl","true"],["pn",", "],["pr","app"],["pn",": "],["bl","true"],["pn",","]],
+  [["sp","    "],["pr","game"],["pn",": "],["bl","true"],["pn",", "],["pr","ai"],["pn",": "],["bl","true"],["pn",","]],
+  [["sp","  "],["pn","});"]],
+  [["sp","  "],["kw","return"],["sp"," "],["fn","deploy"],["pn","(app)"],["pn",";"],["sp","      "],["cm","// 검수 · 배포"]],
+  [["pn","}"]]
+];
+
+const renderCodeBody = () => codeLines.map((tokens, index) => {
+  const inner = tokens.map(([kind, text]) => `<span class="t-${kind}">${escapeHtml(text)}</span>`).join("");
+  return `<span class="code-line" style="--li:${index}"><b class="code-no">${index + 1}</b>${inner}</span>`;
+}).join("");
+
+const terminalLines = [
+  ["cmd", "npm run deploy"],
+  ["ok", "빌드 완료", "1.2s"],
+  ["ok", "검수 통과", "8/8"],
+  ["ok", "운영 주소 발급", "swag.studio"]
+];
+
+const renderTerminal = () => terminalLines.map((line, index) => {
+  const [kind, label, meta] = line;
+  const body = kind === "cmd"
+    ? `<b class="term-prompt">$</b><span>${escapeHtml(label)}</span>`
+    : `<b class="term-ok">✓</b><span>${escapeHtml(label)}</span>${meta ? `<em>${escapeHtml(meta)}</em>` : ""}`;
+  return `<span class="term-line" style="--li:${index}">${body}</span>`;
+}).join("");
+
 const renderHero = () => `
-  <section class="hero" data-impact-hero>
-    <div class="hero-backdrop" aria-hidden="true"><i class="hero-blob hero-blob-1"></i><i class="hero-blob hero-blob-2"></i><i class="hero-blob hero-blob-3"></i><i class="hero-grid"></i></div>
+  <section class="hero" data-impact-hero data-motion-scope>
+    <div class="hero-backdrop" aria-hidden="true"><i class="hero-grid"></i><i class="hero-beam"></i></div>
     <canvas class="film-canvas" data-film-canvas aria-hidden="true"></canvas>
     <div class="hero-inner shell">
       <div class="hero-copy">
@@ -211,7 +243,7 @@ const renderHero = () => `
         <p class="hero-lead" data-reveal>상담한 두 사람이 기획 · 디자인 · 개발 · 검수 · 배포를 끝까지 맡는 ${escapeHtml(data.brand.description)}입니다.</p>
         <div class="hero-actions" data-reveal>
           <a class="btn btn-primary magnetic" href="contact/">${escapeHtml(data.brand.primaryCta)} <span aria-hidden="true">→</span></a>
-          <a class="btn btn-ghost magnetic" href="work/">${escapeHtml(data.brand.secondaryCta)}</a>
+          <a class="btn btn-glass magnetic" href="work/">${escapeHtml(data.brand.secondaryCta)}</a>
         </div>
         <ul class="hero-trust" data-reveal>
           <li>같은 담당자가 끝까지</li>
@@ -220,23 +252,16 @@ const renderHero = () => `
         </ul>
       </div>
       <div class="hero-visual" data-hero-photo data-reveal="zoom" aria-hidden="true">
-        <div class="hero-window">
-          <div class="hero-window-bar"><i></i><i></i><i></i><span>swag.studio</span></div>
-          <div class="hero-window-body">
-            <div class="hw-headline"><span></span><span></span></div>
-            <div class="hw-cards"><i></i><i></i><i></i></div>
-            <div class="hw-code"><span style="--w:72%"></span><span style="--w:48%"></span><span style="--w:84%"></span><span style="--w:56%"></span><span style="--w:38%"></span></div>
-          </div>
+        <div class="code-window">
+          <div class="code-bar"><i class="cw-dot cw-r"></i><i class="cw-dot cw-y"></i><i class="cw-dot cw-g"></i><span class="code-tab is-on">ship.ts</span><span class="code-tab">deploy.yml</span></div>
+          <pre class="code-body" data-typer>${renderCodeBody()}<span class="code-caret"></span></pre>
         </div>
-        <div class="hero-phone">
-          <div class="hero-phone-notch"></div>
-          <div class="hp-header"></div>
-          <div class="hp-list"><i></i><i></i><i></i></div>
-          <div class="hp-tab"></div>
+        <div class="term-window">
+          <div class="term-bar"><span>TERMINAL</span><i class="term-live"></i></div>
+          <div class="term-body">${renderTerminal()}</div>
         </div>
         <div class="hero-chip hero-chip-1"><b>✓</b> 배포 완료</div>
         <div class="hero-chip hero-chip-2"><b>◷</b> 검수 중</div>
-        <div class="hero-chip hero-chip-3"><b>💬</b> 상담 답변</div>
       </div>
     </div>
     <a class="scroll-cue" href="./#stats"><span>SCROLL</span><i aria-hidden="true"></i></a>
@@ -263,7 +288,7 @@ const renderStats = () => statTiles.map((stat, index) => `
 const renderHomeFilm = () => {
   const items = data.services.map((service, index) => `
     <a class="service-card film-shot film-shot-${index + 1}" href="services/#${escapeHtml(service.id)}" data-route-expand data-tilt>
-      <figure class="service-card-visual">${mockups[service.id] || mockups.web}<span class="card-sheen" aria-hidden="true"></span></figure>
+      <figure class="service-card-visual" data-motion-scope>${mockups[service.id] || mockups.web}<span class="card-sheen" aria-hidden="true"></span></figure>
       <div class="service-card-copy">
         <p class="service-card-tag">${escapeHtml(service.short)}</p>
         <h3>${escapeHtml(service.title)}</h3>
@@ -307,7 +332,7 @@ const renderMotionRows = () => stackRows.map((icons, index) => {
 
 const renderServiceChapters = () => data.services.map((service, index) => `
   <article class="service-chapter service-chapter-${index + 1}" id="${escapeHtml(service.id)}" data-reveal="flip">
-    <figure class="service-visual" data-tilt>${mockups[service.id] || mockups.web}<span class="card-sheen" aria-hidden="true"></span></figure>
+    <figure class="service-visual" data-tilt data-motion-scope>${mockups[service.id] || mockups.web}<span class="card-sheen" aria-hidden="true"></span></figure>
     <div class="service-copy">
       <p class="eyebrow">${escapeHtml(service.short)}</p>
       <h2 data-split>${escapeHtml(service.title)}</h2>
