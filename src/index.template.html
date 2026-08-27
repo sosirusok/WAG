@@ -26,6 +26,7 @@
   <script type="application/ld+json">{{STRUCTURED_DATA}}</script>
 </head>
 <body id="top" data-page="home">
+  {{PRELOADER}}
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
@@ -41,7 +42,7 @@
     <section class="home-scope" id="scope" aria-labelledby="scope-title">
       <header class="section-head shell" data-reveal>
         <p class="eyebrow">{{BRAND_EXPANSION}}</p>
-        <h2 id="scope-title">제작 분야</h2>
+        <h2 id="scope-title" data-split>제작 분야</h2>
         <p class="section-lead">필요한 화면과 기능에 맞는 분야를 골라 문의할 수 있어요.</p>
         <a class="btn btn-ghost magnetic" href="services/">전체 보기 <span aria-hidden="true">→</span></a>
       </header>
@@ -52,7 +53,7 @@
     <section class="motion-ribbon" id="stack" aria-labelledby="stack-title">
       <div class="section-head shell" data-reveal>
         <p class="eyebrow eyebrow-invert">TECH STACK</p>
-        <h2 id="stack-title">이런 기술로 만듭니다</h2>
+        <h2 id="stack-title" data-split>이런 기술로 만듭니다</h2>
         <p class="section-lead">화면부터 서버 · 데이터 · 배포 인프라까지 프로젝트에 맞는 도구를 고릅니다.</p>
       </div>
       <button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false" aria-label="움직임 일시정지"><span aria-hidden="true"></span><b class="sr-only" data-motion-toggle-label>움직임 일시정지</b></button>
@@ -65,7 +66,7 @@
       <div class="shell">
         <header class="section-head" data-reveal>
           <p class="eyebrow">PROCESS</p>
-          <h2 id="home-process-title">진행 방식</h2>
+          <h2 id="home-process-title" data-split>진행 방식</h2>
           <a class="btn btn-ghost magnetic" href="process/">자세히 보기 <span aria-hidden="true">→</span></a>
         </header>
         <ol class="process-preview">{{PROCESS_PREVIEW}}</ol>
@@ -76,7 +77,7 @@
       <div class="shell home-studio-card" data-reveal>
         <div class="studio-note">
           <p class="eyebrow">ABOUT</p>
-          <h2 id="studio-title">2인 프리랜서 스튜디오</h2>
+          <h2 id="studio-title" data-split>2인 프리랜서 스튜디오</h2>
           <p>상담한 두 사람이 기획부터 배포까지 담당합니다. 중간 영업도, 재하청도 없습니다.</p>
           <a class="btn btn-ghost magnetic" href="about/">소개 보기 <span aria-hidden="true">→</span></a>
         </div>
