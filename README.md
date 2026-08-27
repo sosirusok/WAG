@@ -10,6 +10,7 @@ SWAG 2인 프리랜서 스튜디오의 정적 웹사이트입니다. 웹사이�
 - 저장소: <https://github.com/sosirusok/WAG>
 - 배포 브랜치: `main`
 - 배포 방식: `.github/workflows/pages.yml`이 검증, 정적 빌드, 로컬 참조 감사를 통과한 `dist/`만 GitHub Pages에 배포
+- v45 공개 검증 커밋: `48c68a26d1729527fc31098abeadcdf0b02f0f76`
 
 ## 페이지 구성
 
@@ -88,6 +89,6 @@ $env:AUDIT_BASE_URL="http://127.0.0.1:4173/"
 npm run audit:visual
 ```
 
-감사는 320×812, 390×844, 844×390, 768×1024, 1100×900, 1440×1000에서 실행합니다. 공개 주소를 다시 검사할 때는 `AUDIT_BASE_URL`만 GitHub Pages 주소로 바꿉니다.
+감사는 320×812, 390×844, 844×390, 768×1024, 1100×900, 1440×1000에서 실행합니다. v45 공개 주소 재검증은 48개 화면 조합과 상호작용을 합쳐 **1330/1330 assertions**를 통과했습니다.
 
 검증 결과와 아직 다시 확인할 항목은 [QUALITY-CHECKLIST.md](QUALITY-CHECKLIST.md)에 기록합니다.
