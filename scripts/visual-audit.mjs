@@ -241,7 +241,7 @@ for (const viewport of viewports) {
     addAssertion(assertions, `${prefix}:no-interactive-overlap`, inspection.overlaps.length === 0, JSON.stringify(inspection.overlaps.slice(0, 4)));
     addAssertion(assertions, `${prefix}:brand-contained`, inspection.brandOverflow.every((item) => !item.overflow), JSON.stringify(inspection.brandOverflow));
     addAssertion(assertions, `${prefix}:automatic-motion`, inspection.activeAnimationCount >= 1, String(inspection.activeAnimationCount));
-    addAssertion(assertions, `${prefix}:canvas-scope`, inspection.canvasCount === (route.page === "home" ? 1 : 0), String(inspection.canvasCount));
+    addAssertion(assertions, `${prefix}:canvas-scope`, inspection.canvasCount === 0, String(inspection.canvasCount));
     addAssertion(assertions, `${prefix}:reveals-complete`, inspection.revealHidden.length === 0, JSON.stringify(inspection.revealHidden));
     addAssertion(assertions, `${prefix}:heading-copy`, inspection.largeSentenceHeadings.length === 0, inspection.largeSentenceHeadings.join(" | "));
     addAssertion(assertions, `${prefix}:rejected-copy`, inspection.rejectedCopy.length === 0, inspection.rejectedCopy.join(" | "));
