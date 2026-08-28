@@ -565,15 +565,30 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   text-shadow: 0 2px 30px rgba(4, 10, 30, .5);
 }
 
-.hero-rotator { display: inline-block; }
+/* 예전에는 가장 긴 단어 너비로 min-width 를 고정해서, 짧은 단어일 때도
+   자리를 그만큼 차지해 제목이 한 줄 더 내려가 있었다.
+   지금은 현재 단어 너비로 부드럽게 늘었다 줄었다 한다. */
+.hero-rotator {
+  display: inline-block;
+  white-space: nowrap;
+  vertical-align: top;
+  transition: width .52s var(--ease-out);
+}
 
 .rotator-word {
   display: inline-block;
-  background: linear-gradient(100deg, #6f9bff 10%, #5bdf9c 90%);
+  background: linear-gradient(100deg, #6f9bff 0%, #5bdf9c 42%, #8ff0c0 58%, #6f9bff 100%);
+  background-size: 260% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  animation: rotatorSheen 5.2s linear infinite;
   transition: opacity .26s ease, transform .26s ease;
+}
+
+@keyframes rotatorSheen {
+  from { background-position: 130% 50%; }
+  to { background-position: -130% 50%; }
 }
 
 .rotator-word.is-out { opacity: 0; transform: translateY(-16px) skewY(-3deg); }
@@ -866,7 +881,7 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 
 /* ------------------------------------------------------------------ 통계 */
 
-.home-stats { padding-block: clamp(24px, 4vw, 44px) clamp(56px, 8vw, 104px); }
+.home-stats { padding-block: clamp(24px, 4vw, 44px) clamp(40px, 5vw, 72px); }
 
 .stat-grid {
   display: grid;
@@ -921,7 +936,7 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 
 /* ------------------------------------------------------------- 제작 분야 */
 
-.home-scope { padding-block: clamp(56px, 8vw, 104px); }
+.home-scope { padding-block: clamp(48px, 6vw, 80px) clamp(56px, 8vw, 104px); }
 
 .film-window {
   display: flex;
@@ -1078,7 +1093,7 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 
 .motion-ribbon {
   position: relative;
-  padding-block: clamp(64px, 9vw, 120px);
+  padding-block: clamp(56px, 7.5vw, 100px) clamp(44px, 5.5vw, 72px);
   background:
     radial-gradient(60% 60% at 16% 0%, rgba(33, 69, 230, .25), transparent 64%),
     radial-gradient(50% 50% at 88% 100%, rgba(22, 184, 120, .16), transparent 60%),
@@ -1161,16 +1176,6 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 
 .process-step > b { font-size: 19px; font-weight: 800; }
 .process-step-note { font-size: 14px; color: var(--sub); }
-
-.process-step:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: calc(-1 * clamp(14px, 2vw, 24px));
-  width: clamp(14px, 2vw, 24px);
-  height: 2px;
-  background: linear-gradient(90deg, var(--line-strong), transparent);
-}
 
 /* --------------------------------------------------------------- 스튜디오 */
 
@@ -2334,13 +2339,17 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   filter: blur(0);
 }
 
+/* 등장이 끝난 제목은 승격을 반납한다 */
+[data-split].words-done .word { will-change: auto; filter: none; }
+
 /* 로테이터는 분해 대상이 아니므로 같은 타이밍으로 따라오게 */
+/* 로테이터에는 blur 를 걸지 않는다. filter 가 새 렌더링 문맥을 만들면서
+   background-clip:text 의 그라디언트가 깨져 글자가 어둡게 뭉개졌다. */
 [data-split].is-split .hero-rotator {
   display: inline-block;
   opacity: 0;
   transform: translateY(.9em);
-  filter: blur(6px);
-  transition: opacity .75s var(--ease-out) .1s, transform .75s var(--ease-out) .1s, filter .75s var(--ease-out) .1s;
+  transition: opacity .75s var(--ease-out) .1s, transform .75s var(--ease-out) .1s;
 }
 
 [data-split].words-in .hero-rotator {
@@ -2646,4 +2655,323 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 
   /* 색 띠 훑기는 자리 이동이 아니므로 천천히 유지한다 */
   .footer-film span { animation: filmSweep 12s var(--ease-out) infinite !important; }
+}
+
+/* ==========================================================================
+   v51 디테일 · 효과 레이어
+
+   구조는 그대로 두고 여기서만 더한다. 전부 transform / opacity /
+   background-position / clip-path / stroke-dashoffset 같은 합성 단계 속성이라
+   프레임 비용이 거의 없다. 레이아웃을 다시 계산하게 만드는 속성은 쓰지 않는다.
+   ========================================================================== */
+
+/* --------------------------------------------------- 숫자 오도미터 롤
+
+   0 에서 목표 숫자까지 매 프레임 글자를 다시 그리는 대신, 0~9 가 세로로 쌓인
+   자리(column)를 transform 으로 한 번 밀어 올린다. 프레임 비용이 없다. */
+
+.odo {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: .01em;
+}
+
+.odo-col {
+  display: block;
+  overflow: hidden;
+  height: 1em;
+  line-height: 1;
+}
+
+.odo-col i {
+  display: block;
+  font-style: normal;
+  transform: translate3d(0, 0, 0);
+  transition: transform 1.15s var(--ease-out);
+  transition-delay: var(--odo-delay, 0ms);
+}
+
+.odo-col i s { display: block; text-decoration: none; line-height: 1; }
+.odo.is-rolled .odo-col i { transform: translate3d(0, calc(var(--odo-target, 0) * -1em), 0); }
+
+/* ------------------------------------------------- 영문 라벨 해독 애니메이션
+
+   화면에 들어올 때 글자가 무작위 기호에서 제자리를 찾아간다.
+   한 번만 돌고 끝나며 대상은 짧은 영문 라벨뿐이다. */
+
+.eyebrow[data-scramble] { font-variant-ligatures: none; }
+.eyebrow[data-scramble] .scr-off { opacity: .55; }
+
+/* ------------------------------------------------------- 카드 깊이 시차
+
+   커서를 올리면 카드보다 안쪽 목업이 조금 더 움직여서 층이 갈라져 보인다. */
+
+.service-card-visual .mock,
+.service-card-visual svg {
+  transition: transform .5s var(--ease-out);
+  will-change: auto;
+}
+
+.service-card:hover .service-card-visual .mock,
+.service-card:focus-visible .service-card-visual .mock {
+  transform: translate3d(calc(var(--cx, 0) * 10px), calc(var(--cy, 0) * 10px), 0) scale(1.045);
+}
+
+.service-card-copy { transition: transform .5s var(--ease-out); }
+
+.service-card:hover .service-card-copy,
+.service-card:focus-visible .service-card-copy {
+  transform: translate3d(calc(var(--cx, 0) * 3px), calc(var(--cy, 0) * 3px), 0);
+}
+
+/* ------------------------------------------------- 화면 진입 시 카드 광택 훑기 */
+
+.sweep { position: relative; overflow: hidden; }
+
+.sweep::after { content: none; }
+
+.sweep.is-swept::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, .58) 50%, transparent 62%);
+  animation: sweepRun 1.15s var(--ease-out) .18s both;
+}
+
+@keyframes sweepRun {
+  from { transform: translate3d(-130%, 0, 0); opacity: 1; }
+  to { transform: translate3d(130%, 0, 0); opacity: 0; }
+}
+
+/* --------------------------------------------------- 버튼 커서 추종 광원 */
+
+.btn { position: relative; overflow: hidden; isolation: isolate; }
+
+/* 커서를 따라오는 광원. z-index:-1 + isolation 으로 라벨 아래에 깔린다 */
+/* content:none 이면 상자 자체가 만들어지지 않는다. 커서가 올라올 때만 생기므로
+   버튼이 몇 개든 평소 프레임 비용이 0 이다. */
+.btn::after { content: none; }
+
+.btn:hover::after,
+.btn:focus-visible::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: var(--bx, 50%);
+  top: var(--by, 50%);
+  width: 220px;
+  height: 220px;
+  margin: -110px 0 0 -110px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, .34), transparent 66%);
+  animation: glowIn .34s var(--ease-out) both;
+}
+
+.btn-ghost:hover::after,
+.btn-ghost:focus-visible::after { background: radial-gradient(circle, rgba(33, 69, 230, .16), transparent 66%); }
+
+@keyframes glowIn {
+  from { opacity: 0; transform: scale(.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* --------------------------------------------------- 내비 글자 단위 반응 */
+
+.desktop-nav a .ch {
+  display: inline-block;
+  transition: transform .32s var(--ease-out), color .2s var(--ease-out);
+  transition-delay: calc(var(--ch-i, 0) * 26ms);
+}
+
+.desktop-nav a:hover .ch { transform: translateY(-3px); }
+.desktop-nav a .ch-space { white-space: pre; }
+
+/* ------------------------------------------------- 기술 스택 타일 상호작용 */
+
+.stack-tile {
+  position: relative;
+  transition: transform .34s var(--ease-out), box-shadow .34s var(--ease-out);
+}
+
+.stack-tile:hover {
+  transform: translate3d(0, -8px, 0) scale(1.08);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, .45);
+  z-index: 3;
+}
+
+.stack-tile::after { content: none; }
+
+.stack-tile:hover::after {
+  content: attr(data-name);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #f3f5fa;
+  color: #0d1530;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: tipIn .22s var(--ease-out) both;
+}
+
+@keyframes tipIn {
+  from { opacity: 0; transform: translate3d(-50%, 6px, 0); }
+  to { opacity: 1; transform: translate3d(-50%, 0, 0); }
+}
+
+/* ----------------------------------------------------- 진행 미리보기 강화
+
+   카드 네 장 위로 진행선이 실제로 그어지고, 지나간 단계의 번호가 채워진다. */
+
+.process-preview { position: relative; }
+
+.process-rail {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 46px;
+  height: 2px;
+  background: var(--line-strong);
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+/* 채움 값은 부모의 CSS 변수가 아니라 이 요소의 inline transform 으로 넣는다.
+   부모에 변수를 쓰면 그 아래 전체가 스타일 재계산 대상이 되어 스크롤이 무거워진다. */
+.process-rail i {
+  display: block;
+  height: 100%;
+  background: var(--grad);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .45s var(--ease-out);
+}
+
+.process-step-no::before { transition: background .34s var(--ease-out), color .34s var(--ease-out), transform .34s var(--ease-out); }
+
+.process-step.is-lit .process-step-no::before {
+  background: var(--grad);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.process-step > b { transition: color .3s var(--ease-out); }
+
+/* 평소에는 상자를 만들지 않는다. 단계가 켜지거나 커서가 올라올 때만 생긴다. */
+.process-step::before { content: none; }
+
+.process-step.is-lit::before,
+.process-step:hover::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+  background: var(--grad);
+  transform-origin: left;
+  animation: stepBar .42s var(--ease-out) both;
+}
+
+@keyframes stepBar {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media (max-width: 900px) { .process-rail { display: none; } }
+
+/* --------------------------------------------------- 히어로 코드 하이라이트
+
+   편집기 위를 얇은 빛줄기가 한 줄씩 훑고 지나간다. */
+
+.code-body { position: relative; }
+
+.code-highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 26px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(111, 155, 255, .16), rgba(91, 223, 156, .1) 60%, transparent);
+  transform: translate3d(0, var(--hl-y, 0px), 0);
+  opacity: 0;
+  transition: transform .6s var(--ease-out), opacity .4s var(--ease-out);
+  pointer-events: none;
+}
+
+.is-typing .code-highlight { opacity: 1; }
+
+/* ------------------------------------------------------- 복사 완료 체크 */
+
+.copy-check {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  overflow: visible;
+}
+
+.copy-check path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+}
+
+.is-copied .copy-check path { animation: checkDraw .42s var(--ease-out) forwards; }
+
+@keyframes checkDraw { to { stroke-dashoffset: 0; } }
+
+/* --------------------------------------------------------- FAQ 아이콘 변형 */
+
+.faq summary i { transition: transform .3s var(--ease-out); }
+.faq details[open] summary i { transform: rotate(180deg); }
+.faq details { transition: background .3s var(--ease-out); }
+.faq details[open] { background: rgba(33, 69, 230, .03); }
+
+/* ------------------------------------------------- 프로젝트 이미지 확대 */
+
+.case-visual figure { overflow: hidden; }
+.case-visual img { transition: transform .8s var(--ease-out); }
+.case-visual:hover img,
+.case-visual:focus-visible img { transform: scale(1.05); }
+
+/* --------------------------------------------------------- 스크롤 안내 링 */
+
+.scroll-cue::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -3px;
+  width: 18px;
+  height: 18px;
+  margin-left: -9px;
+  border-radius: 50%;
+  border: 1px solid rgba(91, 223, 156, .5);
+  animation: cueRing 1.8s var(--ease-out) infinite;
+  pointer-events: none;
+}
+
+@keyframes cueRing {
+  0% { transform: scale(.35); opacity: 0; }
+  35% { opacity: .75; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .odo-col i,
+  .sweep::after,
+  .code-highlight,
+  .scroll-cue::after,
+  .rotator-word { animation: none !important; transition: none !important; }
+  .odo.is-rolled .odo-col i { transform: translate3d(0, calc(var(--odo-target, 0) * -1em), 0); }
+  .scroll-cue::after { display: none; }
+  .process-rail i { transform: scaleX(1); }
 }

@@ -122,7 +122,9 @@ for (const viewport of viewports) {
       const textSelector = "h1,h2,h3,p,a,button,legend,label,li,summary,pre,dt,dd,span";
       const textElements = [...document.querySelectorAll(textSelector)].filter((element) => visible(element) && element.textContent.trim());
       const clippedText = textElements.filter((element) => {
-        if (element.closest("[aria-hidden='true'], .platform-loop") || element.matches("a,button") && element.children.length) return false;
+        // .odo-col 은 0~9 가 세로로 쌓인 숫자 롤 슬롯이다. 잘린 글자가 아니라
+        // 의도한 창(window)이므로 검사에서 제외한다.
+        if (element.closest("[aria-hidden='true'], .platform-loop, .odo-col") || element.matches("a,button") && element.children.length) return false;
         const style = getComputedStyle(element);
         const clippedX = element.scrollWidth > element.clientWidth + 2 && ["hidden", "clip"].includes(style.overflowX);
         const clippedY = element.scrollHeight > element.clientHeight + 2 && ["hidden", "clip"].includes(style.overflowY);

@@ -242,17 +242,21 @@ if (rotator) {
     words = [];
   }
   if (words.length > 1 && !reducedMotion) {
+    // 단어마다 정확한 너비를 재 두고, 바뀔 때 그 너비로 부드럽게 늘었다 줄었다 한다.
+    // 가장 긴 단어로 자리를 고정하면 짧은 단어일 때 제목이 한 줄 더 내려간다.
+    const slot = rotator.closest(".hero-rotator") || rotator;
     const probe = document.createElement("span");
     probe.style.cssText = "position:absolute;visibility:hidden;white-space:nowrap;";
     probe.className = rotator.className;
-    rotator.parentElement?.append(probe);
-    let widest = 0;
-    words.forEach((word) => {
+    slot.parentElement?.append(probe);
+    const widths = words.map((word) => {
       probe.textContent = word;
-      widest = Math.max(widest, probe.offsetWidth);
+      return Math.ceil(probe.offsetWidth) + 2;
     });
     probe.remove();
-    if (widest) rotator.style.minWidth = `${Math.ceil(widest) + 2}px`;
+    const applyWidth = (i) => { if (widths[i]) slot.style.width = `${widths[i]}px`; };
+    applyWidth(0);
+    window.addEventListener("resize", () => applyWidth(index), { passive: true });
 
     let index = 0;
     window.setInterval(() => {
@@ -261,48 +265,12 @@ if (rotator) {
       window.setTimeout(() => {
         index = (index + 1) % words.length;
         rotator.textContent = words[index];
+        applyWidth(index);
         rotator.classList.remove("is-out");
         rotator.classList.add("is-in");
         window.setTimeout(() => rotator.classList.remove("is-in"), 460);
       }, 260);
     }, 2600);
-  }
-}
-
-/* ------------------------------------------------------------- count up */
-
-const countItems = [...document.querySelectorAll("[data-count]")];
-
-if (countItems.length) {
-  const animateCount = (item) => {
-    const target = Number(item.dataset.count) || 0;
-    if (reducedMotion) {
-      item.textContent = String(target);
-      return;
-    }
-    const start = performance.now();
-    const duration = 1300;
-    const step = (now) => {
-      const linear = Math.min(1, (now - start) / duration);
-      const eased = 1 - Math.pow(1 - linear, 3);
-      item.textContent = String(Math.round(target * eased));
-      if (linear < 1) window.requestAnimationFrame(step);
-      else item.textContent = String(target);
-    };
-    window.requestAnimationFrame(step);
-  };
-
-  if ("IntersectionObserver" in window && !reducedMotion) {
-    const countObserver = new IntersectionObserver((entries, observer) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        animateCount(entry.target);
-        observer.unobserve(entry.target);
-      });
-    }, { threshold: 0.4 });
-    countItems.forEach((item) => countObserver.observe(item));
-  } else {
-    countItems.forEach(animateCount);
   }
 }
 
@@ -861,3 +829,286 @@ if (!reducedMotion) {
     if (event.persisted) curtain.classList.remove("is-closing");
   });
 }
+
+/* ======================================================================
+   v51 효과 레이어
+
+   구조는 건드리지 않고 여기서만 더한다. 여기 있는 모든 효과는
+   transform / opacity / CSS 변수만 건드리고, 매 프레임 도는 루프를
+   새로 만들지 않는다. 화면 밖 구역은 기존 IntersectionObserver 가
+   이미 멈춰 준다.
+   ====================================================================== */
+
+/* --------------------------------------------------- 숫자 오도미터 롤 */
+
+/* 기존 카운트업은 1.3초 동안 매 프레임 글자를 다시 그렸고, 0 -> 0 인 타일은
+   아무 일도 일어나지 않는 것처럼 보였다. 0~9 가 세로로 쌓인 자리를
+   transform 으로 한 번 밀어 올리면 프레임 비용 없이 훨씬 잘 읽힌다. */
+
+const odometers = [...document.querySelectorAll("[data-count]")];
+
+if (odometers.length) {
+  odometers.forEach((item) => {
+    const target = String(Math.max(0, Math.round(Number(item.dataset.count) || 0)));
+    item.textContent = "";
+    item.classList.add("odo");
+    target.split("").forEach((digit, index) => {
+      const column = document.createElement("span");
+      column.className = "odo-col";
+      const strip = document.createElement("i");
+      strip.style.setProperty("--odo-target", digit);
+      strip.style.setProperty("--odo-delay", `${index * 90}ms`);
+      for (let n = 0; n <= 9; n += 1) {
+        const cell = document.createElement("s");
+        cell.textContent = String(n);
+        strip.append(cell);
+      }
+      column.append(strip);
+      item.append(column);
+    });
+  });
+
+  const rollAll = () => odometers.forEach((item) => item.classList.add("is-rolled"));
+
+  if (reducedMotion || !("IntersectionObserver" in window)) {
+    rollAll();
+  } else {
+    const odoObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-rolled");
+        odoObserver.unobserve(entry.target);
+      });
+    }, { threshold: .4 });
+    odometers.forEach((item) => odoObserver.observe(item));
+  }
+}
+
+/* ------------------------------------------------- 영문 라벨 해독 애니메이션 */
+
+const scrambleTargets = [...document.querySelectorAll(".eyebrow")]
+  .filter((item) => /^[A-Z0-9 ·.·-]+$/.test(item.textContent.trim()) && item.textContent.trim().length <= 40);
+
+scrambleTargets.forEach((item) => item.setAttribute("data-scramble", ""));
+
+const runScramble = (element) => {
+  const finalText = element.dataset.scrambleText || element.textContent;
+  element.dataset.scrambleText = finalText;
+  // 기호를 섞으면 글자가 깨진 것처럼 보인다. 알파벳만 써서 "해독되는" 느낌을 낸다.
+  const glyphs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const chars = [...finalText];
+  // 문자열이 길어도 총 시간이 같도록 비율로 배분한다(약 0.5초 안에 끝난다).
+  const span = Math.max(1, chars.length - 1);
+  const settleAt = chars.map((char, index) => (char === " " || char === "·" ? 0 : 4 + (index / span) * 26));
+  let frame = 0;
+
+  const step = () => {
+    let done = true;
+    element.textContent = chars.map((char, index) => {
+      if (frame >= settleAt[index]) return char;
+      done = false;
+      return glyphs[(frame * 7 + index * 13) % glyphs.length];
+    }).join("");
+    frame += 1;
+    if (!done) window.requestAnimationFrame(step);
+    else element.textContent = finalText;
+  };
+
+  window.requestAnimationFrame(step);
+};
+
+if (scrambleTargets.length && !reducedMotion && "IntersectionObserver" in window) {
+  const scrambleObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      runScramble(entry.target);
+      scrambleObserver.unobserve(entry.target);
+    });
+  }, { threshold: .6 });
+  scrambleTargets.forEach((item) => scrambleObserver.observe(item));
+}
+
+/* ------------------------------------------------------- 카드 깊이 시차 */
+
+if (finePointer && !reducedMotion) {
+  document.querySelectorAll(".service-card").forEach((card) => {
+    card.addEventListener("pointermove", (event) => {
+      const bounds = card.getBoundingClientRect();
+      card.style.setProperty("--cx", ((event.clientX - bounds.left) / bounds.width * 2 - 1).toFixed(3));
+      card.style.setProperty("--cy", ((event.clientY - bounds.top) / bounds.height * 2 - 1).toFixed(3));
+    }, { passive: true });
+    card.addEventListener("pointerleave", () => {
+      card.style.setProperty("--cx", "0");
+      card.style.setProperty("--cy", "0");
+    });
+  });
+
+  /* 버튼 위 광원은 커서를 따라온다 */
+  document.querySelectorAll(".btn").forEach((button) => {
+    button.addEventListener("pointermove", (event) => {
+      const bounds = button.getBoundingClientRect();
+      button.style.setProperty("--bx", `${Math.round(event.clientX - bounds.left)}px`);
+      button.style.setProperty("--by", `${Math.round(event.clientY - bounds.top)}px`);
+    }, { passive: true });
+  });
+}
+
+/* --------------------------------------------------- 내비 글자 단위 반응 */
+
+document.querySelectorAll(".desktop-nav a > span").forEach((label) => {
+  const text = label.textContent;
+  if (!text || label.querySelector(".ch")) return;
+  label.textContent = "";
+  [...text].forEach((char, index) => {
+    const piece = document.createElement("span");
+    piece.className = char === " " ? "ch ch-space" : "ch";
+    piece.style.setProperty("--ch-i", String(index));
+    // 공백도 그대로 넣는다. 비워 두면 "제작 분야"가 "제작분야"가 되어 라벨이 달라진다.
+    piece.textContent = char;
+    label.append(piece);
+  });
+});
+
+/* ------------------------------------------------- 기술 스택 타일 이름표 */
+
+document.querySelectorAll(".stack-tile").forEach((tile) => {
+  const name = tile.getAttribute("title");
+  if (!name) return;
+  tile.setAttribute("data-name", name);
+  // 브라우저 기본 툴팁과 겹치지 않도록 title 은 걷어내고 접근성 이름만 남긴다
+  tile.removeAttribute("title");
+  tile.setAttribute("aria-label", name);
+});
+
+/* --------------------------------------------- 화면 진입 시 광택 훑기 */
+
+const sweepTargets = [...document.querySelectorAll(".service-card-visual, .stat-tile")];
+sweepTargets.forEach((item) => item.classList.add("sweep"));
+
+if (sweepTargets.length && !reducedMotion && "IntersectionObserver" in window) {
+  const sweepObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      // is-visible 은 등장 애니메이션이 쓰는 이름이라 건드리면 안 된다.
+      // 광택 훑기는 자기 이름(is-swept)만 쓰고, 끝나면 그것만 걷는다.
+      entry.target.classList.add("is-swept");
+      sweepObserver.unobserve(entry.target);
+      entry.target.addEventListener("animationend", (event) => {
+        if (event.animationName !== "sweepRun") return;
+        entry.target.classList.remove("sweep", "is-swept");
+      }, { once: true });
+    });
+  }, { threshold: .35 });
+  sweepTargets.forEach((item) => sweepObserver.observe(item));
+}
+
+/* --------------------------------------------------- 진행 미리보기 진행선 */
+
+const processPreview = document.querySelector(".process-preview");
+
+if (processPreview) {
+  if (!processPreview.querySelector(".process-rail")) {
+    const rail = document.createElement("div");
+    rail.className = "process-rail";
+    rail.setAttribute("aria-hidden", "true");
+    rail.append(document.createElement("i"));
+    processPreview.prepend(rail);
+  }
+
+  const railFill = processPreview.querySelector(".process-rail i");
+  const steps = [...processPreview.querySelectorAll(".process-step")];
+
+  if ("IntersectionObserver" in window) {
+    const stepObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const index = steps.indexOf(entry.target);
+        entry.target.classList.add("is-lit");
+        railFill.style.transform = `scaleX(${((index + 1) / steps.length).toFixed(3)})`;
+      });
+    }, { threshold: .55 });
+    steps.forEach((step) => stepObserver.observe(step));
+  } else {
+    steps.forEach((step) => step.classList.add("is-lit"));
+    railFill.style.transform = "scaleX(1)";
+  }
+}
+
+/* ------------------------------------------------- 히어로 코드 하이라이트 */
+
+const codeBody = document.querySelector(".code-body");
+
+if (codeBody && !reducedMotion) {
+  const bar = document.createElement("span");
+  bar.className = "code-highlight";
+  bar.setAttribute("aria-hidden", "true");
+  codeBody.append(bar);
+
+  const lines = [...codeBody.querySelectorAll(".code-line")];
+  let lineIndex = 0;
+  let highlightTimer = 0;
+
+  const moveHighlight = () => {
+    if (document.hidden || !lines.length) return;
+    const line = lines[lineIndex % lines.length];
+    bar.style.setProperty("--hl-y", `${line.offsetTop - 4}px`);
+    lineIndex += 1;
+  };
+
+  const startHighlight = () => {
+    if (highlightTimer) return;
+    moveHighlight();
+    highlightTimer = window.setInterval(moveHighlight, 1400);
+  };
+
+  const stopHighlight = () => {
+    window.clearInterval(highlightTimer);
+    highlightTimer = 0;
+  };
+
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) startHighlight();
+      else stopHighlight();
+    }, { threshold: .2 }).observe(codeBody);
+  } else {
+    startHighlight();
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopHighlight();
+    else startHighlight();
+  });
+}
+
+/* --------------------------------------- 제목 등장이 끝나면 승격 반납
+
+   [data-split] 제목은 단어마다 레이어로 올라간다. 등장이 끝난 뒤에도
+   승격을 붙들고 있으면 제목 수만큼 레이어가 영구히 남는다. */
+
+document.querySelectorAll("[data-split]").forEach((heading) => {
+  const settle = () => heading.classList.add("words-done");
+  if (reducedMotion) { settle(); return; }
+  let timer = 0;
+  const schedule = () => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(settle, 260);
+  };
+  heading.addEventListener("transitionend", schedule);
+  // 전환이 아예 시작되지 않는 경우(이미 보이는 제목 등)를 위한 대비
+  window.setTimeout(settle, 3200);
+});
+
+/* ------------------------------------------------------- 복사 완료 체크 */
+
+document.querySelectorAll("[data-brief-copy]").forEach((button) => {
+  if (button.querySelector(".copy-check")) return;
+  const mark = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  mark.setAttribute("class", "copy-check");
+  mark.setAttribute("viewBox", "0 0 20 20");
+  mark.setAttribute("aria-hidden", "true");
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", "M4 10.6 8.2 15 16 5.6");
+  mark.append(path);
+  button.prepend(mark);
+});
