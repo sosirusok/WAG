@@ -18,19 +18,21 @@ SWAG(System · Website · App · Game)는 시스템 · 웹사이트 · 앱 · �
 
 1. <https://dash.cloudflare.com> 가입 → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
 2. GitHub 계정을 연결하고 `sosirusok/WAG` 저장소를 고른다
-3. 설정값을 아래 그대로 넣는다. **프로젝트 이름은 반드시 `swagstudio`** 여야 한다 (`wrangler.toml`의 `name`과 같아야 빌드가 통과한다)
+3. 입력할 값은 두 개뿐이다. **프로젝트 이름은 반드시 `swagstudio`** 여야 한다 (`wrangler.toml`의 `name`과 같아야 빌드가 통과한다)
 
    | 항목 | 값 |
    | --- | --- |
    | Project name | `swagstudio` |
-   | Production branch | `main` |
    | Build command | `npm run build` |
-   | Build output directory | `dist` |
-   | Environment variable | `SITE_URL` = `https://swagstudio.pages.dev/` |
+   | Production branch | `main` (기본값 그대로) |
+   | Build output directory | 비워 둔다 — `wrangler.toml`이 `dist`로 정한다 |
+   | Environment variables | **넣지 않는다** — 아래 참고 |
 
 4. Save and Deploy. 이후 `main`에 push 할 때마다 자동 재배포된다.
 
-`SITE_URL`은 `<base href>`, canonical, OG, 구조화 데이터에 그대로 박힌다. 실제 서비스 주소와 다르면 모든 상대 경로가 깨지므로 값을 바꾸면 반드시 함께 맞춰야 한다.
+공개 주소는 `scripts/build.mjs`가 Cloudflare가 자동으로 주는 `CF_PAGES_BRANCH`와 `CF_PAGES_URL`에서 알아내므로 `SITE_URL`을 직접 넣을 필요가 없다. 운영 브랜치(`main`) 빌드는 고정 주소 `https://swagstudio.pages.dev/`를, 그 밖의 미리보기 빌드는 그 배포 고유 주소를 쓴다. 배포마다 달라지는 주소가 canonical에 박히면 매 배포가 서로 다른 사이트로 취급되기 때문이다.
+
+이 값은 `<base href>`, canonical, OG, 구조화 데이터에 절대 경로로 박힌다. 실제 서비스 주소와 다르면 모든 상대 경로가 깨진다.
 
 ## 페이지 구성
 
