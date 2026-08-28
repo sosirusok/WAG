@@ -122,14 +122,15 @@ for (const viewport of viewports) {
       const textSelector = "h1,h2,h3,p,a,button,legend,label,li,summary,pre,dt,dd,span";
       const textElements = [...document.querySelectorAll(textSelector)].filter((element) => visible(element) && element.textContent.trim());
       const clippedText = textElements.filter((element) => {
-        if (element.closest("[aria-hidden='true'], .platform-loop") || element.matches("a,button") && element.children.length) return false;
+        // .facts .n 은 숫자가 스크롤 시점에 칸 밖에서 올라오는 슬롯이다. 잘린 글자가 아니다.
+        if (element.closest("[aria-hidden='true'], .facts .n") || element.matches("a,button") && element.children.length) return false;
         const style = getComputedStyle(element);
         const clippedX = element.scrollWidth > element.clientWidth + 2 && ["hidden", "clip"].includes(style.overflowX);
         const clippedY = element.scrollHeight > element.clientHeight + 2 && ["hidden", "clip"].includes(style.overflowY);
         return clippedX || clippedY;
       }).map((element) => ({ tag: element.tagName, text: element.textContent.trim().slice(0, 80) }));
       const offscreenText = textElements.filter((element) => {
-        if (element.closest("[aria-hidden='true'], .mobile-menu:not([open]), .film-window, .motion-ribbon, .chapter-jump, .capability-marquee, .footer-film")) return false;
+        if (element.closest("[aria-hidden='true'], .mobile-menu:not([open]), .s-stack, .chapter-jump, .capability-marquee, .hero-field")) return false;
         const rect = element.getBoundingClientRect();
         return rect.left < -2 || rect.right > document.documentElement.clientWidth + 2;
       }).map((element) => ({ tag: element.tagName, text: element.textContent.trim().slice(0, 80), rect: [Math.round(element.getBoundingClientRect().left), Math.round(element.getBoundingClientRect().right)] }));
@@ -161,7 +162,11 @@ for (const viewport of viewports) {
         const rect = image.getBoundingClientRect();
         return { width: rect.width, height: rect.height, frameWidth: frame.width, frameHeight: frame.height, overflow: rect.width > frame.width + 2 || rect.height > frame.height + 2 };
       });
-      const headings = [...document.querySelectorAll("h1,h2")].filter(visible).map((heading) => heading.textContent.trim());
+      // 이 규칙은 슬로건 모양의 제목을 잡으려고 만든 것이다.
+      // 포스터 크기로 세운 평범한 사실 문장(.display)은 오히려 AI 티를 없애는 쪽이라 제외한다.
+      const headings = [...document.querySelectorAll("h1,h2")]
+        .filter((heading) => visible(heading) && !heading.matches(".display"))
+        .map((heading) => heading.textContent.trim());
       const largeSentenceHeadings = headings.filter((text) => /(?:합니다|됩니다|있습니다|했습니다)[.!?]?$/u.test(text));
       const bodyText = document.body.innerText.replace(/\s+/g, " ");
       return {
@@ -185,7 +190,7 @@ for (const viewport of viewports) {
         rejectedCopy: rejected.filter((phrase) => bodyText.includes(phrase)),
         activeAnimationCount: document.getAnimations().filter((animation) => animation.playState === "running").length,
         canvasCount: document.querySelectorAll("canvas").length,
-        revealHidden: [...document.querySelectorAll("[data-reveal]")].filter((item) => !item.classList.contains("is-visible")).map((item) => ({
+        revealHidden: [...document.querySelectorAll("[data-reveal]")].filter((item) => !item.classList.contains("is-in")).map((item) => ({
           tag: item.tagName,
           className: item.className,
           text: item.textContent.trim().slice(0, 80),
@@ -202,7 +207,7 @@ for (const viewport of viewports) {
 
     let motionInspection = null;
     if (route.page === "home") {
-      await page.locator(".motion-ribbon").scrollIntoViewIfNeeded();
+      await page.locator(".s-stack").scrollIntoViewIfNeeded();
       await page.waitForTimeout(220);
       const before = await page.evaluate(() => [...document.querySelectorAll(".motion-track")].map((track) => new DOMMatrix(getComputedStyle(track).transform).m41));
       await page.waitForTimeout(520);
@@ -220,6 +225,31 @@ for (const viewport of viewports) {
           return rect.right > 8 && rect.left < window.innerWidth - 8;
         })
       }), { before, after });
+    }
+
+    let heroInspection = null;
+    if (route.page === "home") {
+      heroInspection = await page.evaluate(() => {
+        const line = document.querySelector(".display .t");
+        const scale = new Set([14, 17, 21, 27, 34, 44, 58, 76]);
+        const nodes = [...document.querySelectorAll("body *")].filter((element) => {
+          const rect = element.getBoundingClientRect();
+          return rect.width > 0 && rect.height > 0 && element.textContent.trim();
+        });
+        return {
+          settled: line ? getComputedStyle(line).transform === "none" : false,
+          templateParts: document.querySelectorAll(".hero canvas, .hero [class*=code], .hero [class*=term], .hero [class*=chip], .hero .pulse-dot").length,
+          radii: [...document.querySelectorAll("body *")].filter((element) => {
+            const rect = element.getBoundingClientRect();
+            if (rect.width < 200) return false;
+            const radius = getComputedStyle(element).borderTopLeftRadius;
+            return radius !== "0px" && !radius.includes("%") && radius !== "999px";
+          }).map((element) => `${element.className}:${getComputedStyle(element).borderTopLeftRadius}`),
+          offScale: [...new Set(nodes.map((element) => Math.round(Number.parseFloat(getComputedStyle(element).fontSize))))]
+            .filter((size) => !scale.has(size) && size < 48),
+          weights: [...new Set(nodes.map((element) => getComputedStyle(element).fontWeight))]
+        };
+      });
     }
 
     const assertions = [];
@@ -256,13 +286,18 @@ for (const viewport of viewports) {
     addAssertion(assertions, `${prefix}:motion-equal-loops`, route.page !== "home" || motionInspection?.setWidths.every(([first, second]) => Math.abs(first - second) <= 1), JSON.stringify(motionInspection?.setWidths || []));
     addAssertion(assertions, `${prefix}:motion-directions`, route.page !== "home" || (motionInspection?.deltas[0] > 0 && motionInspection?.deltas[1] < 0 && motionInspection?.deltas[2] > 0), JSON.stringify(motionInspection?.deltas || []));
     addAssertion(assertions, `${prefix}:motion-rows-onscreen`, route.page !== "home" || motionInspection?.onscreen === true, String(motionInspection?.onscreen));
+    addAssertion(assertions, `${prefix}:hero-settled`, route.page !== "home" || heroInspection?.settled === true, String(heroInspection?.settled));
+    addAssertion(assertions, `${prefix}:no-template-parts`, route.page !== "home" || heroInspection?.templateParts === 0, String(heroInspection?.templateParts));
+    addAssertion(assertions, `${prefix}:no-container-radius`, route.page !== "home" || heroInspection?.radii.length === 0, JSON.stringify(heroInspection?.radii.slice(0, 4) || []));
+    addAssertion(assertions, `${prefix}:type-scale`, route.page !== "home" || heroInspection?.offScale.length === 0, JSON.stringify(heroInspection?.offScale || []));
+    addAssertion(assertions, `${prefix}:type-weights`, route.page !== "home" || heroInspection?.weights.length <= 3, JSON.stringify(heroInspection?.weights || []));
 
     const errors = assertions.filter((item) => !item.passed).map((item) => `${item.id}${item.evidence ? ` (${item.evidence})` : ""}`);
     const screenshotWanted = screenshotMode !== "none" && (viewport.width === 320 || viewport.width === 1440 || errors.length > 0 || screenshotMode === "all");
     const screenshotPath = screenshotWanted ? path.join(auditDir, `${viewport.label}-${safeRouteName(route.path)}.png`) : "";
     if (screenshotPath) await page.screenshot({ path: screenshotPath, fullPage: true });
 
-    results.push({ viewport: viewport.label, route: route.path || "/", status: response?.status() || 0, screenshotPath, inspection, motionInspection, assertions, errors });
+    results.push({ viewport: viewport.label, route: route.path || "/", status: response?.status() || 0, screenshotPath, inspection, motionInspection, heroInspection, assertions, errors });
     console.log(`Finished ${viewport.label} ${route.path || "/"}: ${assertions.filter((item) => item.passed).length}/${assertions.length}`);
     if (errors.length) failed = true;
     await page.close();
@@ -332,7 +367,7 @@ const reducedContext = await browser.newContext({
 });
 const reducedPage = await reducedContext.newPage();
 await reducedPage.goto(baseUrl, { waitUntil: "domcontentloaded", timeout: 60000 });
-await reducedPage.locator(".motion-ribbon").scrollIntoViewIfNeeded();
+await reducedPage.locator(".s-stack").scrollIntoViewIfNeeded();
 await reducedPage.waitForTimeout(180);
 const reducedBefore = await reducedPage.evaluate(() => [...document.querySelectorAll(".motion-track")].map((track) => getComputedStyle(track).transform));
 await reducedPage.waitForTimeout(320);

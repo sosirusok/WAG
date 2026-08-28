@@ -49,6 +49,29 @@ const publicProjects = data.projects
   .filter((project) => project.published)
   .sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
 
+/* --------------------------------------------------------- 사실 화이트리스트
+
+   mono 서체(.mono)로 조판되는 모든 문자열은 반드시 이 표나 site.json 에서 나와야 한다.
+   validate.mjs 가 빌드 결과의 .mono 텍스트를 이 표와 대조해서, 예전처럼
+   "swag.studio" / "1.2s" / "8/8" 같은 지어낸 값이 다시 들어오면 빌드를 실패시킨다.
+   이 검사를 지우지 말 것.                                                        */
+
+const facts = {
+  version: `v${data.meta.version}`,
+  updated: String(data.meta.updatedAt).slice(0, 10).replaceAll("-", "."),
+  origin: normalizedSiteUrl.replace(/^https?:\/\//, "").replace(/\/$/, ""),
+  people: String(data.people?.count ?? 2),
+  published: String(publicProjects.length),
+  subcontract: "0"
+};
+
+const mono = (key) => {
+  if (!(key in facts)) throw new Error(`mono(): "${key}" is not a whitelisted fact`);
+  return `<span class="mono">${escapeHtml(facts[key])}</span>`;
+};
+
+export const monoFacts = facts;
+
 /* ---------------------------------------------------------------- brand */
 
 const inlineLogo = async (file, className) => {
@@ -90,212 +113,90 @@ const renderHeader = (active = "") => `
       <details class="mobile-menu">
         <summary aria-label="메뉴 열기"><span class="menu-glyph" aria-hidden="true"><i></i><i></i></span><b>MENU</b></summary>
         <div class="mobile-menu-panel">
-          <p>${escapeHtml(data.brand.expansion)}</p>
           <nav aria-label="모바일 메뉴">${renderNavLinks(active)}</nav>
-          <a class="mobile-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a>
+          <a class="mobile-contact" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(data.contact.kakaoLabel)} ↗</a>
         </div>
       </details>
     </div>
   </header>`;
 
-const filmWords = "<span>SYSTEM · WEBSITE · APP · GAME ·&nbsp;</span><span>SYSTEM · WEBSITE · APP · GAME ·&nbsp;</span>";
-
 const renderFooter = (currentUrl = normalizedSiteUrl) => `
-  <footer class="site-footer" data-motion-scope data-spotlight>
-    <div class="footer-film" aria-hidden="true">${filmWords}</div>
+  <footer class="site-footer" data-motion-scope>
+    <i class="footer-blade" aria-hidden="true"></i>
     <div class="footer-main shell">
-      <div class="footer-brand">${renderBrand("brand-footer", true)}<p>웹 · 앱 · 게임 · AI · 운영 시스템 외주 제작<br>2인 프리랜서 스튜디오</p></div>
+      <div class="footer-brand">${renderBrand("brand-footer", true)}<p>웹 · 앱 · 게임 · AI · 운영 시스템 외주 제작<br>${escapeHtml(data.brand.description)}</p></div>
       <nav aria-label="하단 메뉴">${renderNavLinks("")}</nav>
-      <div class="footer-direct"><p>DIRECT</p><a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">김의현 (SWAG)</a></div>
+      <div class="footer-direct">
+        <a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(data.contact.kakaoLabel)} ↗</a>
+        <a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(data.people.lead)} (${escapeHtml(data.brand.name)})</a>
+      </div>
+      <p class="footer-legal"><a href="privacy.html">개인정보 처리 안내</a><a href="${escapeHtml(currentUrl)}#top">위로 ↑</a></p>
     </div>
-    <div class="footer-bottom shell"><span>© <b data-year>2026</b> SWAG</span><a href="privacy.html">개인정보 처리 안내</a><a href="${escapeHtml(currentUrl)}#top">위로 ↑</a></div>
+    <p class="footer-colophon shell">
+      <span>${escapeHtml(data.brand.name)} · ${escapeHtml(data.brand.description)}</span>
+      <span>© <b data-year>2026</b> ${escapeHtml(data.brand.name)}</span>
+      <span class="mono">${escapeHtml(facts.version)} · ${escapeHtml(facts.updated)}</span>
+    </p>
   </footer>`;
 
-/* -------------------------------------------------------- device mockups */
+/* ------------------------------------------------------------------ 히어로
 
-const mockups = {
-  web: `<svg class="mock mock-web" viewBox="0 0 320 210" aria-hidden="true" focusable="false">
-    <rect class="mk-frame" x="4" y="4" width="312" height="202" rx="14"/>
-    <rect class="mk-bar" x="4" y="4" width="312" height="30" rx="14"/>
-    <rect x="4" y="24" width="312" height="10" class="mk-bar-fix"/>
-    <circle cx="22" cy="19" r="4" class="mk-dot mk-dot-r"/><circle cx="36" cy="19" r="4" class="mk-dot mk-dot-y"/><circle cx="50" cy="19" r="4" class="mk-dot mk-dot-g"/>
-    <rect x="70" y="11" width="180" height="16" rx="8" class="mk-pill"/>
-    <rect x="20" y="50" width="120" height="14" rx="7" class="mk-ink"/>
-    <rect x="20" y="72" width="170" height="8" rx="4" class="mk-line"/>
-    <rect x="20" y="86" width="140" height="8" rx="4" class="mk-line"/>
-    <rect x="20" y="104" width="64" height="20" rx="10" class="mk-cta"/>
-    <rect class="mk-card" x="212" y="50" width="88" height="74" rx="10"/>
-    <rect x="222" y="60" width="40" height="8" rx="4" class="mk-line"/>
-    <rect x="222" y="74" width="68" height="6" rx="3" class="mk-line"/>
-    <rect x="222" y="86" width="56" height="6" rx="3" class="mk-line"/>
-    <rect x="222" y="102" width="30" height="12" rx="6" class="mk-chip"/>
-    <g class="mk-cols"><rect x="20" y="142" width="88" height="52" rx="10" class="mk-card"/><rect x="116" y="142" width="88" height="52" rx="10" class="mk-card"/><rect x="212" y="142" width="88" height="52" rx="10" class="mk-card"/></g>
-  </svg>`,
-  app: `<svg class="mock mock-app" viewBox="0 0 320 210" aria-hidden="true" focusable="false">
-    <rect class="mk-phone" x="112" y="10" width="96" height="200" rx="18"/>
-    <rect x="140" y="18" width="40" height="8" rx="4" class="mk-notch"/>
-    <rect x="124" y="38" width="46" height="10" rx="5" class="mk-ink"/>
-    <circle cx="188" cy="43" r="7" class="mk-chip"/>
-    <rect x="124" y="58" width="72" height="34" rx="8" class="mk-hero"/>
-    <g class="mk-rows"><rect x="124" y="100" width="72" height="20" rx="6" class="mk-card"/><rect x="124" y="126" width="72" height="20" rx="6" class="mk-card"/><rect x="124" y="152" width="72" height="20" rx="6" class="mk-card"/></g>
-    <rect x="124" y="182" width="72" height="16" rx="8" class="mk-tabbar"/>
-    <circle cx="138" cy="190" r="4" class="mk-dot-b"/><circle cx="160" cy="190" r="4" class="mk-dot-mute"/><circle cx="182" cy="190" r="4" class="mk-dot-mute"/>
-    <g class="mk-float"><rect x="30" y="52" width="70" height="30" rx="10" class="mk-toast"/><circle cx="46" cy="67" r="7" class="mk-chip"/><rect x="58" y="60" width="34" height="5" rx="2.5" class="mk-line"/><rect x="58" y="70" width="26" height="5" rx="2.5" class="mk-line"/></g>
-    <g class="mk-float mk-float-late"><rect x="224" y="120" width="66" height="30" rx="10" class="mk-toast"/><circle cx="240" cy="135" r="7" class="mk-dot-g"/><rect x="252" y="128" width="30" height="5" rx="2.5" class="mk-line"/><rect x="252" y="138" width="22" height="5" rx="2.5" class="mk-line"/></g>
-  </svg>`,
-  game: `<svg class="mock mock-game" viewBox="0 0 320 210" aria-hidden="true" focusable="false">
-    <rect class="mk-frame mk-screen" x="4" y="14" width="312" height="182" rx="16"/>
-    <rect x="20" y="30" width="66" height="16" rx="8" class="mk-score"/>
-    <circle cx="286" cy="38" r="10" class="mk-chip"/>
-    <g class="mk-terrain"><rect x="20" y="150" width="280" height="14" rx="7" class="mk-ground"/><rect x="56" y="126" width="30" height="24" rx="6" class="mk-block"/><rect x="150" y="112" width="30" height="38" rx="6" class="mk-block"/><rect x="238" y="130" width="30" height="20" rx="6" class="mk-block"/></g>
-    <g class="mk-sprite"><circle cx="110" cy="100" r="14" class="mk-hero-dot"/><circle cx="105" cy="96" r="2.6" class="mk-eye"/><circle cx="115" cy="96" r="2.6" class="mk-eye"/></g>
-    <g class="mk-coins"><circle cx="170" cy="80" r="6" class="mk-coin"/><circle cx="192" cy="70" r="6" class="mk-coin"/><circle cx="214" cy="80" r="6" class="mk-coin"/></g>
-  </svg>`,
-  ai: `<svg class="mock mock-ai" viewBox="0 0 320 210" aria-hidden="true" focusable="false">
-    <rect class="mk-frame" x="4" y="4" width="312" height="202" rx="14"/>
-    <rect x="20" y="20" width="60" height="12" rx="6" class="mk-ink"/>
-    <g class="mk-chat">
-      <rect x="20" y="46" width="150" height="34" rx="12" class="mk-bubble-user"/>
-      <rect x="32" y="56" width="90" height="6" rx="3" class="mk-line"/>
-      <rect x="32" y="68" width="118" height="6" rx="3" class="mk-line"/>
-    </g>
-    <g class="mk-chat mk-chat-late">
-      <rect x="108" y="92" width="192" height="58" rx="12" class="mk-bubble-ai"/>
-      <rect x="120" y="104" width="140" height="6" rx="3" class="mk-line-soft"/>
-      <rect x="120" y="118" width="168" height="6" rx="3" class="mk-line-soft"/>
-      <rect x="120" y="132" width="104" height="6" rx="3" class="mk-line-soft"/>
-    </g>
-    <g class="mk-spark">
-      <path d="M78 104 L84 118 L98 124 L84 130 L78 144 L72 130 L58 124 L72 118 Z" class="mk-spark-a"/>
-      <path d="M50 138 L53 146 L61 149 L53 152 L50 160 L47 152 L39 149 L47 146 Z" class="mk-spark-b"/>
-    </g>
-    <rect x="20" y="168" width="240" height="24" rx="12" class="mk-prompt"/>
-    <rect x="32" y="177" width="96" height="6" rx="3" class="mk-line"/>
-    <circle cx="284" cy="180" r="14" class="mk-send"/>
-    <path d="M278 180 L290 180 M285 175 L290 180 L285 185" class="mk-send-arrow"/>
-  </svg>`,
-  platform: `<svg class="mock mock-platform" viewBox="0 0 320 210" aria-hidden="true" focusable="false">
-    <rect class="mk-frame" x="4" y="4" width="312" height="202" rx="14"/>
-    <rect x="4" y="4" width="72" height="202" rx="14" class="mk-side"/>
-    <rect x="4" y="4" width="20" height="202" class="mk-side-fix"/>
-    <rect x="18" y="22" width="44" height="10" rx="5" class="mk-ink-soft"/>
-    <g class="mk-menu"><rect x="18" y="48" width="44" height="8" rx="4" class="mk-line-soft"/><rect x="18" y="64" width="36" height="8" rx="4" class="mk-line-soft"/><rect x="18" y="80" width="40" height="8" rx="4" class="mk-line-soft"/></g>
-    <g class="mk-kpis"><rect x="92" y="22" width="64" height="40" rx="10" class="mk-card"/><rect x="164" y="22" width="64" height="40" rx="10" class="mk-card"/><rect x="236" y="22" width="64" height="40" rx="10" class="mk-card"/></g>
-    <rect x="100" y="32" width="26" height="7" rx="3.5" class="mk-line"/><rect x="100" y="46" width="38" height="9" rx="4.5" class="mk-ink"/>
-    <rect x="172" y="32" width="26" height="7" rx="3.5" class="mk-line"/><rect x="172" y="46" width="34" height="9" rx="4.5" class="mk-ink"/>
-    <rect x="244" y="32" width="26" height="7" rx="3.5" class="mk-line"/><rect x="244" y="46" width="30" height="9" rx="4.5" class="mk-ink"/>
-    <rect x="92" y="74" width="208" height="120" rx="12" class="mk-card"/>
-    <g class="mk-chart"><rect x="112" y="150" width="18" height="28" rx="4" class="mk-col"/><rect x="142" y="134" width="18" height="44" rx="4" class="mk-col"/><rect x="172" y="142" width="18" height="36" rx="4" class="mk-col"/><rect x="202" y="118" width="18" height="60" rx="4" class="mk-col mk-col-hi"/><rect x="232" y="128" width="18" height="50" rx="4" class="mk-col"/><rect x="262" y="108" width="18" height="70" rx="4" class="mk-col mk-col-hi"/></g>
-    <path class="mk-trend" d="M112 138 L142 122 L172 130 L202 104 L232 116 L262 92" pathLength="100"/>
-  </svg>`
+   히어로는 로고에서 잰 16.7도 기울기(칼날 각도)를 그대로 쓴다.
+   문장이 기울어진 채로 올라와 똑바로 서면서 멈추고, 초록 잔상 세 겹이
+   한 박자 늦게 따라온다. 로고의 스피드라인을 시간으로 옮긴 것.            */
+
+const heroLines = [
+  { text: "상담한 사람이", brk: null },
+  { text: "그대로 만들고", brk: null },
+  { text: "그대로", brk: "배포합니다" }
+];
+
+const renderHeroLine = ({ text, brk }, index) => {
+  const inner = brk
+    ? `${escapeHtml(text)} <br class="brk-sm">${escapeHtml(brk)}`
+    : escapeHtml(text);
+  return `<span class="ln" style="--b:${120 + index * 100}ms"><span class="t">${inner}</span><span class="gh" aria-hidden="true">${inner}</span></span>`;
 };
 
-/* ------------------------------------------------------------- home hero */
-
-const rotatorWords = data.services.map((service) => service.title);
-
-const renderPreloader = () => `
-  <div class="intro-curtain" data-preloader aria-hidden="true">
-    <div class="intro-mark">${logoWhiteSvg}<span class="intro-bar"></span></div>
-  </div>`;
-
-const codeLines = [
-  [["kw","export"],["sp"," "],["kw","async"],["sp"," "],["kw","function"],["sp"," "],["fn","ship"],["pn","(brief)"],["sp"," "],["pn","{"]],
-  [["sp","  "],["kw","const"],["sp"," "],["vr","plan"],["sp"," = "],["kw","await"],["sp"," "],["fn","consult"],["pn","(brief)"],["pn",";"],["sp","   "],["cm","// 상담"]],
-  [["sp","  "],["kw","const"],["sp"," "],["vr","ui"],["sp"," = "],["kw","await"],["sp"," "],["fn","design"],["pn","(plan)"],["pn",";"],["sp","     "],["cm","// 기획 · 디자인"]],
-  [["sp","  "],["kw","const"],["sp"," "],["vr","app"],["sp"," = "],["kw","await"],["sp"," "],["fn","build"],["pn","(ui, {"]],
-  [["sp","    "],["pr","web"],["pn",": "],["bl","true"],["pn",", "],["pr","app"],["pn",": "],["bl","true"],["pn",","]],
-  [["sp","    "],["pr","game"],["pn",": "],["bl","true"],["pn",", "],["pr","ai"],["pn",": "],["bl","true"],["pn",","]],
-  [["sp","  "],["pn","});"]],
-  [["sp","  "],["kw","return"],["sp"," "],["fn","deploy"],["pn","(app)"],["pn",";"],["sp","      "],["cm","// 검수 · 배포"]],
-  [["pn","}"]]
-];
-
-const renderCodeBody = () => codeLines.map((tokens, index) => {
-  const inner = tokens.map(([kind, text]) => `<span class="t-${kind}">${escapeHtml(text)}</span>`).join("");
-  return `<span class="code-line" style="--li:${index}"><b class="code-no">${index + 1}</b>${inner}</span>`;
-}).join("");
-
-const terminalLines = [
-  ["cmd", "npm run deploy"],
-  ["ok", "빌드 완료", "1.2s"],
-  ["ok", "검수 통과", "8/8"],
-  ["ok", "운영 주소 발급", "swag.studio"]
-];
-
-const renderTerminal = () => terminalLines.map((line, index) => {
-  const [kind, label, meta] = line;
-  const body = kind === "cmd"
-    ? `<b class="term-prompt">$</b><span>${escapeHtml(label)}</span>`
-    : `<b class="term-ok">✓</b><span>${escapeHtml(label)}</span>${meta ? `<em>${escapeHtml(meta)}</em>` : ""}`;
-  return `<span class="term-line" style="--li:${index}">${body}</span>`;
-}).join("");
+const renderHeroIndex = () => data.process.map((step, index) => `
+  <li style="--b:${960 + index * 60}ms">
+    <b class="mono">${String(index + 1).padStart(2, "0")}</b>
+    <span class="stage">${escapeHtml(step.title)}</span>
+    <em>${escapeHtml(step.result)}</em>
+  </li>`).join("");
 
 const renderHero = () => `
-  <section class="hero" data-impact-hero data-motion-scope>
-    <div class="hero-backdrop" aria-hidden="true"><i class="hero-grid"></i><i class="hero-beam"></i></div>
-    <div class="hero-inner shell">
-      <div class="hero-copy">
-        <p class="hero-eyebrow" data-reveal><span class="pulse-dot" aria-hidden="true"></span>${escapeHtml(data.brand.expansion)}</p>
-        <h1 data-reveal data-split>필요한 건 <span class="hero-rotator"><b class="rotator-word" data-rotator data-rotator-words="${escapeHtml(JSON.stringify(rotatorWords))}">${escapeHtml(rotatorWords[0])}</b></span><br>만드는 건 SWAG</h1>
-        <p class="hero-lead" data-reveal>상담한 두 사람이 기획 · 디자인 · 개발 · 검수 · 배포를 끝까지 맡는 ${escapeHtml(data.brand.description)}입니다.</p>
-        <div class="hero-actions" data-reveal>
-          <a class="btn btn-primary magnetic" href="contact/">${escapeHtml(data.brand.primaryCta)} <span aria-hidden="true">→</span></a>
-          <a class="btn btn-glass magnetic" href="work/">${escapeHtml(data.brand.secondaryCta)}</a>
-        </div>
-        <ul class="hero-trust" data-reveal>
-          <li>같은 담당자가 끝까지</li>
-          <li>재하청 없는 직접 개발</li>
-          <li>카카오 오픈채팅 상담</li>
-        </ul>
-      </div>
-      <div class="hero-visual" data-hero-photo data-reveal="zoom" aria-hidden="true">
-        <div class="code-window">
-          <div class="code-bar"><i class="cw-dot cw-r"></i><i class="cw-dot cw-y"></i><i class="cw-dot cw-g"></i><span class="code-tab is-on">ship.ts</span><span class="code-tab">deploy.yml</span></div>
-          <pre class="code-body" data-typer>${renderCodeBody()}<span class="code-caret"></span></pre>
-        </div>
-        <div class="term-window">
-          <div class="term-bar"><span>TERMINAL</span><i class="term-live"></i></div>
-          <div class="term-body">${renderTerminal()}</div>
-        </div>
-        <div class="hero-chip hero-chip-1"><b>✓</b> 배포 완료</div>
-        <div class="hero-chip hero-chip-2"><i class="chip-ring"></i> 검수 중</div>
-      </div>
+  <section class="hero" data-hero data-motion-scope>
+    <div class="hero-field" aria-hidden="true"><i></i></div>
+
+    <div class="hero-say shell">
+      <h1 class="display">${heroLines.map(renderHeroLine).join("")}</h1>
+      <p class="sig" aria-hidden="true"><b class="wm">SWAG</b><i class="bars"><i></i><i></i><i></i></i></p>
     </div>
-    <a class="scroll-cue" href="./#stats"><span>SCROLL</span><i aria-hidden="true"></i></a>
+
+    <ol class="hero-index" aria-label="진행 순서">${renderHeroIndex()}</ol>
+
+    <p class="hero-foot">
+      <span class="expansion"><b>S</b>YSTEM · <b>W</b>EBSITE · <b>A</b>PP · <b>G</b>AME</span>
+      <a class="mono" href="${escapeHtml(normalizedSiteUrl)}">${escapeHtml(facts.origin)}</a>
+    </p>
   </section>`;
 
-/* ------------------------------------------------------------ home stats */
+/* --------------------------------------------------------- 01 제작 분야
 
-const statTiles = [
-  { value: data.services.length, unit: "개", label: "제작 분야", note: "시스템 · 웹 · 앱 · 게임" },
-  { value: 6, unit: "단계", label: "담당 과정", note: "상담부터 배포까지 직접" },
-  { value: 2, unit: "인", label: "전담 인원", note: "상담한 사람이 직접 제작" },
-  { value: 0, unit: "건", label: "중간 하청", note: "재하청 없이 전 과정 직접" }
-];
+   카드 다섯 장 대신 화면 끝에서 끝까지 걸친 가로 줄 다섯 개.
+   비어 있던 회색 자리표시자 그림 자리에는 site.json 의 실제 항목이 들어간다. */
 
-const renderStats = () => statTiles.map((stat, index) => `
-  <article class="stat-tile stat-tile-${index + 1}" data-reveal="flip">
-    <p class="stat-value"><b data-count="${stat.value}">0</b><span>${escapeHtml(stat.unit)}</span></p>
-    <p class="stat-label">${escapeHtml(stat.label)}</p>
-    <p class="stat-note">${escapeHtml(stat.note)}</p>
-  </article>`).join("");
-
-/* --------------------------------------------------------- service cards */
-
-const renderHomeFilm = () => {
-  const items = data.services.map((service, index) => `
-    <a class="service-card film-shot film-shot-${index + 1}" href="services/#${escapeHtml(service.id)}" data-route-expand data-tilt>
-      <figure class="service-card-visual" data-motion-scope>${mockups[service.id] || mockups.web}<span class="card-sheen" aria-hidden="true"></span></figure>
-      <div class="service-card-copy">
-        <p class="service-card-tag">${escapeHtml(service.short)}</p>
-        <h3>${escapeHtml(service.title)}</h3>
-        <p>${escapeHtml(service.description)}</p>
-        <span class="btn btn-small">자세히 보기</span>
-      </div>
-    </a>`).join("");
-  return `<div class="film-track">${items}</div>`;
-};
+const renderScopeRows = () => data.services.map((service, index) => `
+  <li>
+    <a class="row" href="services/#${escapeHtml(service.id)}">
+      <b class="mono">S${String(index + 1).padStart(2, "0")}</b>
+      <span class="row-title">${escapeHtml(service.title)}</span>
+      <span class="row-short">${escapeHtml(service.short)}</span>
+      <span class="row-items">${service.items.map((item) => `<i>${escapeHtml(item)}</i>`).join("")}</span>
+      <i class="blade" aria-hidden="true"></i>
+    </a>
+  </li>`).join("");
 
 /* ------------------------------------------------------------ tech stack */
 
@@ -329,15 +230,15 @@ const renderMotionRows = () => stackRows.map((icons, index) => {
 /* -------------------------------------------------------------- services */
 
 const renderServiceChapters = () => data.services.map((service, index) => `
-  <article class="service-chapter service-chapter-${index + 1}" id="${escapeHtml(service.id)}" data-reveal="flip">
-    <figure class="service-visual" data-tilt data-motion-scope>${mockups[service.id] || mockups.web}<span class="card-sheen" aria-hidden="true"></span></figure>
+  <article class="service-chapter" id="${escapeHtml(service.id)}" data-reveal>
+    <p class="chapter-no mono">S${String(index + 1).padStart(2, "0")}</p>
     <div class="service-copy">
-      <p class="eyebrow">${escapeHtml(service.short)}</p>
-      <h2 data-split>${escapeHtml(service.title)}</h2>
+      <h2>${escapeHtml(service.title)}</h2>
+      <p class="service-short">${escapeHtml(service.short)}</p>
       <p class="service-description">${escapeHtml(service.description)}</p>
-      <ul class="check-list">${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-      <a class="btn btn-primary magnetic" href="contact/?type=${escapeHtml(service.id)}">이 분야로 문의 <span aria-hidden="true">→</span></a>
     </div>
+    <ul class="service-items">${service.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+    <p class="service-go"><a href="contact/?type=${escapeHtml(service.id)}">이 분야로 문의</a></p>
   </article>`).join("");
 
 const renderCapabilityFlow = () => data.capabilityGroups.map((item) => `
@@ -356,10 +257,10 @@ const renderImage = (entry, options = {}) => {
 const renderWorkList = () => publicProjects.map((project, index) => {
   const external = safeHttpUrl(project.url);
   return `
-  <article class="case-study case-study-${index + 1}" data-reveal="flip">
-    <a class="case-visual" href="${escapeHtml(external)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(project.title)} 운영 사이트 열기" data-parallax>
+  <article class="case-study" data-reveal>
+    <a class="case-visual" href="${escapeHtml(external)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(project.title)} 운영 사이트 열기">
       <span class="browser-chrome" aria-hidden="true"><i></i><i></i><i></i><b>${escapeHtml((external || "").replace(/^https?:\/\//, "").replace(/\/$/, ""))}</b></span>
-      <figure data-reveal="mask">${renderImage(project, { priority: index === 0, width: 1600, height: 1000 })}<span class="image-scan" aria-hidden="true"></span></figure>
+      <figure>${renderImage(project, { priority: index === 0, width: 1600, height: 1000 })}<span class="image-scan" aria-hidden="true"></span></figure>
     </a>
     <div class="case-copy">
       <p class="eyebrow">${escapeHtml(project.category)} · ${escapeHtml(project.year)}</p>
@@ -367,7 +268,7 @@ const renderWorkList = () => publicProjects.map((project, index) => {
       <p class="case-summary">${escapeHtml(project.summary)}</p>
       <dl><div><dt>제작 범위</dt><dd>${escapeHtml(project.problem)}</dd></div><div><dt>구현 내용</dt><dd>${escapeHtml(project.solution)}</dd></div></dl>
       <p class="case-features">${project.features.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</p>
-      ${external ? `<a class="btn btn-ghost magnetic" href="${escapeHtml(external)}" target="_blank" rel="noopener noreferrer">운영 사이트 열기 <span aria-hidden="true">↗</span></a>` : ""}
+      ${external ? `<a class="ulink" href="${escapeHtml(external)}" target="_blank" rel="noopener noreferrer">운영 사이트 열기 <span aria-hidden="true">↗</span></a>` : ""}
     </div>
   </article>`;
 }).join("");
@@ -390,23 +291,47 @@ const renderProcess = () => data.process.map((item, index) => `
   </article>`).join("");
 
 const renderProcessPreview = () => data.process.map((item, index) => `
-  <li class="process-step" data-reveal="flip">
-    <span class="process-step-no" aria-hidden="true"></span>
-    <b>${escapeHtml(item.title)}</b>
-    <span class="process-step-note">${escapeHtml(item.result)}</span>
+  <li class="pstep" data-pstep>
+    <b class="mono">${String(index + 1).padStart(2, "0")}</b>
+    <div class="pstep-body">
+      <h3>${escapeHtml(item.title)}</h3>
+      <p class="pstep-desc">${escapeHtml(item.description)}</p>
+      <p class="pstep-result"><i aria-hidden="true"></i>${escapeHtml(item.result)}</p>
+    </div>
   </li>`).join("");
+
+const renderProcessMarks = () => data.process.map((item, index) => `
+  <b class="pmark" data-pmark="${index}" aria-hidden="true">${String(index + 1).padStart(2, "0")}</b>`).join("");
 
 const renderFaq = () => data.faq.map((item) => `
   <details data-reveal><summary><span>${escapeHtml(item.question)}</span><i aria-hidden="true"></i></summary><div class="faq-body"><p>${escapeHtml(item.answer)}</p></div></details>`).join("");
 
+const renderSendList = () => String(data.contact.responseNote).split("·").map((label, index) => `
+  <li><b class="mono">${String(index + 1).padStart(2, "0")}</b><span>${escapeHtml(label.trim())}</span></li>`).join("");
+
+const renderSeedChoices = () => data.services.map((service) => `
+  <button type="button" class="seed-choice" data-seed-key="${escapeHtml(service.id)}" data-seed-label="${escapeHtml(service.title)}" aria-pressed="false">${escapeHtml(service.title)}</button>`).join("");
+
 const renderContactStrip = () => `
-  <section class="contact-strip" data-reveal>
-    <div class="shell" data-spotlight>
-      <div class="contact-strip-glow" aria-hidden="true"></div>
-      <p class="eyebrow">CONTACT</p>
-      <h2 data-split>아이디어만 있어도 충분해요</h2>
-      <p class="contact-strip-lead">제작 종류와 필요한 기능만 알려 주세요. 견적과 일정을 안내해 드립니다.</p>
-      <div class="contact-strip-actions"><a class="btn btn-invert magnetic" href="contact/">문의 내용 정리하기 <span aria-hidden="true">→</span></a><a class="btn btn-outline-invert magnetic" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a></div>
+  <section class="s-contact" id="contact" data-seed data-advances="brief" aria-labelledby="s-contact-h">
+    <div class="spine"><b class="mono">05</b><h2 id="s-contact-h">문의</h2></div>
+    <div class="shell">
+      <p class="say" data-reveal>${escapeHtml(data.faq[0].question.replace(/\?$/, "").replace(/되나요$/, "됩니다"))}</p>
+      <p class="say-lead" data-reveal>${escapeHtml(data.faq[0].answer)}</p>
+
+      <ol class="send-list" data-reveal>${renderSendList()}</ol>
+
+      <div class="seed-pick" role="group" aria-label="제작 종류 선택">${renderSeedChoices()}</div>
+
+      <div class="contact-actions">
+        <a class="cta-block" href="contact/" data-seed-link>${escapeHtml(data.brand.primaryCta)}</a>
+        <a class="cta-kakao" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">
+          <svg class="orbit" viewBox="0 0 120 60" aria-hidden="true" focusable="false"><rect class="orbit-path" x="1.5" y="1.5" width="117" height="57" rx="28.5" pathLength="100"/></svg>
+          <span>${escapeHtml(data.contact.kakaoLabel)} ↗</span>
+        </a>
+        <button type="button" class="cta-copy" data-seed-copy><i class="flash" aria-hidden="true"></i><span>메시지 복사</span></button>
+      </div>
+      <p class="seed-status mono" role="status" aria-live="polite"></p>
     </div>
   </section>`;
 
@@ -420,9 +345,9 @@ const structuredData = JSON.stringify({
   url: normalizedSiteUrl,
   areaServed: { "@type": "Country", name: "대한민국" },
   sameAs: [kakaoUrl],
-  makesOffer: ["웹사이트 제작", "모바일 앱 개발", "브라우저 게임 개발", "운영 시스템 개발"].map((name) => ({
+  makesOffer: data.services.map((service) => service.title).map((name) => ({
     "@type": "Offer",
-    itemOffered: { "@type": "Service", name, serviceType: name }
+    itemOffered: { "@type": "Service", name: `${name} 제작`, serviceType: name }
   }))
 }).replaceAll("<", "\\u003c");
 
@@ -470,14 +395,18 @@ await writePage("index.template.html", "index.html", {
   CANONICAL_URL: normalizedSiteUrl,
   HEADER: renderHeader("home"),
   FOOTER: renderFooter(normalizedSiteUrl),
-  BRAND_EXPANSION: data.brand.expansion,
-  PRELOADER: renderPreloader(),
   HERO: renderHero(),
-  STATS: renderStats(),
-  HOME_FILM: renderHomeFilm(),
+  SCOPE_ROWS: renderScopeRows(),
   MOTION_ROWS: renderMotionRows(),
-  PROCESS_PREVIEW: renderProcessPreview()
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "PRELOADER", "HERO", "STATS", "HOME_FILM", "MOTION_ROWS", "PROCESS_PREVIEW", "CONTACT_STRIP"]);
+  STACK_NOTE: data.stack.note,
+  PROCESS_PREVIEW: renderProcessPreview(),
+  PROCESS_MARKS: renderProcessMarks(),
+  STUDIO_QUOTE: data.faq[3].answer,
+  PEOPLE_COUNT: facts.people,
+  PEOPLE_LEAD: data.people.lead,
+  PUBLISHED_COUNT: facts.published,
+  SUBCONTRACT: facts.subcontract
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "HERO", "SCOPE_ROWS", "MOTION_ROWS", "PROCESS_PREVIEW", "PROCESS_MARKS", "CONTACT_STRIP"]);
 
 await writePage("services.template.html", "services/index.html", {
   PAGE_TITLE: `제작 분야 | ${data.brand.name}`,
