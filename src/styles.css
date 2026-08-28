@@ -2975,3 +2975,23 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   .scroll-cue::after { display: none; }
   .process-rail i { transform: scaleX(1); }
 }
+
+/* --------------------------------------------- 목업 안의 실제 문구
+
+   예전에는 회색 막대만 있어서 "아직 안 채운 자리표시자"로 보였다.
+   실제 화면에 있을 법한 문구를 넣으면 같은 그림이 만들어진 화면으로 읽힌다.
+   장식용 그래픽이라 aria-hidden 이고 본문 글자 크기 규칙과는 무관하다. */
+
+.mk-t { font-family: inherit; font-weight: 700; }
+.mk-t-url { font-size: 9px; font-weight: 500; fill: #7d8aa8; }
+.mk-t-nav { font-size: 9px; font-weight: 600; fill: #6b7794; }
+.mk-t-head { font-size: 13px; fill: #1b2b56; letter-spacing: -.02em; }
+.mk-t-body { font-size: 8px; font-weight: 500; fill: #8a95ad; }
+.mk-t-cta { font-size: 9px; fill: #fff; }
+.mk-t-label { font-size: 9px; font-weight: 600; fill: #6b7794; }
+.mk-t-num { font-size: 14px; fill: #2145e6; letter-spacing: -.03em; }
+.mk-t-row { font-size: 8px; font-weight: 600; fill: #6b7794; }
+.mk-t-onhero { font-size: 10px; fill: #fff; }
+.mk-t-onhero-sub { font-size: 8px; font-weight: 600; fill: rgba(255, 255, 255, .82); }
+.mk-t-toast { font-size: 8px; fill: #1b2b56; }
+.mk-t-toast-sub { font-size: 7.5px; font-weight: 600; fill: #8a95ad; }

@@ -2,7 +2,7 @@
 
 SWAG(System · Website · App · Game)는 시스템 · 웹사이트 · 앱 · 게임 · AI 외주 제작을 안내하고 견적 문의를 받는 정적 웹사이트입니다. 상담한 두 사람이 기획부터 배포까지 담당하는 2인 프리랜서 스튜디오의 제작 범위, 프로젝트, 진행 방식, 소개, 문의 흐름을 분리된 페이지에서 안내합니다.
 
-현재 작업 기준은 `v51`입니다. 배포 대상은 GitHub 저장소와 GitHub Pages입니다.
+현재 작업 기준은 `v52`입니다. 배포 대상은 GitHub 저장소와 GitHub Pages입니다.
 
 ## 공개 주소와 배포
 
@@ -59,7 +59,7 @@ CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... \
 
 홈에는 프로젝트명, 프로젝트 스크린샷, 작업 사례 상세를 넣지 않습니다. 실제 사례는 `/work/`에서만 보여 줍니다.
 
-## 디자인 기준 (v51)
+## 디자인 기준 (v52)
 
 - 밝은 쿨그레이 캔버스(`#f3f5fa`) 위에 라운드 화이트 카드, 포인트 다크 네이비 섹션을 배치한 카드형 화면
 - 브랜드 컬러는 로고에서 가져온 블루 `#2145e6`와 민트 그린 `#5bdf9c`, 강조 요소에만 블루→그린 그라디언트 사용
@@ -97,11 +97,16 @@ CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... \
 
 | 파일 | 크기 | 역할 |
 | --- | ---: | --- |
-| `SUIT-core.woff2` | 87KB | 사이트가 실제로 쓰는 글자만. 첫 화면은 이것만으로 완결되며 preload 대상입니다. |
+| `SUIT-core.woff2` | 88KB | 사이트가 실제로 쓰는 글자만. 첫 화면은 이것만으로 완결되며 preload 대상입니다. |
 | `SUIT-full.woff2` | 508KB | KS X 1001 상용 한글 2,350자. core에 없는 글자가 나올 때만 내려받습니다. |
 
 CSS의 `font-family`가 `"SUIT Core", "SUIT Full", ...` 순서이므로, 관리자 도구로 새 문구를
 넣어 core에 없는 글자가 생겨도 자동으로 full이 받아져 깨지지 않습니다.
+
+`scripts/build-fonts.py`는 core가 담은 글자 목록을 `scripts/font-coverage.json`에 남기고,
+`scripts/audit-links.mjs`가 빌드마다 화면에 쓰인 글자를 그 목록과 대조합니다. core에 없는 글자가
+하나라도 있으면 빌드가 실패합니다. SUIT에 없는 글자(em dash, en dash 등)를 쓰면 브라우저가 그 한
+글자 때문에 508KB 전체 폰트를 받는데, 화면상으로는 멀쩡해 보여서 실제로 두 번 놓쳤습니다.
 
 원본 가변 폰트는 `font-source/SUIT-Variable.woff2`에 두고 배포하지 않습니다.
 콘텐츠를 크게 바꿔 core를 다시 만들려면:

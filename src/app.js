@@ -771,7 +771,9 @@ if (motionScopes.length && "IntersectionObserver" in window) {
       // 히어로 코드 편집기는 처음 보일 때 한 번만 타이핑한다
       if (entry.isIntersecting) entry.target.classList.add("is-typing");
     });
-  }, { rootMargin: "120px 0px" });
+    // 여백을 두면 구역이 화면을 벗어난 뒤에도 그만큼 더 돈다. 히어로처럼
+    // 화면을 꽉 채우는 구역은 두 번째 화면에서 애니메이션 10여 개가 헛돌았다.
+  }, { rootMargin: "0px" });
   motionScopes.forEach((scope) => scopeObserver.observe(scope));
 } else {
   motionScopes.forEach((scope) => scope.classList.add("is-typing"));

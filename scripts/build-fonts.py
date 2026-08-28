@@ -10,6 +10,7 @@ core 에 없는 글자가 나오면 브라우저가 그때만 full 을 받아온
     pip install fonttools brotli
     python3 scripts/build-fonts.py
 """
+import json
 import glob, html, os, re, sys
 from fontTools import subset
 from fontTools.ttLib import TTFont
@@ -80,5 +81,16 @@ core_text = "".join(sorted(site_characters() | set(LATIN) | set(PUNCT)))
 full_text = "".join(sorted(set(ks_x_1001()) | set(jamo) | set(LATIN) | set(PUNCT)))
 
 core = write_subset(core_text, os.path.join(ROOT, "src/assets/SUIT-core.woff2"))
+
+# core 가 실제로 담은 글자를 기록해 둔다.
+# SUIT 에 없는 글자(em dash, en dash 등)를 화면에 쓰면 브라우저가 그 한 글자
+# 때문에 508KB 전체 폰트를 받아 버린다. 실제로 두 번 겪었고 눈에 보이지 않아서
+# 알아채기 어렵다. audit-links.mjs 가 이 목록으로 매 빌드마다 검사한다.
+from fontTools.ttLib import TTFont as _TTF
+_covered = set()
+for _tbl in _TTF(os.path.join(ROOT, "src/assets/SUIT-core.woff2"))["cmap"].tables:
+    _covered |= set(_tbl.cmap.keys())
+with open(os.path.join(ROOT, "scripts/font-coverage.json"), "w", encoding="utf8") as _fh:
+    json.dump(sorted(_covered), _fh)
 full = write_subset(full_text, os.path.join(ROOT, "src/assets/SUIT-full.woff2"))
 print(f"core {core/1024:.0f}KB / full {full/1024:.0f}KB (원본 {os.path.getsize(SRC)/1024:.0f}KB)")
