@@ -154,6 +154,8 @@ const mockups = {
     <text class="mk-t mk-t-body" x="20" y="94">원하는 시간을 골라 신청하세요</text>
     <rect x="20" y="104" width="70" height="22" rx="11" class="mk-cta"/>
     <text class="mk-t mk-t-cta" x="33" y="119">예약하기</text>
+    <circle class="mk-click" cx="55" cy="115" r="16"/>
+    <g class="mk-cursor"><path d="M0 0 L0 12 L3.2 9 L5.4 13.6 L7.6 12.6 L5.4 8.2 L9.2 8.2 Z"/></g>
     <rect class="mk-card" x="212" y="50" width="88" height="74" rx="10"/>
     <text class="mk-t mk-t-label" x="222" y="66">운영시간</text>
     <text class="mk-t mk-t-num" x="222" y="86">10:00</text>
