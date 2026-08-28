@@ -66,7 +66,8 @@ if (processSteps.length < 4) errors.push("at least four process stages are requi
 if (faqItems.length < 4) errors.push("at least four FAQ items are required");
 
 const requiredAssets = [
-  "SUIT-Variable.woff2",
+  "SUIT-core.woff2",
+  "SUIT-full.woff2",
   "apple-touch-icon.png",
   "case-catharsis.jpg",
   "case-crimescene.jpg",
@@ -121,7 +122,7 @@ for (const [pattern, label] of bannedPatterns) {
 }
 
 const css = await readFile(new URL("src/styles.css", root), "utf8");
-if (!/@font-face[\s\S]*SUIT Variable/.test(css)) errors.push("SUIT Variable webfont is not configured");
+if (!/@font-face[\s\S]*SUIT Core[\s\S]*@font-face[\s\S]*SUIT Full/.test(css)) errors.push("two-tier SUIT webfont is not configured");
 if (!/body\s*\{[\s\S]*?font-size:\s*(?:17|18)px/.test(css)) errors.push("body copy must be at least 17px");
 if (!/@media\s*\(prefers-reduced-motion:\s*reduce\)/.test(css)) errors.push("reduced-motion mode is required");
 if (!/:focus-visible\b/.test(css)) errors.push("visible keyboard focus styles are required");

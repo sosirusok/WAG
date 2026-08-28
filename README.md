@@ -54,6 +54,27 @@ SWAG(System · Website · App · Game)는 시스템 · 웹사이트 · 앱 · �
 - `scripts/audit-links.mjs`: 생성된 경로와 로컬 자산 참조 검사
 - `scripts/visual-audit.mjs`: 8개 경로, 6개 뷰포트, 메뉴 · 문의 상호작용 자동 검사
 
+## 웹폰트 (2단 서브셋)
+
+본문 글꼴은 `SUIT Variable`이며, 로딩 비용을 줄이기 위해 두 단계로 나눠 배포합니다.
+
+| 파일 | 크기 | 역할 |
+| --- | ---: | --- |
+| `SUIT-core.woff2` | 87KB | 사이트가 실제로 쓰는 글자만. 첫 화면은 이것만으로 완결되며 preload 대상입니다. |
+| `SUIT-full.woff2` | 508KB | KS X 1001 상용 한글 2,350자. core에 없는 글자가 나올 때만 내려받습니다. |
+
+CSS의 `font-family`가 `"SUIT Core", "SUIT Full", ...` 순서이므로, 관리자 도구로 새 문구를
+넣어 core에 없는 글자가 생겨도 자동으로 full이 받아져 깨지지 않습니다.
+
+원본 가변 폰트는 `font-source/SUIT-Variable.woff2`에 두고 배포하지 않습니다.
+콘텐츠를 크게 바꿔 core를 다시 만들려면:
+
+```bash
+pip install fonttools brotli
+npm run build            # dist 를 먼저 생성
+python3 scripts/build-fonts.py
+```
+
 ## 로컬 실행과 검증
 
 ```bash

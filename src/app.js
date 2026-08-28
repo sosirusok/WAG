@@ -259,7 +259,8 @@ if (canvas) {
 
   const resizeCanvas = () => {
     const bounds = canvas.getBoundingClientRect();
-    const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+    // 배경 장식이므로 1x 로 그린다. 1.5x 대비 픽셀 수가 절반 이하로 줄어든다.
+    const ratio = 1;
     canvasWidth = Math.max(1, Math.round(bounds.width));
     canvasHeight = Math.max(1, Math.round(bounds.height));
     canvas.width = Math.round(canvasWidth * ratio);
@@ -271,8 +272,8 @@ if (canvas) {
   let lastDraw = 0;
 
   const drawFilm = (now = 0) => {
-    // 파티클은 30fps 로 충분하다. 나머지 프레임 예산은 스크롤에 양보한다.
-    if (now - lastDraw < 32) {
+    // 느리게 떠다니는 배경 장식이므로 20fps 로 충분하다.
+    if (now - lastDraw < 48) {
       if (!reducedMotion && !document.hidden && heroVisible) animationFrame = window.requestAnimationFrame(drawFilm);
       else animationFrame = 0;
       return;
@@ -291,28 +292,47 @@ if (canvas) {
       if (particle.y > canvasHeight + 20) particle.y = -20;
     });
 
+    // 선을 하나씩 stroke() 하면 호출 수가 수백 번이 된다.
+    // 진하기별로 3개 묶음에 모아 한 번씩만 그린다 (보이는 결과는 같다).
     context.lineWidth = 1;
+    const buckets = [[], [], [], [], [], []];
     for (let first = 0; first < particles.length; first += 1) {
+      const a = particles[first];
       for (let second = first + 1; second < particles.length; second += 1) {
-        const a = particles[first];
         const b = particles[second];
         const dx = a.x - b.x;
         const dy = a.y - b.y;
+        if (Math.abs(dx) > linkDistance || Math.abs(dy) > linkDistance) continue;
         const distance = Math.hypot(dx, dy);
         if (distance > linkDistance) continue;
-        const alpha = (1 - distance / linkDistance) * .22;
-        context.strokeStyle = a.green || b.green ? `rgba(120, 240, 180, ${alpha})` : `rgba(150, 180, 255, ${alpha})`;
-        context.beginPath();
-        context.moveTo(a.x, a.y);
-        context.lineTo(b.x, b.y);
-        context.stroke();
+        const strength = 1 - distance / linkDistance;
+        const tier = strength > .66 ? 0 : strength > .33 ? 1 : 2;
+        buckets[(a.green || b.green ? 3 : 0) + tier].push(a, b);
       }
     }
 
-    particles.forEach((particle) => {
-      context.fillStyle = particle.green ? "rgba(120, 240, 180, .6)" : "rgba(160, 190, 255, .5)";
+    const tierAlpha = [.22, .13, .06];
+    buckets.forEach((points, index) => {
+      if (!points.length) return;
+      context.strokeStyle = index < 3
+        ? `rgba(150, 180, 255, ${tierAlpha[index]})`
+        : `rgba(120, 240, 180, ${tierAlpha[index - 3]})`;
       context.beginPath();
-      context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+      for (let i = 0; i < points.length; i += 2) {
+        context.moveTo(points[i].x, points[i].y);
+        context.lineTo(points[i + 1].x, points[i + 1].y);
+      }
+      context.stroke();
+    });
+
+    [false, true].forEach((green) => {
+      context.fillStyle = green ? "rgba(120, 240, 180, .6)" : "rgba(160, 190, 255, .5)";
+      context.beginPath();
+      particles.forEach((particle) => {
+        if (particle.green !== green) return;
+        context.moveTo(particle.x + particle.radius, particle.y);
+        context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+      });
       context.fill();
     });
 
@@ -510,7 +530,7 @@ if (motionStage) {
     const delta = Math.min(50, time - previousMotionTime || 16) / 1000;
     previousMotionTime = time;
 
-    // scrolling fast pushes every row along its own direction — the wall reacts to you
+    // scrolling fast pushes every row along its own direction - the wall reacts to you
     const boost = 1 + Math.min(2.6, Math.abs(scrollVelocity) * .06);
 
     motionRows.forEach((item) => {
@@ -757,7 +777,7 @@ if (briefBuilder) {
 }
 
 /* ======================================================================
-   여기부터 연출 레이어 — 인트로, 글자 분해 등장, 커서, 스포트라이트, 리플
+   여기부터 연출 레이어 - 인트로, 글자 분해 등장, 커서, 스포트라이트, 리플
    ====================================================================== */
 
 /* ----------------------------------------------------------- 인트로 커튼 */
