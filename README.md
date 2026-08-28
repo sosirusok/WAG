@@ -12,27 +12,35 @@ SWAG(System · Website · App · Game)는 시스템 · 웹사이트 · 앱 · �
 - 배포 브랜치: `main`
 - 배포 방식: `.github/workflows/pages.yml`이 검증, 정적 빌드, 로컬 참조 감사를 통과한 `dist/`만 배포
 
-### Cloudflare Pages 연결 (1회만)
+### Cloudflare Pages 배포
 
-주소에서 `github` · 계정 이름을 없애기 위해 Cloudflare Pages 로 옮긴다. 무료이고 도메인 구입이 필요 없다.
+공개 주소는 <https://swagstudio.pages.dev/> 이다. 주소에서 `github` 과 계정 이름을 없애기 위해
+옮겼고, 도메인 구입 없이 무료로 쓴다.
 
-1. <https://dash.cloudflare.com> 가입 → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
-2. GitHub 계정을 연결하고 `sosirusok/WAG` 저장소를 고른다
-3. 입력할 값은 두 개뿐이다. **프로젝트 이름은 반드시 `swagstudio`** 여야 한다 (`wrangler.toml`의 `name`과 같아야 빌드가 통과한다)
+이 계정은 대시보드에서 신규 Pages 프로젝트 생성이 막혀 있어(“애플리케이션 생성”에 Workers 만
+나온다) **Pages API 로 프로젝트를 만들었다.** 그렇게 만든 프로젝트는 Direct Upload 방식이라
+Cloudflare 가 스스로 저장소를 빌드하지 않고, 나중에 Git 연결로 바꿀 수도 없다
+(`8000069 You cannot update the source object in a Direct Uploads project`).
 
-   | 항목 | 값 |
-   | --- | --- |
-   | Project name | `swagstudio` |
-   | Build command | `npm run build` |
-   | Production branch | `main` (기본값 그대로) |
-   | Build output directory | 비워 둔다 — `wrangler.toml`이 `dist`로 정한다 |
-   | Environment variables | **넣지 않는다** — 아래 참고 |
+그래서 빌드와 업로드를 `.github/workflows/cloudflare.yml` 에서 한다. `main` 에 push 하면
+검증 → 빌드 → 링크 감사 → 업로드가 돌아간다.
 
-4. Save and Deploy. 이후 `main`에 push 할 때마다 자동 재배포된다.
+필요한 저장소 Secret 두 개 (Settings → Secrets and variables → Actions):
 
-공개 주소는 `scripts/build.mjs`가 Cloudflare가 자동으로 주는 `CF_PAGES_BRANCH`와 `CF_PAGES_URL`에서 알아내므로 `SITE_URL`을 직접 넣을 필요가 없다. 운영 브랜치(`main`) 빌드는 고정 주소 `https://swagstudio.pages.dev/`를, 그 밖의 미리보기 빌드는 그 배포 고유 주소를 쓴다. 배포마다 달라지는 주소가 canonical에 박히면 매 배포가 서로 다른 사이트로 취급되기 때문이다.
+| 이름 | 값 |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare Pages **편집** 권한 토큰 |
+| `CLOUDFLARE_ACCOUNT_ID` | `50e681eeae8d24131bff5cea7cf2fb89` |
 
-이 값은 `<base href>`, canonical, OG, 구조화 데이터에 절대 경로로 박힌다. 실제 서비스 주소와 다르면 모든 상대 경로가 깨진다.
+Secret 이 없으면 워크플로는 실패하지 않고 배포 단계를 건너뛴다.
+
+수동으로 올릴 때:
+
+```bash
+SITE_URL=https://swagstudio.pages.dev/ npm run build
+CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... \
+  npx wrangler@4 pages deploy dist --project-name=swagstudio --branch=main
+```
 
 ## 페이지 구성
 
