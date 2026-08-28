@@ -44,7 +44,6 @@ const normalizedSiteUrl = (() => {
 
 const pageUrl = (relative = "") => new URL(relative, normalizedSiteUrl).href;
 const kakaoUrl = safeHttpUrl(data.contact.kakao);
-const phoneDigits = data.contact.phone.replace(/\D/g, "");
 const ogUrl = pageUrl("assets/swag-og.png");
 const publicProjects = data.projects
   .filter((project) => project.published)
@@ -107,7 +106,7 @@ const renderFooter = (currentUrl = normalizedSiteUrl) => `
     <div class="footer-main shell">
       <div class="footer-brand">${renderBrand("brand-footer", true)}<p>웹 · 앱 · 게임 · AI · 운영 시스템 외주 제작<br>2인 프리랜서 스튜디오</p></div>
       <nav aria-label="하단 메뉴">${renderNavLinks("")}</nav>
-      <div class="footer-direct"><p>DIRECT</p><a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a href="tel:${phoneDigits}">김의현 ${escapeHtml(data.contact.phone)}</a></div>
+      <div class="footer-direct"><p>DIRECT</p><a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">김의현 (SWAG)</a></div>
     </div>
     <div class="footer-bottom shell"><span>© <b data-year>2026</b> SWAG</span><a href="privacy.html">개인정보 처리 안내</a><a href="${escapeHtml(currentUrl)}#top">위로 ↑</a></div>
   </footer>`;
@@ -235,7 +234,6 @@ const renderTerminal = () => terminalLines.map((line, index) => {
 const renderHero = () => `
   <section class="hero" data-impact-hero data-motion-scope>
     <div class="hero-backdrop" aria-hidden="true"><i class="hero-grid"></i><i class="hero-beam"></i></div>
-    <canvas class="film-canvas" data-film-canvas aria-hidden="true"></canvas>
     <div class="hero-inner shell">
       <div class="hero-copy">
         <p class="hero-eyebrow" data-reveal><span class="pulse-dot" aria-hidden="true"></span>${escapeHtml(data.brand.expansion)}</p>
@@ -248,7 +246,7 @@ const renderHero = () => `
         <ul class="hero-trust" data-reveal>
           <li>같은 담당자가 끝까지</li>
           <li>재하청 없는 직접 개발</li>
-          <li>카카오 · 전화 상담</li>
+          <li>카카오 오픈채팅 상담</li>
         </ul>
       </div>
       <div class="hero-visual" data-hero-photo data-reveal="zoom" aria-hidden="true">
@@ -408,7 +406,7 @@ const renderContactStrip = () => `
       <p class="eyebrow">CONTACT</p>
       <h2 data-split>아이디어만 있어도 충분해요</h2>
       <p class="contact-strip-lead">제작 종류와 필요한 기능만 알려 주세요. 견적과 일정을 안내해 드립니다.</p>
-      <div class="contact-strip-actions"><a class="btn btn-invert magnetic" href="contact/">문의 내용 정리하기 <span aria-hidden="true">→</span></a><a class="btn btn-outline-invert magnetic" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a><a class="contact-strip-tel" href="tel:${phoneDigits}">${escapeHtml(data.contact.phone)}</a></div>
+      <div class="contact-strip-actions"><a class="btn btn-invert magnetic" href="contact/">문의 내용 정리하기 <span aria-hidden="true">→</span></a><a class="btn btn-outline-invert magnetic" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a></div>
     </div>
   </section>`;
 
@@ -420,8 +418,8 @@ const structuredData = JSON.stringify({
   name: data.brand.name,
   description: data.meta.description,
   url: normalizedSiteUrl,
-  telephone: data.contact.phone,
   areaServed: { "@type": "Country", name: "대한민국" },
+  sameAs: [kakaoUrl],
   makesOffer: ["웹사이트 제작", "모바일 앱 개발", "브라우저 게임 개발", "운영 시스템 개발"].map((name) => ({
     "@type": "Offer",
     itemOffered: { "@type": "Service", name, serviceType: name }
@@ -435,8 +433,6 @@ const commonTokens = {
   OG_URL: ogUrl,
   STRUCTURED_DATA: structuredData,
   KAKAO_URL: kakaoUrl,
-  PHONE: data.contact.phone,
-  PHONE_DIGITS: phoneDigits,
   OWNER: data.contact.owner,
   RESPONSE_NOTE: data.contact.responseNote,
   CONTACT_STRIP: renderContactStrip()

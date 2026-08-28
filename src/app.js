@@ -122,10 +122,8 @@ const paintScroll = () => {
   previousScrollY = scrollTop;
   scrollVelocity += (rawVelocity - scrollVelocity) * .28;
   if (!reducedMotion) {
-    const clamped = Math.max(-40, Math.min(40, scrollVelocity));
-    root.style.setProperty("--scroll-velocity", clamped.toFixed(2));
-    root.style.setProperty("--scroll-skew", `${(clamped * .045).toFixed(3)}deg`);
-    root.style.setProperty("--scroll-stretch", String(1 + Math.min(.05, Math.abs(clamped) * .0012)));
+    // scrollVelocity 는 기술 스택 3개 행의 가속에만 쓴다.
+    // CSS 변수로 내보내면 이를 쓰는 요소 전체가 매 프레임 스타일 재계산 대상이 된다.
 
     // 아래로 빠르게 내릴 때만 헤더를 감추고, 멈추거나 올리면 반드시 되돌린다
     if (header && !root.classList.contains("menu-open")) {
@@ -231,141 +229,6 @@ impactHero?.addEventListener("pointerleave", () => {
   heroY = 0;
   if (!pointerFrame) pointerFrame = window.requestAnimationFrame(paintHeroPointer);
 }, { passive: true });
-
-/* ------------------------------------------------ hero particle constellation */
-
-const canvas = document.querySelector("[data-film-canvas]");
-
-if (canvas) {
-  const context = canvas.getContext("2d", { alpha: true });
-  let canvasWidth = 1;
-  let canvasHeight = 1;
-  let animationFrame = 0;
-  let heroVisible = true;
-  let particles = [];
-
-  const seedParticles = () => {
-    // 연결선 계산은 입자 수의 제곱에 비례하므로 개수를 줄이는 게 가장 효과가 크다
-    const count = Math.max(16, Math.min(30, Math.round(canvasWidth / 54)));
-    particles = Array.from({ length: count }, (_, index) => ({
-      x: Math.random() * canvasWidth,
-      y: Math.random() * canvasHeight,
-      vx: (Math.random() - .5) * .22,
-      vy: (Math.random() - .5) * .18,
-      radius: 1.1 + Math.random() * 1.9,
-      green: index % 4 === 0
-    }));
-  };
-
-  const resizeCanvas = () => {
-    const bounds = canvas.getBoundingClientRect();
-    // 배경 장식이므로 1x 로 그린다. 1.5x 대비 픽셀 수가 절반 이하로 줄어든다.
-    const ratio = 1;
-    canvasWidth = Math.max(1, Math.round(bounds.width));
-    canvasHeight = Math.max(1, Math.round(bounds.height));
-    canvas.width = Math.round(canvasWidth * ratio);
-    canvas.height = Math.round(canvasHeight * ratio);
-    context.setTransform(ratio, 0, 0, ratio, 0, 0);
-    seedParticles();
-  };
-
-  let lastDraw = 0;
-
-  const drawFilm = (now = 0) => {
-    // 느리게 떠다니는 배경 장식이므로 20fps 로 충분하다.
-    if (now - lastDraw < 48) {
-      if (!reducedMotion && !document.hidden && heroVisible) animationFrame = window.requestAnimationFrame(drawFilm);
-      else animationFrame = 0;
-      return;
-    }
-    lastDraw = now;
-
-    context.clearRect(0, 0, canvasWidth, canvasHeight);
-    const linkDistance = Math.min(130, canvasWidth * .1 + 60);
-
-    particles.forEach((particle) => {
-      particle.x += particle.vx;
-      particle.y += particle.vy;
-      if (particle.x < -20) particle.x = canvasWidth + 20;
-      if (particle.x > canvasWidth + 20) particle.x = -20;
-      if (particle.y < -20) particle.y = canvasHeight + 20;
-      if (particle.y > canvasHeight + 20) particle.y = -20;
-    });
-
-    // 선을 하나씩 stroke() 하면 호출 수가 수백 번이 된다.
-    // 진하기별로 3개 묶음에 모아 한 번씩만 그린다 (보이는 결과는 같다).
-    context.lineWidth = 1;
-    const buckets = [[], [], [], [], [], []];
-    for (let first = 0; first < particles.length; first += 1) {
-      const a = particles[first];
-      for (let second = first + 1; second < particles.length; second += 1) {
-        const b = particles[second];
-        const dx = a.x - b.x;
-        const dy = a.y - b.y;
-        if (Math.abs(dx) > linkDistance || Math.abs(dy) > linkDistance) continue;
-        const distance = Math.hypot(dx, dy);
-        if (distance > linkDistance) continue;
-        const strength = 1 - distance / linkDistance;
-        const tier = strength > .66 ? 0 : strength > .33 ? 1 : 2;
-        buckets[(a.green || b.green ? 3 : 0) + tier].push(a, b);
-      }
-    }
-
-    const tierAlpha = [.22, .13, .06];
-    buckets.forEach((points, index) => {
-      if (!points.length) return;
-      context.strokeStyle = index < 3
-        ? `rgba(150, 180, 255, ${tierAlpha[index]})`
-        : `rgba(120, 240, 180, ${tierAlpha[index - 3]})`;
-      context.beginPath();
-      for (let i = 0; i < points.length; i += 2) {
-        context.moveTo(points[i].x, points[i].y);
-        context.lineTo(points[i + 1].x, points[i + 1].y);
-      }
-      context.stroke();
-    });
-
-    [false, true].forEach((green) => {
-      context.fillStyle = green ? "rgba(120, 240, 180, .6)" : "rgba(160, 190, 255, .5)";
-      context.beginPath();
-      particles.forEach((particle) => {
-        if (particle.green !== green) return;
-        context.moveTo(particle.x + particle.radius, particle.y);
-        context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-      });
-      context.fill();
-    });
-
-    if (!reducedMotion && !document.hidden && heroVisible) animationFrame = window.requestAnimationFrame(drawFilm);
-    else animationFrame = 0;
-  };
-
-  const syncFilm = () => {
-    const shouldPlay = !reducedMotion && !document.hidden && heroVisible;
-    if (shouldPlay && !animationFrame) animationFrame = window.requestAnimationFrame(drawFilm);
-    if (!shouldPlay && animationFrame) {
-      window.cancelAnimationFrame(animationFrame);
-      animationFrame = 0;
-    }
-  };
-
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(([entry]) => {
-      heroVisible = entry.isIntersecting;
-      syncFilm();
-    }, { rootMargin: "100px 0px" }).observe(canvas);
-  }
-
-  document.addEventListener("visibilitychange", syncFilm);
-  window.addEventListener("resize", () => {
-    resizeCanvas();
-    if (reducedMotion) drawFilm();
-  }, { passive: true });
-
-  resizeCanvas();
-  if (reducedMotion) drawFilm();
-  else animationFrame = window.requestAnimationFrame(drawFilm);
-}
 
 /* ------------------------------------------------------ headline rotator */
 
