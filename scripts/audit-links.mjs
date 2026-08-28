@@ -98,6 +98,35 @@ for (const file of cssFiles) {
   }
 }
 
+/* 첫 화면 글꼴 커버리지 검사
+
+   core 서브셋에 없는 글자가 화면에 하나라도 있으면, 브라우저는 그 글자를 찾으려고
+   508KB 짜리 전체 폰트를 받는다. 화면상으로는 멀쩡해 보여서 알아채기 어렵고
+   실제로 두 번(em dash, en dash) 놓쳤다. 그래서 빌드마다 확인한다. */
+try {
+  const coverage = new Set(JSON.parse(await readFile(new URL("font-coverage.json", import.meta.url), "utf8")));
+  const uncovered = new Map();
+  for (const file of htmlFiles) {
+    const html = await readFile(file, "utf8");
+    const shown = html
+      .replace(/<script[\s\S]*?<\/script>/g, " ")
+      .replace(/<style[\s\S]*?<\/style>/g, " ")
+      .replace(/<[^>]+>/g, " ");
+    for (const char of shown) {
+      const code = char.codePointAt(0);
+      if (code > 0x2000 && !coverage.has(code)) {
+        uncovered.set(char, path.relative(dist, file));
+      }
+    }
+  }
+  if (uncovered.size) {
+    const list = [...uncovered].map(([char, where]) => `"${char}" (U+${char.codePointAt(0).toString(16).toUpperCase()}) in ${where}`);
+    failures.push(`characters missing from the core font subset - this makes the browser download the 508KB full font: ${list.join(", ")}`);
+  }
+} catch {
+  // 커버리지 파일이 아직 없으면(폰트를 한 번도 생성하지 않은 저장소) 건너뛴다
+}
+
 if (failures.length) {
   console.error("Broken local references:\n" + failures.join("\n"));
   process.exit(1);

@@ -114,7 +114,10 @@ const bannedPatterns = [
   [/MAKE\s*\/\s*BREAK|DESIGN IN MOTION|눈에 남고 제대로 작동|다양한 플랫폼[,.]?\s*맞춤형 제작/gi, "generic slogan copy"],
   [/필요한 만큼 정확하게|실제로 운영 중인 화면을 직접 확인|중요한 화면을 먼저 확인하고|만들고 싶은 서비스가 있나요|필요한 페이지로 바로 이동하세요/gi, "rejected AI-style copy"],
   [/(?:맑은\s*고딕|Malgun Gothic|Dotum|돋움|Gulim|굴림)/gi, "legacy system font"],
-  [/#(?:cf4714|11110f)\b/gi, "retired burnt-orange palette"]
+  [/#(?:cf4714|11110f)\b/gi, "retired burnt-orange palette"],
+  // 히어로 터미널이 소유하지도 않은 가짜 도메인을 출력하던 것을 막는다.
+  // 화면에 보이는 값은 실제로 확인 가능한 것이어야 한다.
+  [/swag\.studio/gi, "fabricated domain"]
 ];
 
 for (const [pattern, label] of bannedPatterns) {
@@ -127,8 +130,13 @@ if (!/body\s*\{[\s\S]*?font-size:\s*(?:17|18)px/.test(css)) errors.push("body co
 if (!/@media\s*\(prefers-reduced-motion:\s*reduce\)/.test(css)) errors.push("reduced-motion mode is required");
 if (!/:focus-visible\b/.test(css)) errors.push("visible keyboard focus styles are required");
 
-const tinyFonts = [...css.matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/gi)].filter((match) => Number(match[1]) < 14);
-if (tinyFonts.length) errors.push(`CSS contains ${tinyFonts.length} font sizes below 14px`);
+/* 14px 바닥 규칙은 사람이 읽는 본문을 지키려는 것이다.
+   목업 SVG 안의 라벨(.mk-t*)은 aria-hidden 장식 그래픽이라 읽는 글자가 아니고
+   그림 비율에 맞춰 작아야 한다. 그 규칙 블록만 걷어내고 검사한다.
+   본문과 UI 글자는 여전히 14px 밑으로 내려갈 수 없다. */
+const readableCss = css.replace(/\.mk-t[^{}]*\{[^}]*\}/g, "");
+const tinyFonts = [...readableCss.matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/gi)].filter((match) => Number(match[1]) < 14);
+if (tinyFonts.length) errors.push(`CSS contains ${tinyFonts.length} font sizes below 14px outside decorative mockups`);
 if (!/#2145e6\b/i.test(css)) errors.push("brand blue color is missing");
 if (!/#5bdf9c\b/i.test(css)) errors.push("brand green color is missing");
 
@@ -152,6 +160,10 @@ if (!/제작 분야[\s\S]*프로젝트[\s\S]*진행 방식[\s\S]*소개[\s\S]*�
 const buildSource = await readFile(new URL("scripts/build.mjs", root), "utf8");
 if (!/data-rotator/.test(buildSource)) errors.push("hero headline rotator is missing");
 if (!/data-count/.test(buildSource)) errors.push("count-up stat tiles are missing");
+// 숫자 타일에 손으로 적은 값이 다시 들어오면 화면 안에서 숫자가 어긋난다
+if (/unit:\s*"단계",\s*label/.test(buildSource) && !/value:\s*data\.process\.length,\s*unit:\s*"단계"/.test(buildSource)) {
+  errors.push("stat tile counts must come from data, not literals");
+}
 if (!/assets\/stack\//.test(buildSource)) errors.push("tech stack icon tiles are missing");
 if (!/\[27,\s*-21,\s*24\]/.test(buildSource)) errors.push("three-row opposing motion speeds are missing");
 

@@ -146,28 +146,58 @@ const mockups = {
     <rect x="4" y="24" width="312" height="10" class="mk-bar-fix"/>
     <circle cx="22" cy="19" r="4" class="mk-dot mk-dot-r"/><circle cx="36" cy="19" r="4" class="mk-dot mk-dot-y"/><circle cx="50" cy="19" r="4" class="mk-dot mk-dot-g"/>
     <rect x="70" y="11" width="180" height="16" rx="8" class="mk-pill"/>
-    <rect x="20" y="50" width="120" height="14" rx="7" class="mk-ink"/>
-    <rect x="20" y="72" width="170" height="8" rx="4" class="mk-line"/>
-    <rect x="20" y="86" width="140" height="8" rx="4" class="mk-line"/>
-    <rect x="20" y="104" width="64" height="20" rx="10" class="mk-cta"/>
+    <text class="mk-t mk-t-url" x="80" y="23">brand.kr</text>
+    <text class="mk-t mk-t-nav" x="20" y="52">홈</text>
+    <text class="mk-t mk-t-nav" x="42" y="52">소개</text>
+    <text class="mk-t mk-t-nav" x="76" y="52">예약</text>
+    <text class="mk-t mk-t-head" x="20" y="78">이번 주 예약 가능</text>
+    <text class="mk-t mk-t-body" x="20" y="94">원하는 시간을 골라 신청하세요</text>
+    <rect x="20" y="104" width="70" height="22" rx="11" class="mk-cta"/>
+    <text class="mk-t mk-t-cta" x="33" y="119">예약하기</text>
     <rect class="mk-card" x="212" y="50" width="88" height="74" rx="10"/>
-    <rect x="222" y="60" width="40" height="8" rx="4" class="mk-line"/>
-    <rect x="222" y="74" width="68" height="6" rx="3" class="mk-line"/>
-    <rect x="222" y="86" width="56" height="6" rx="3" class="mk-line"/>
-    <rect x="222" y="102" width="30" height="12" rx="6" class="mk-chip"/>
-    <g class="mk-cols"><rect x="20" y="142" width="88" height="52" rx="10" class="mk-card"/><rect x="116" y="142" width="88" height="52" rx="10" class="mk-card"/><rect x="212" y="142" width="88" height="52" rx="10" class="mk-card"/></g>
+    <text class="mk-t mk-t-label" x="222" y="66">운영시간</text>
+    <text class="mk-t mk-t-num" x="222" y="86">10:00</text>
+    <text class="mk-t mk-t-body" x="222" y="100">~ 22:00</text>
+    <rect x="222" y="106" width="34" height="12" rx="6" class="mk-chip"/>
+    <g class="mk-cols">
+      <rect x="20" y="142" width="88" height="52" rx="10" class="mk-card"/>
+      <text class="mk-t mk-t-label" x="32" y="166">공지</text>
+      <rect x="116" y="142" width="88" height="52" rx="10" class="mk-card"/>
+      <text class="mk-t mk-t-label" x="128" y="166">오시는 길</text>
+      <rect x="212" y="142" width="88" height="52" rx="10" class="mk-card"/>
+      <text class="mk-t mk-t-label" x="224" y="166">문의</text>
+    </g>
   </svg>`,
   app: `<svg class="mock mock-app" viewBox="0 0 320 210" aria-hidden="true" focusable="false">
     <rect class="mk-phone" x="112" y="10" width="96" height="200" rx="18"/>
     <rect x="140" y="18" width="40" height="8" rx="4" class="mk-notch"/>
-    <rect x="124" y="38" width="46" height="10" rx="5" class="mk-ink"/>
-    <circle cx="188" cy="43" r="7" class="mk-chip"/>
+    <text class="mk-t mk-t-head" x="124" y="46">내 예약</text>
+    <circle cx="192" cy="41" r="7" class="mk-chip"/>
     <rect x="124" y="58" width="72" height="34" rx="8" class="mk-hero"/>
-    <g class="mk-rows"><rect x="124" y="100" width="72" height="20" rx="6" class="mk-card"/><rect x="124" y="126" width="72" height="20" rx="6" class="mk-card"/><rect x="124" y="152" width="72" height="20" rx="6" class="mk-card"/></g>
+    <text class="mk-t mk-t-onhero" x="132" y="74">오늘 14:00</text>
+    <text class="mk-t mk-t-onhero-sub" x="132" y="85">확정</text>
+    <g class="mk-rows">
+      <rect x="124" y="100" width="72" height="20" rx="6" class="mk-card"/>
+      <text class="mk-t mk-t-row" x="131" y="114">지난 예약</text>
+      <rect x="124" y="126" width="72" height="20" rx="6" class="mk-card"/>
+      <text class="mk-t mk-t-row" x="131" y="140">알림 설정</text>
+      <rect x="124" y="152" width="72" height="20" rx="6" class="mk-card"/>
+      <text class="mk-t mk-t-row" x="131" y="166">내 정보</text>
+    </g>
     <rect x="124" y="182" width="72" height="16" rx="8" class="mk-tabbar"/>
     <circle cx="138" cy="190" r="4" class="mk-dot-b"/><circle cx="160" cy="190" r="4" class="mk-dot-mute"/><circle cx="182" cy="190" r="4" class="mk-dot-mute"/>
-    <g class="mk-float"><rect x="30" y="52" width="70" height="30" rx="10" class="mk-toast"/><circle cx="46" cy="67" r="7" class="mk-chip"/><rect x="58" y="60" width="34" height="5" rx="2.5" class="mk-line"/><rect x="58" y="70" width="26" height="5" rx="2.5" class="mk-line"/></g>
-    <g class="mk-float mk-float-late"><rect x="224" y="120" width="66" height="30" rx="10" class="mk-toast"/><circle cx="240" cy="135" r="7" class="mk-dot-g"/><rect x="252" y="128" width="30" height="5" rx="2.5" class="mk-line"/><rect x="252" y="138" width="22" height="5" rx="2.5" class="mk-line"/></g>
+    <g class="mk-float">
+      <rect x="24" y="52" width="80" height="30" rx="10" class="mk-toast"/>
+      <circle cx="40" cy="67" r="7" class="mk-chip"/>
+      <text class="mk-t mk-t-toast" x="52" y="65">예약 확정</text>
+      <text class="mk-t mk-t-toast-sub" x="52" y="76">14:00 · 2인</text>
+    </g>
+    <g class="mk-float mk-float-late">
+      <rect x="220" y="120" width="76" height="30" rx="10" class="mk-toast"/>
+      <circle cx="236" cy="135" r="7" class="mk-dot-g"/>
+      <text class="mk-t mk-t-toast" x="248" y="133">결제 완료</text>
+      <text class="mk-t mk-t-toast-sub" x="248" y="144">카드</text>
+    </g>
   </svg>`,
   game: `<svg class="mock mock-game" viewBox="0 0 320 210" aria-hidden="true" focusable="false">
     <rect class="mk-frame mk-screen" x="4" y="14" width="312" height="182" rx="16"/>
@@ -179,24 +209,24 @@ const mockups = {
   </svg>`,
   ai: `<svg class="mock mock-ai" viewBox="0 0 320 210" aria-hidden="true" focusable="false">
     <rect class="mk-frame" x="4" y="4" width="312" height="202" rx="14"/>
-    <rect x="20" y="20" width="60" height="12" rx="6" class="mk-ink"/>
+    <text class="mk-t mk-t-head" x="20" y="31">상담 챗봇</text>
     <g class="mk-chat">
       <rect x="20" y="46" width="150" height="34" rx="12" class="mk-bubble-user"/>
-      <rect x="32" y="56" width="90" height="6" rx="3" class="mk-line"/>
-      <rect x="32" y="68" width="118" height="6" rx="3" class="mk-line"/>
+      <text class="mk-t mk-t-row" x="32" y="61">예약 언제 가능해요?</text>
+      <text class="mk-t mk-t-body" x="32" y="73">오늘 저녁으로요</text>
     </g>
     <g class="mk-chat mk-chat-late">
       <rect x="108" y="92" width="192" height="58" rx="12" class="mk-bubble-ai"/>
-      <rect x="120" y="104" width="140" height="6" rx="3" class="mk-line-soft"/>
-      <rect x="120" y="118" width="168" height="6" rx="3" class="mk-line-soft"/>
-      <rect x="120" y="132" width="104" height="6" rx="3" class="mk-line-soft"/>
+      <text class="mk-t mk-t-onhero" x="120" y="109">오늘 18:00, 20:00 자리가</text>
+      <text class="mk-t mk-t-onhero" x="120" y="123">남아 있습니다.</text>
+      <text class="mk-t mk-t-onhero-sub" x="120" y="138">바로 예약해 드릴까요?</text>
     </g>
     <g class="mk-spark">
       <path d="M78 104 L84 118 L98 124 L84 130 L78 144 L72 130 L58 124 L72 118 Z" class="mk-spark-a"/>
       <path d="M50 138 L53 146 L61 149 L53 152 L50 160 L47 152 L39 149 L47 146 Z" class="mk-spark-b"/>
     </g>
     <rect x="20" y="168" width="240" height="24" rx="12" class="mk-prompt"/>
-    <rect x="32" y="177" width="96" height="6" rx="3" class="mk-line"/>
+    <text class="mk-t mk-t-body" x="32" y="184">메시지를 입력하세요</text>
     <circle cx="284" cy="180" r="14" class="mk-send"/>
     <path d="M278 180 L290 180 M285 175 L290 180 L285 185" class="mk-send-arrow"/>
   </svg>`,
@@ -242,11 +272,20 @@ const renderCodeBody = () => codeLines.map((tokens, index) => {
   return `<span class="code-line" style="--li:${index}"><b class="code-no">${index + 1}</b>${inner}</span>`;
 }).join("");
 
+/* 터미널에 찍히는 값은 전부 실제로 확인 가능한 것만 쓴다.
+   예전에는 지어낸 빌드 시간과 검수 수치, 그리고 소유하지도 않은 가짜 도메인을
+   출력하고 있었다. 사이트가 스스로 거짓말을 하고 있던 셈이라 가장 먼저 눈에
+   걸리던 부분이다. validate.mjs 가 그 도메인 문자열을 금지어로 잡는다.
+   지금은 실제 경로 수, 실제 링크 감사 결과, 실제 운영 주소를 쓴다. */
+
+const ROUTE_COUNT = 8; // scripts/audit-links.mjs 가 감사하는 경로 수와 같아야 한다
+const liveOrigin = normalizedSiteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
+
 const terminalLines = [
   ["cmd", "npm run deploy"],
-  ["ok", "빌드 완료", "1.2s"],
-  ["ok", "검수 통과", "8/8"],
-  ["ok", "운영 주소 발급", "swag.studio"]
+  ["ok", "빌드 완료", `${ROUTE_COUNT} 페이지`],
+  ["ok", "링크 감사 통과", "0 오류"],
+  ["ok", "운영 주소 발급", liveOrigin]
 ];
 
 const renderTerminal = () => terminalLines.map((line, index) => {
@@ -293,10 +332,25 @@ const renderHero = () => `
 
 /* ------------------------------------------------------------ home stats */
 
+/* 숫자는 전부 실제 데이터에서 뽑는다.
+   예전에는 "5개"라고 써 놓고 밑에 네 가지만 나열했고, "6단계"라고 써 놓고
+   같은 페이지 아래 진행 방식은 네 단계만 보여 주고 있었다.
+   화면 안에서 스스로 어긋나는 숫자는 눈에 띄게 어설퍼 보인다. */
+
 const statTiles = [
-  { value: data.services.length, unit: "개", label: "제작 분야", note: "시스템 · 웹 · 앱 · 게임" },
-  { value: 6, unit: "단계", label: "담당 과정", note: "상담부터 배포까지 직접" },
-  { value: 2, unit: "인", label: "전담 인원", note: "상담한 사람이 직접 제작" },
+  {
+    value: data.services.length,
+    unit: "개",
+    label: "제작 분야",
+    note: data.services.map((service) => service.title).join(" · ")
+  },
+  {
+    value: data.process.length,
+    unit: "단계",
+    label: "담당 과정",
+    note: data.process.map((step) => step.title).join(" · ")
+  },
+  { value: data.people?.count ?? 2, unit: "인", label: "전담 인원", note: "상담한 사람이 직접 제작" },
   { value: 0, unit: "건", label: "중간 하청", note: "재하청 없이 전 과정 직접" }
 ];
 
