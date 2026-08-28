@@ -1,11 +1,21 @@
 /* ==========================================================================
-   SWAG v47 — 시스템 · 웹 · 앱 · 게임 외주 제작 스튜디오
+   SWAG v47 - 시스템 · 웹 · 앱 · 게임 외주 제작 스튜디오
    라이트 그레이 캔버스 + 화이트 카드 + 브랜드 블루/그린, 모션 중심 디자인
    ========================================================================== */
 
+/* 첫 화면에 필요한 글자만 담은 85KB 폰트를 먼저 쓰고,
+   여기에 없는 글자(관리자가 새로 넣은 문구 등)가 나올 때만 508KB 전체 폰트를 받는다. */
 @font-face {
-  font-family: "SUIT Variable";
-  src: url("assets/SUIT-Variable.woff2") format("woff2-variations");
+  font-family: "SUIT Core";
+  src: url("assets/SUIT-core.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SUIT Full";
+  src: url("assets/SUIT-full.woff2") format("woff2-variations");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -61,7 +71,7 @@ html.inertia-scroll { scroll-behavior: auto; }
 
 body {
   margin: 0;
-  font-family: "SUIT Variable", "Apple SD Gothic Neo", sans-serif;
+  font-family: "SUIT Core", "SUIT Full", "Apple SD Gothic Neo", sans-serif;
   font-size: 17px;
   line-height: 1.65;
   letter-spacing: -.011em;
@@ -523,7 +533,18 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   55%, 100% { transform: translate3d(0, 260%, 0); }
 }
 
-.film-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: .75; }
+/* 캔버스를 독립 합성 레이어로 올려 배경 그라디언트까지 다시 그리지 않게 한다 */
+.film-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: .75;
+  will-change: transform;
+  transform: translateZ(0);
+  contain: strict;
+}
 
 .hero-inner {
   position: relative;
@@ -800,6 +821,19 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   color: var(--ink);
   will-change: transform;
   animation: floatChip 6s ease-in-out infinite alternate;
+}
+
+.chip-ring {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: chipSpin 1.4s linear infinite;
+}
+
+@keyframes chipSpin {
+  to { transform: rotate(360deg); }
 }
 
 .hero-chip-1 { top: -18px; right: 2%; color: var(--green-deep); animation-delay: -1.4s; }
@@ -1251,7 +1285,9 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   overflow: hidden;
 }
 
-/* 글자가 잘리지 않도록 줄높이로 여유를 준다 (line-height:1 은 어센더/디센더가 잘림) */
+/* 윤곽선과 그라디언트를 서로 다른 레이어에 겹쳐 두면 두 레이어의 애니메이션이
+   환경에 따라 어긋나 보인다. 한 요소에 stroke 와 background-clip:text 를 함께 걸어
+   글자는 흐르고(capabilityRun) 색 띠만 훑고 지나가게(filmSweep) 한다. */
 .footer-film {
   position: relative;
   display: flex;
@@ -1261,44 +1297,34 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   font-weight: 900;
   letter-spacing: -.02em;
   line-height: 1.32;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, .26);
-  /* 양끝을 흐리게 잘라 글자가 중간에서 뚝 끊긴 것처럼 보이지 않게 한다 */
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
 }
 
-.footer-film span { animation: capabilityRun 30s linear infinite; }
-
-/* 윤곽선 글자 위로 브랜드 그라디언트가 훑고 지나간다 */
-.footer-film-glow {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  white-space: nowrap;
-  font: inherit;
-  line-height: inherit;
-  letter-spacing: inherit;
-  -webkit-text-stroke: 0;
-  background: linear-gradient(100deg, transparent 26%, rgba(91, 223, 156, .95) 40%, rgba(255, 255, 255, .95) 48%, rgba(122, 162, 255, .95) 56%, transparent 70%);
+.footer-film span {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, .26);
+  background-image: linear-gradient(100deg,
+    transparent 24%,
+    rgba(91, 223, 156, .95) 38%,
+    rgba(255, 255, 255, .95) 46%,
+    rgba(122, 162, 255, .95) 54%,
+    transparent 68%);
+  background-size: 260% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  background-size: 300% 100%;
-  animation: filmSweep 5.5s var(--ease-out) infinite;
-  pointer-events: none;
-}
-
-.footer-film-glow span { animation: capabilityRun 30s linear infinite; }
-
-@keyframes filmSweep {
-  0% { background-position: 200% 0; }
-  60%, 100% { background-position: -100% 0; }
+  will-change: transform;
+  animation: capabilityRun 30s linear infinite, filmSweep 6s var(--ease-out) infinite;
 }
 
 @keyframes capabilityRun {
   from { transform: translate3d(0, 0, 0); }
   to { transform: translate3d(-100%, 0, 0); }
+}
+
+@keyframes filmSweep {
+  0% { background-position: 190% 0; }
+  62%, 100% { background-position: -90% 0; }
 }
 
 .footer-main {
@@ -2178,7 +2204,7 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 .route-leaving main { opacity: .6; transition: opacity .5s; }
 
 /* ======================================================================
-   연출 레이어 — 인트로 커튼, 단어 등장, 커서, 스포트라이트, 리플, 전환
+   연출 레이어 - 인트로 커튼, 단어 등장, 커서, 스포트라이트, 리플, 전환
    ====================================================================== */
 
 /* --------------------------------------------------------- 인트로 커튼 */
@@ -2610,7 +2636,6 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   .nf-zero i,
   .capability-marquee > div,
   .footer-film span,
-  .footer-film-glow span,
   .card-sheen,
   .mk-float,
   .mk-sprite,
@@ -2649,6 +2674,6 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 
   .js:not(.intro-done) [data-page="home"] .hero-visual { opacity: 1; transform: none; }
 
-  /* 푸터 글자 위 그라디언트는 자리 이동이 아니라 색 전환이므로 천천히 유지 */
-  .footer-film-glow { animation-duration: 11s; }
+  /* 색 띠 훑기는 자리 이동이 아니므로 천천히 유지한다 */
+  .footer-film span { animation: filmSweep 12s var(--ease-out) infinite !important; }
 }

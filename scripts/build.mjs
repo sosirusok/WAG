@@ -103,7 +103,7 @@ const filmWords = "<span>SYSTEM · WEBSITE · APP · GAME ·&nbsp;</span><span>S
 
 const renderFooter = (currentUrl = normalizedSiteUrl) => `
   <footer class="site-footer" data-motion-scope data-spotlight>
-    <div class="footer-film" aria-hidden="true">${filmWords}<div class="footer-film-glow">${filmWords}</div></div>
+    <div class="footer-film" aria-hidden="true">${filmWords}</div>
     <div class="footer-main shell">
       <div class="footer-brand">${renderBrand("brand-footer", true)}<p>웹 · 앱 · 게임 · AI · 운영 시스템 외주 제작<br>2인 프리랜서 스튜디오</p></div>
       <nav aria-label="하단 메뉴">${renderNavLinks("")}</nav>
@@ -261,7 +261,7 @@ const renderHero = () => `
           <div class="term-body">${renderTerminal()}</div>
         </div>
         <div class="hero-chip hero-chip-1"><b>✓</b> 배포 완료</div>
-        <div class="hero-chip hero-chip-2"><b>◷</b> 검수 중</div>
+        <div class="hero-chip hero-chip-2"><i class="chip-ring"></i> 검수 중</div>
       </div>
     </div>
     <a class="scroll-cue" href="./#stats"><span>SCROLL</span><i aria-hidden="true"></i></a>
