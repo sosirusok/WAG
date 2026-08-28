@@ -1,4 +1,10 @@
-name: Deploy SWAG to GitHub Pages
+# 옛 주소 전용 워크플로.
+#
+# 실제 사이트는 Cloudflare Pages(https://swagstudio.pages.dev/)가 서비스한다.
+# GitHub Pages 에는 사이트를 더 이상 올리지 않고, 예전에 공유된 링크가
+# 새 주소의 같은 자리로 도착하도록 리디렉션 페이지만 올린다.
+# 사이트 배포는 .github/workflows/cloudflare.yml 이 담당한다.
+name: Redirect old GitHub Pages address to swagstudio.pages.dev
 
 on:
   push:
@@ -24,14 +30,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Validate content
-        run: npm run check
-      - name: Build static site
-        run: npm run build
+      - name: Build redirect pages
+        run: node scripts/build-redirect.mjs
         env:
-          SITE_URL: https://sosirusok.github.io/WAG/
-      - name: Verify generated routes and assets
-        run: node scripts/audit-links.mjs
+          REDIRECT_TARGET: https://swagstudio.pages.dev/
+          REDIRECT_OLD_BASE: /WAG/
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
@@ -39,7 +42,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: dist-redirect
 
   deploy:
     environment:

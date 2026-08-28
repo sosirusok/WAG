@@ -2472,6 +2472,20 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   transform-origin: bottom;
 }
 
+/* 세 칸의 경계에 생기는 머리카락 굵기의 틈을 막는다.
+
+   1fr 세 칸은 화면 너비가 3으로 나누어떨어지지 않으면 경계가 소수점에 놓인다
+   (예: 1366px -> 455.328 / 910.656). 각 칸은 transform 으로 움직이는 별도
+   합성 레이어라서 같은 경계 픽셀을 서로 모르는 채로 반투명하게 칠하고,
+   그 둘을 겹쳐도 100% 가 되지 않아 뒤 배경이 밝은 선으로 새어 나온다.
+   고해상도(2배) 화면에서 특히 잘 보이고, 실제로 두 번째와 세 번째 칸
+   사이에서 화면 높이 전체에 걸쳐 나타났다.
+
+   칸을 서로 2px 겹쳐 두면 경계가 어느 소수점에 놓이든 덮인다.
+   세 칸 모두 같은 불투명한 색이라 겹친 부분은 보이지 않는다.
+   왼쪽으로만 밀어 넣으므로 화면 밖으로 삐져나가지도 않는다. */
+.route-curtain i + i { margin-left: -2px; }
+
 .route-curtain.is-closing { pointer-events: all; }
 .route-curtain.is-closing i { animation: curtainUp .5s cubic-bezier(.76, 0, .24, 1) forwards; }
 .route-curtain.is-closing i:nth-child(2) { animation-delay: .06s; }

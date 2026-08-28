@@ -45,10 +45,13 @@ const safeImage = (value = "") => {
       - 운영 브랜치(main) 빌드는 고정 주소를 쓴다. CF_PAGES_URL 은 배포마다
         달라지는 주소라서 canonical 에 박히면 매 배포가 다른 사이트가 된다
       - 그 외 미리보기 빌드는 그 배포 주소를 그대로 쓴다
-   3) 둘 다 없으면 예전 GitHub Pages 주소                                    */
+   3) 둘 다 없으면 운영 주소
+
+   예전 GitHub Pages 주소는 이제 사이트가 아니라 리디렉션 페이지만 올라간다
+   (scripts/build-redirect.mjs). 그래서 기본값으로 쓰면 canonical 이 되넘김
+   페이지를 가리키게 되므로 쓰지 않는다.                                     */
 
 const PRODUCTION_URL = "https://swagstudio.pages.dev/";
-const LEGACY_URL = "https://sosirusok.github.io/WAG/";
 
 const resolveSiteUrl = () => {
   if (process.env.SITE_URL) return process.env.SITE_URL;
@@ -56,7 +59,7 @@ const resolveSiteUrl = () => {
     if (process.env.CF_PAGES_BRANCH === "main") return PRODUCTION_URL;
     return process.env.CF_PAGES_URL || PRODUCTION_URL;
   }
-  return LEGACY_URL;
+  return PRODUCTION_URL;
 };
 
 const normalizedSiteUrl = (() => {
@@ -64,7 +67,7 @@ const normalizedSiteUrl = (() => {
     const url = new URL(resolveSiteUrl());
     return url.href.endsWith("/") ? url.href : `${url.href}/`;
   } catch {
-    return LEGACY_URL;
+    return PRODUCTION_URL;
   }
 })();
 
