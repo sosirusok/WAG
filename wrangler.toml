@@ -1,0 +1,15 @@
+# Cloudflare Pages 배포 설정
+#
+# 대시보드에서 프로젝트를 만들 때 이름을 반드시 아래 name 과 같게(swagstudio) 지정해야 한다.
+# 이름이 다르면 빌드가 실패한다. 공개 주소는 https://swagstudio.pages.dev/ 가 된다.
+#
+# 대시보드에서 함께 넣어야 하는 값 (이 파일로는 지정할 수 없다):
+#   Build command          : npm run build
+#   Environment variables  : SITE_URL = https://swagstudio.pages.dev/
+#
+# SITE_URL 은 <base href>, canonical, OG, 구조화 데이터에 그대로 박히므로
+# 실제 서비스되는 주소와 반드시 일치해야 한다. 틀리면 모든 상대 경로가 깨진다.
+
+name = "swagstudio"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-08-28"

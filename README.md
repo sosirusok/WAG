@@ -6,10 +6,31 @@ SWAG(System · Website · App · Game)는 시스템 · 웹사이트 · 앱 · �
 
 ## 공개 주소와 배포
 
-- 공개 주소: <https://sosirusok.github.io/WAG/>
+- 공개 주소: <https://swagstudio.pages.dev/> (Cloudflare Pages)
+- 예전 주소: <https://sosirusok.github.io/WAG/> (GitHub Pages)
 - 저장소: <https://github.com/sosirusok/WAG>
 - 배포 브랜치: `main`
-- 배포 방식: `.github/workflows/pages.yml`이 검증, 정적 빌드, 로컬 참조 감사를 통과한 `dist/`만 GitHub Pages에 배포
+- 배포 방식: `.github/workflows/pages.yml`이 검증, 정적 빌드, 로컬 참조 감사를 통과한 `dist/`만 배포
+
+### Cloudflare Pages 연결 (1회만)
+
+주소에서 `github` · 계정 이름을 없애기 위해 Cloudflare Pages 로 옮긴다. 무료이고 도메인 구입이 필요 없다.
+
+1. <https://dash.cloudflare.com> 가입 → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
+2. GitHub 계정을 연결하고 `sosirusok/WAG` 저장소를 고른다
+3. 설정값을 아래 그대로 넣는다. **프로젝트 이름은 반드시 `swagstudio`** 여야 한다 (`wrangler.toml`의 `name`과 같아야 빌드가 통과한다)
+
+   | 항목 | 값 |
+   | --- | --- |
+   | Project name | `swagstudio` |
+   | Production branch | `main` |
+   | Build command | `npm run build` |
+   | Build output directory | `dist` |
+   | Environment variable | `SITE_URL` = `https://swagstudio.pages.dev/` |
+
+4. Save and Deploy. 이후 `main`에 push 할 때마다 자동 재배포된다.
+
+`SITE_URL`은 `<base href>`, canonical, OG, 구조화 데이터에 그대로 박힌다. 실제 서비스 주소와 다르면 모든 상대 경로가 깨지므로 값을 바꾸면 반드시 함께 맞춰야 한다.
 
 ## 페이지 구성
 
