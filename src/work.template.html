@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#08080a">
-  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#f3f5fa">
+  <meta name="color-scheme" content="light">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -29,11 +29,12 @@
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
   <main id="main">
-    <header class="page-intro">
-      <div class="spine"><b class="mono">W</b><h2>프로젝트</h2></div>
-      <div class="intro-copy shell">
-        <h1 class="page-title">프로젝트</h1>
-        <p class="page-lead">공개 중인 실제 운영 사이트와 담당 범위입니다.</p>
+    <header class="page-intro compact-intro">
+      <div class="page-intro-backdrop" aria-hidden="true"><i class="hero-grid"></i></div>
+      <div class="intro-copy shell" data-reveal>
+        <p class="eyebrow"><span class="pulse-dot" aria-hidden="true"></span>PROJECTS</p>
+        <h1 data-split>프로젝트</h1>
+        <p class="section-lead">공개 중인 실제 운영 사이트와 담당 범위입니다.</p>
       </div>
     </header>
     <section class="work-editorial shell">{{WORK_CASES}}</section>

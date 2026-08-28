@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#08080a">
-  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#f3f5fa">
+  <meta name="color-scheme" content="light">
   <meta name="description" content="{{PAGE_DESCRIPTION}}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta property="og:type" content="website">
@@ -26,61 +26,70 @@
   <script type="application/ld+json">{{STRUCTURED_DATA}}</script>
 </head>
 <body id="top" data-page="home">
+  {{PRELOADER}}
   <a class="skip-link" href="{{CANONICAL_URL}}#main">본문으로 바로가기</a>
   {{HEADER}}
-
-  <aside class="rail" aria-hidden="true"><b class="mono" data-rail-no>01</b><i data-rail-tick></i></aside>
-
   <main id="main">
-    <!-- HERO -->
     {{HERO}}
 
-    <section class="s-scope" id="scope" data-advances="fact" aria-labelledby="s-scope-h" data-rail-section="01">
-      <div class="spine"><b class="mono">01</b><h2 id="s-scope-h">제작 분야</h2></div>
-      <ol class="scope-rows" data-reveal-group>{{SCOPE_ROWS}}</ol>
-      <p class="scope-more"><a href="services/">제작 분야 자세히 보기</a></p>
+    <section class="home-stats" id="stats" aria-labelledby="stats-title">
+      <div class="shell">
+        <h2 class="sr-only" id="stats-title">숫자로 보는 SWAG</h2>
+        <div class="stat-grid">{{STATS}}</div>
+      </div>
     </section>
 
-    <section class="s-stack" id="stack" data-motion-scope data-advances="fact" aria-labelledby="s-stack-h" data-rail-section="02">
-      <h2 class="sr-only" id="s-stack-h">기술 스택</h2>
-      <div class="stack-stage" data-motion-stage>
+    <section class="home-scope" id="scope" aria-labelledby="scope-title">
+      <header class="section-head shell" data-reveal>
+        <p class="eyebrow">{{BRAND_EXPANSION}}</p>
+        <h2 id="scope-title" data-split>제작 분야</h2>
+        <p class="section-lead">필요한 화면과 기능에 맞는 분야를 골라 문의할 수 있어요.</p>
+        <a class="btn btn-ghost magnetic" href="services/">전체 보기 <span aria-hidden="true">→</span></a>
+      </header>
+      <div class="film-window" data-drag-film tabindex="-1">{{HOME_FILM}}</div>
+      <p class="film-hint shell" aria-hidden="true">← 옆으로 넘겨 보세요 →</p>
+    </section>
+
+    <section class="motion-ribbon" id="stack" data-motion-scope aria-labelledby="stack-title">
+      <div class="section-head shell" data-reveal>
+        <p class="eyebrow eyebrow-invert">TECH STACK</p>
+        <h2 id="stack-title" data-split>이런 기술로 만듭니다</h2>
+        <p class="section-lead">화면부터 서버 · 데이터 · AI · 배포 인프라까지 프로젝트에 맞는 도구를 고릅니다.</p>
+      </div>
+      <div class="motion-ribbon-stage" data-motion-stage>
         {{MOTION_ROWS}}
       </div>
-      <p class="stack-note shell">{{STACK_NOTE}}</p>
     </section>
 
-    <section class="s-process" id="process" data-advances="brief" aria-labelledby="s-process-h" data-rail-section="03">
-      <i class="seam-blade" aria-hidden="true"></i>
-      <div class="process-inner shell">
-        <div class="spine spine-paper"><b class="mono">03</b><h2 id="s-process-h">진행 방식</h2></div>
-        <div class="process-grid">
-          <div class="process-marks" aria-hidden="true">{{PROCESS_MARKS}}</div>
-          <ol class="process-list" data-process-list>
-            <i class="process-rule" aria-hidden="true"></i>
-            {{PROCESS_PREVIEW}}
-          </ol>
+    <section class="home-process" aria-labelledby="home-process-title">
+      <div class="shell">
+        <header class="section-head" data-reveal>
+          <p class="eyebrow">PROCESS</p>
+          <h2 id="home-process-title" data-split>진행 방식</h2>
+          <a class="btn btn-ghost magnetic" href="process/">자세히 보기 <span aria-hidden="true">→</span></a>
+        </header>
+        <ol class="process-preview">{{PROCESS_PREVIEW}}</ol>
+      </div>
+    </section>
+
+    <section class="home-studio" aria-labelledby="studio-title">
+      <div class="shell home-studio-card" data-reveal>
+        <div class="studio-note">
+          <p class="eyebrow">ABOUT</p>
+          <h2 id="studio-title" data-split>2인 프리랜서 스튜디오</h2>
+          <p>상담한 두 사람이 기획부터 배포까지 담당합니다. 중간 영업도, 재하청도 없습니다.</p>
+          <a class="btn btn-ghost magnetic" href="about/">소개 보기 <span aria-hidden="true">→</span></a>
         </div>
-        <p class="process-more"><a href="process/">진행 방식 자세히 보기</a></p>
+        <ul class="studio-points" aria-label="작업 방식">
+          <li data-reveal><b>같은 담당자</b><span>상담한 사람이 직접 개발</span></li>
+          <li data-reveal><b>합리적인 비용</b><span>필요한 화면과 기능으로 견적</span></li>
+          <li data-reveal><b>빠른 진행</b><span>확인한 내용을 바로 반영</span></li>
+        </ul>
       </div>
-    </section>
-
-    <section class="s-studio" id="studio" data-advances="fact" aria-labelledby="s-studio-h" data-rail-section="04">
-      <div class="spine"><b class="mono">04</b><h2 id="s-studio-h">소개</h2></div>
-      <div class="studio-grid shell">
-        <p class="quote" data-reveal>{{STUDIO_QUOTE}}</p>
-        <dl class="facts" data-facts>
-          <div><dt class="mono">PEOPLE</dt><dd><span class="n">{{PEOPLE_COUNT}}</span> {{PEOPLE_LEAD}} 외 1</dd></div>
-          <div><dt class="mono">PUBLISHED</dt><dd><span class="n">{{PUBLISHED_COUNT}}</span> <a href="work/">프로젝트 보기</a></dd></div>
-          <div><dt class="mono">SUBCONTRACT</dt><dd><span class="n">{{SUBCONTRACT}}</span> 재하청</dd></div>
-          <div><dt class="mono">OWNERSHIP</dt><dd>의뢰인 명의</dd></div>
-        </dl>
-      </div>
-      <p class="studio-more shell"><a href="about/">소개 자세히 보기</a></p>
     </section>
 
     {{CONTACT_STRIP}}
   </main>
-
   {{FOOTER}}
   <script src="app.js" defer></script>
 </body>
