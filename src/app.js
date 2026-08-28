@@ -329,6 +329,17 @@ if (motionStage) {
   let motionVisible = true;
   let previousMotionTime = 0;
 
+  /* 줄이 계속 흐르면 타일 하나를 짚기가 어렵다. 손을 뻗으면 천천히 느려지고
+     떼면 다시 붙는다. 완전히 멈추지 않는 것은, 멈춰 버리면 고장 난 것처럼
+     보이기 때문이다. */
+  let speedScale = 1;
+  let speedTarget = 1;
+
+  if (finePointer) {
+    motionStage.addEventListener("pointerenter", () => { speedTarget = .12; });
+    motionStage.addEventListener("pointerleave", () => { speedTarget = 1; });
+  }
+
   const measureMotionRows = () => {
     motionRows.forEach((item) => {
       const distance = item.leadSet.offsetWidth;
@@ -363,10 +374,11 @@ if (motionStage) {
 
     // scrolling fast pushes every row along its own direction - the wall reacts to you
     const boost = 1 + Math.min(2.6, Math.abs(scrollVelocity) * .06);
+    speedScale += (speedTarget - speedScale) * Math.min(1, delta * 6);
 
     motionRows.forEach((item) => {
       if (!item.distance) return;
-      item.offset += item.speed * boost * delta;
+      item.offset += item.speed * boost * speedScale * delta;
       while (item.speed < 0 && item.offset <= -item.distance) item.offset += item.distance;
       while (item.speed > 0 && item.offset >= 0) item.offset -= item.distance;
       item.track.style.transform = `translate3d(${item.offset}px, 0, 0)`;
@@ -773,7 +785,10 @@ if (motionScopes.length && "IntersectionObserver" in window) {
     });
     // 여백을 두면 구역이 화면을 벗어난 뒤에도 그만큼 더 돈다. 히어로처럼
     // 화면을 꽉 채우는 구역은 두 번째 화면에서 애니메이션 10여 개가 헛돌았다.
-  }, { rootMargin: "0px" });
+    // 0 이면 구역의 아래끝이 화면 맨 위에 정확히 닿았을 때도 "보이는 중"으로
+    // 판정된다. 히어로처럼 화면을 꽉 채우는 구역은 그 자리가 곧 두 번째 화면이라
+    // 거기서 애니메이션 10여 개가 헛돌았다. 1px 물려 그 경계를 없앤다.
+  }, { rootMargin: "-1px 0px" });
   motionScopes.forEach((scope) => scopeObserver.observe(scope));
 } else {
   motionScopes.forEach((scope) => scope.classList.add("is-typing"));

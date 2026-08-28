@@ -2995,3 +2995,132 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 .mk-t-onhero-sub { font-size: 8px; font-weight: 600; fill: rgba(255, 255, 255, .82); }
 .mk-t-toast { font-size: 8px; fill: #1b2b56; }
 .mk-t-toast-sub { font-size: 7.5px; font-weight: 600; fill: #8a95ad; }
+
+/* ==========================================================================
+   v53 아기자기한 디테일
+
+   전체 인상은 그대로 두고, 눈이 머무는 곳마다 작은 반응을 하나씩 심는다.
+   센 느낌을 덜어내는 게 아니라 그 위에 사람 손길을 얹는 쪽이다.
+   전부 transform / opacity 라 프레임 비용은 없고, 화면 밖 구역은
+   기존 관찰자가 이미 멈춰 준다.
+   ========================================================================== */
+
+:root {
+  /* 살짝 지나쳤다 돌아오는 곡선. 이것 하나로 움직임이 딱딱하지 않고 통통해진다 */
+  --ease-spring: cubic-bezier(.34, 1.62, .58, 1);
+}
+
+/* --------------------------------------------- 로고에 손을 올리면 반응한다 */
+
+.brand .lg-line { transform-box: fill-box; transform-origin: right center; }
+.brand:hover .lg-line,
+.brand:focus-visible .lg-line { animation: lineDart .52s var(--ease-spring); }
+.brand:hover .lg-line:nth-of-type(2) { animation-delay: 40ms; }
+.brand:hover .lg-line:nth-of-type(3) { animation-delay: 80ms; }
+.brand .lg-orbit { transform-box: fill-box; transform-origin: center; }
+.brand:hover .lg-orbit,
+.brand:focus-visible .lg-orbit { animation: orbitLoop .9s var(--ease-out); }
+
+@keyframes lineDart {
+  0% { transform: translateX(0); }
+  45% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes orbitLoop {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ------------------------------------- 구역 라벨 뒤에서 깜빡이는 커서
+
+   라벨이 한 글자씩 해독되고 나면 그 끝에 커서가 남아 깜빡인다.
+   터미널을 닮은 작은 장치라 개발 스튜디오 성격과도 맞는다. */
+
+[data-page="home"] .section-head .eyebrow::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: .95em;
+  margin-left: 7px;
+  vertical-align: -.12em;
+  background: currentColor;
+  animation: labelCaret 1.15s steps(1) infinite;
+}
+
+@keyframes labelCaret {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0; }
+}
+
+/* ------------------------------------- 기술 스택 타일이 통통 튀며 기운다 */
+
+.stack-tile:hover {
+  transform: translate3d(0, -9px, 0) scale(1.09) rotate(-3.5deg);
+  transition-duration: .42s;
+  transition-timing-function: var(--ease-spring);
+}
+
+/* 옆 타일도 아주 살짝 물러난다. 하나만 뜨는 것보다 줄 전체가 살아 있어 보인다 */
+.motion-set .stack-tile:hover + .stack-tile { transform: translate3d(4px, -2px, 0); }
+
+/* ----------------------------------- 숫자가 자리에 살짝 지나쳤다 앉는다 */
+
+.odo-col i { transition-timing-function: var(--ease-spring); }
+
+/* 단위(개 · 단계 · 인 · 건)는 카드에 손을 올리면 한 번 뛴다 */
+.stat-value span { display: inline-block; transition: transform .34s var(--ease-spring); }
+.stat-tile:hover .stat-value span { transform: translateY(-4px); }
+
+/* ------------------------------------------- 신뢰 항목 체크가 톡 나온다 */
+
+.js .hero-trust li::before { animation: checkPop .5s var(--ease-spring) both; }
+.js .hero-trust li:nth-child(1)::before { animation-delay: 1.05s; }
+.js .hero-trust li:nth-child(2)::before { animation-delay: 1.17s; }
+.js .hero-trust li:nth-child(3)::before { animation-delay: 1.29s; }
+
+@keyframes checkPop {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* --------------------------------------------- 버튼 화살표가 앞서 나간다 */
+
+.btn:hover span,
+.btn:focus-visible span { transform: translateX(4px); transition-timing-function: var(--ease-spring); }
+
+/* --------------------------------- 목업 안에서 커서가 버튼을 눌러 보인다
+
+   화면이 그림이 아니라 "쓰이고 있는 제품"으로 읽히게 하는 장치다.
+   카드가 화면 밖으로 나가면 기존 관찰자가 멈춘다. */
+
+.mk-cursor path { fill: #1b2b56; stroke: #fff; stroke-width: 1.2; stroke-linejoin: round; }
+.mk-cursor { animation: mkCursor 5.4s var(--ease-out) infinite; }
+
+@keyframes mkCursor {
+  0% { transform: translate(206px, 150px); opacity: 0; }
+  10% { transform: translate(170px, 142px); opacity: 1; }
+  32% { transform: translate(52px, 112px); opacity: 1; }
+  38% { transform: translate(52px, 112px) scale(.82); }
+  45% { transform: translate(52px, 112px) scale(1); }
+  78% { transform: translate(52px, 112px); opacity: 1; }
+  92% { transform: translate(128px, 158px); opacity: 0; }
+  100% { transform: translate(206px, 150px); opacity: 0; }
+}
+
+.mk-click { fill: rgba(33, 69, 230, .35); transform-origin: 55px 115px; animation: mkClick 5.4s linear infinite; }
+
+@keyframes mkClick {
+  0%, 36% { opacity: 0; transform: scale(.15); }
+  41% { opacity: .55; transform: scale(.5); }
+  56%, 100% { opacity: 0; transform: scale(1.35); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mk-cursor,
+  .mk-click,
+  [data-page="home"] .section-head .eyebrow::after,
+  .js .hero-trust li::before { animation: none !important; }
+  .mk-cursor, .mk-click { opacity: 0; }
+  .js .hero-trust li::before { transform: none; opacity: 1; }
+}
