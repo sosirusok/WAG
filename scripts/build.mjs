@@ -32,13 +32,39 @@ const safeImage = (value = "") => {
   return safeHttpUrl(value);
 };
 
+/* ------------------------------------------------------------ 공개 주소
+
+   SITE_URL 은 <base href> · canonical · OG · 구조화 데이터에 절대 경로로
+   박히므로 실제 서비스되는 주소와 반드시 같아야 한다. 틀리면 상대 경로가
+   전부 깨진다. 그래서 Cloudflare Pages 에서는 사람이 환경변수를 넣지 않아도
+   되도록 빌드 환경이 자동으로 주는 값에서 알아낸다.
+
+   결정 순서
+   1) SITE_URL — 로컬 미리보기와 GitHub Actions 가 명시적으로 넘긴다
+   2) Cloudflare Pages 가 자동 주입하는 값
+      - 운영 브랜치(main) 빌드는 고정 주소를 쓴다. CF_PAGES_URL 은 배포마다
+        달라지는 주소라서 canonical 에 박히면 매 배포가 다른 사이트가 된다
+      - 그 외 미리보기 빌드는 그 배포 주소를 그대로 쓴다
+   3) 둘 다 없으면 예전 GitHub Pages 주소                                    */
+
+const PRODUCTION_URL = "https://swagstudio.pages.dev/";
+const LEGACY_URL = "https://sosirusok.github.io/WAG/";
+
+const resolveSiteUrl = () => {
+  if (process.env.SITE_URL) return process.env.SITE_URL;
+  if (process.env.CF_PAGES) {
+    if (process.env.CF_PAGES_BRANCH === "main") return PRODUCTION_URL;
+    return process.env.CF_PAGES_URL || PRODUCTION_URL;
+  }
+  return LEGACY_URL;
+};
+
 const normalizedSiteUrl = (() => {
-  const candidate = process.env.SITE_URL || "https://sosirusok.github.io/WAG/";
   try {
-    const url = new URL(candidate);
+    const url = new URL(resolveSiteUrl());
     return url.href.endsWith("/") ? url.href : `${url.href}/`;
   } catch {
-    return "https://sosirusok.github.io/WAG/";
+    return LEGACY_URL;
   }
 })();
 
