@@ -338,6 +338,82 @@ if (rotator) {
   }
 }
 
+/* ------------------------------------------- 검색바 타이핑 플레이스홀더 */
+
+/* 만들 수 있는 것들이 실제 입력처럼 한 글자씩 찍혔다 지워진다.
+   보일 때만 돌고, 탭이 숨거나 화면 밖이면 완전히 선다.
+   모션 감소에서는 손대지 않아 정적 안내문이 그대로 남는다. */
+
+const typeField = document.querySelector("[data-type-field]");
+const typeTarget = typeField ? typeField.querySelector(".hs-ph-full") : null;
+
+if (typeField && typeTarget && !reducedMotion) {
+  let typeWords = [];
+  try {
+    typeWords = JSON.parse(typeTarget.dataset.typeWords || "[]");
+  } catch {
+    typeWords = [];
+  }
+  if (typeWords.length) {
+    let typeWordIndex = 0;
+    let typeCharIndex = 0;
+    let typeDeleting = false;
+    let typeTimer = 0;
+    let typeInView = false;
+
+    const typeTick = () => {
+      const word = typeWords[typeWordIndex];
+      if (!typeDeleting) {
+        typeCharIndex += 1;
+        typeTarget.textContent = word.slice(0, typeCharIndex);
+        if (typeCharIndex >= word.length) {
+          typeDeleting = true;
+          typeTimer = window.setTimeout(typeTick, 1700);
+          return;
+        }
+        typeTimer = window.setTimeout(typeTick, 62 + Math.random() * 74);
+      } else {
+        typeCharIndex -= 1;
+        typeTarget.textContent = word.slice(0, typeCharIndex);
+        if (typeCharIndex <= 0) {
+          typeDeleting = false;
+          typeWordIndex = (typeWordIndex + 1) % typeWords.length;
+          typeTimer = window.setTimeout(typeTick, 430);
+          return;
+        }
+        typeTimer = window.setTimeout(typeTick, 34);
+      }
+    };
+
+    const startTyping = () => {
+      if (typeTimer || document.hidden || !typeInView) return;
+      typeTarget.classList.add("is-typing-live");
+      typeTimer = window.setTimeout(typeTick, 600);
+    };
+
+    const stopTyping = () => {
+      window.clearTimeout(typeTimer);
+      typeTimer = 0;
+    };
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(([entry]) => {
+        typeInView = entry.isIntersecting;
+        if (entry.isIntersecting) startTyping();
+        else stopTyping();
+      }, { threshold: .4 }).observe(typeField);
+    } else {
+      typeInView = true;
+      startTyping();
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stopTyping();
+      else startTyping();
+    });
+  }
+}
+
 /* ------------------------------------------------------------ card tilt */
 
 if (!reducedMotion && finePointer) {
@@ -862,11 +938,12 @@ if (finePointer && !reducedMotion && window.matchMedia("(min-width: 901px)").mat
   const layer = document.createElement("div");
   layer.className = "cursor-layer";
   layer.setAttribute("aria-hidden", "true");
-  layer.innerHTML = '<i class="cursor-ring"></i><i class="cursor-dot"></i>';
+  layer.innerHTML = '<i class="cursor-ring"></i><i class="cursor-dot"></i><i class="cursor-tail cursor-tail-1"></i><i class="cursor-tail cursor-tail-2"></i><i class="cursor-tail cursor-tail-3"></i>';
   document.body.append(layer);
 
   const ring = layer.querySelector(".cursor-ring");
   const dot = layer.querySelector(".cursor-dot");
+  const tails = [...layer.querySelectorAll(".cursor-tail")].map((node) => ({ node, x: 0, y: 0 }));
   let pointerX = window.innerWidth / 2;
   let pointerY = window.innerHeight / 2;
   let ringX = pointerX;
@@ -879,6 +956,16 @@ if (finePointer && !reducedMotion && window.matchMedia("(min-width: 901px)").mat
     ringY += (pointerY - ringY) * .18;
     ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
     dot.style.transform = `translate3d(${pointerX}px, ${pointerY}px, 0) translate(-50%, -50%)`;
+    // 꼬리는 앞 점을 조금씩 늦게 따라와 혜성처럼 이어진다. 같은 루프라 추가 비용이 없다.
+    let tailX = ringX;
+    let tailY = ringY;
+    tails.forEach((tail) => {
+      tail.x += (tailX - tail.x) * .3;
+      tail.y += (tailY - tail.y) * .3;
+      tail.node.style.transform = `translate3d(${tail.x}px, ${tail.y}px, 0) translate(-50%, -50%)`;
+      tailX = tail.x;
+      tailY = tail.y;
+    });
     cursorFrame = window.requestAnimationFrame(paintCursor);
   };
 
