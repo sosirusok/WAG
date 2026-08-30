@@ -422,8 +422,8 @@ const renderServiceChapters = () => data.services.map((service, index) => `
     </div>
   </article>`).join("");
 
-const renderCapabilityFlow = () => data.capabilityGroups.map((item) => `
-  <span><b>${escapeHtml(item.title)}</b><em>${escapeHtml(item.description)}</em></span>`).join("");
+const renderCapabilityFlow = () => data.capabilityGroups.map((item, index) => `
+  <span class="cg-${index % 4}"><b>${escapeHtml(item.title)}</b><em>${escapeHtml(item.description)}</em></span>`).join("");
 
 /* ------------------------------------------------------------------ work */
 
@@ -478,12 +478,19 @@ const renderProcessPreview = () => data.process.map((item, index) => `
     <span class="process-step-note">${escapeHtml(item.result)}</span>
   </li>`).join("");
 
+const renderAboutFields = () => data.services.map((service) => `
+  <a class="field-line" href="services/#${escapeHtml(service.id)}" data-reveal="left">
+    <span class="fl-ic" aria-hidden="true">${heroCatIcons[service.id] || heroCatIcons.web}</span>
+    <span class="fl-tx"><b>${escapeHtml(service.title)}</b><em>${escapeHtml(service.short)}</em></span>
+    <i class="fl-arrow" aria-hidden="true">→</i>
+  </a>`).join("");
+
 const renderFaq = () => data.faq.map((item) => `
   <details data-reveal><summary><span>${escapeHtml(item.question)}</span><i aria-hidden="true"></i></summary><div class="faq-body"><p>${escapeHtml(item.answer)}</p></div></details>`).join("");
 
 const renderContactStrip = () => `
-  <section class="contact-strip" data-reveal data-motion-scope>
-    <div class="shell" data-spotlight>
+  <section class="contact-strip" data-reveal>
+    <div class="shell" data-spotlight data-motion-scope>
       <i class="strip-aurora" aria-hidden="true"></i>
       <div class="contact-strip-glow" aria-hidden="true"></div>
       <p class="eyebrow">CONTACT</p>
@@ -595,8 +602,9 @@ await writePage("about.template.html", "about/index.html", {
   PAGE_DESCRIPTION: "상담부터 배포까지 직접 맡는 SWAG 2인 프리랜서 스튜디오",
   CANONICAL_URL: pageUrl("about/"),
   HEADER: renderHeader("about"),
-  FOOTER: renderFooter(pageUrl("about/"))
-}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "CONTACT_STRIP"]);
+  FOOTER: renderFooter(pageUrl("about/")),
+  ABOUT_FIELDS: renderAboutFields()
+}, ["STRUCTURED_DATA", "HEADER", "FOOTER", "ABOUT_FIELDS", "CONTACT_STRIP"]);
 
 await writePage("contact.template.html", "contact/index.html", {
   PAGE_TITLE: `견적 문의 | ${data.brand.name}`,

@@ -47,15 +47,27 @@
       </div>
     </section>
 
+    <section class="about-fields shell" aria-labelledby="fields-title">
+      <div data-reveal><p class="eyebrow">FIELDS</p><h2 id="fields-title" data-split>맡는 분야</h2><p class="section-lead">5개 분야를 상담부터 배포까지 같은 두 사람이 맡습니다.</p></div>
+      <div class="field-lines">{{ABOUT_FIELDS}}</div>
+    </section>
+
     <section class="about-route shell" data-reveal aria-labelledby="route-title">
       <div><p class="eyebrow">WORKFLOW</p><h2 id="route-title">담당 과정</h2></div>
       <p><span>상담</span><i></i><span>기획</span><i></i><span>디자인</span><i></i><span>개발</span><i></i><span>검수</span><i></i><span>배포</span></p>
     </section>
 
     <section class="direct-contact shell" data-reveal>
-      <p class="eyebrow">DIRECT CONTACT</p>
-      <h2>김의현 / SWAG</h2>
-      <div><a class="btn btn-ghost magnetic" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a></div>
+      <div class="dc-card">
+        <div class="dc-duo" aria-hidden="true">
+          <span class="dc-face dc-face-a"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#2145e6"/><circle cx="17.5" cy="20.5" r="2.7" fill="#fff"/><circle cx="30.5" cy="20.5" r="2.7" fill="#fff"/><path d="M16 29c2.4 3 5 4.5 8 4.5s5.6-1.5 8-4.5" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/></svg></span>
+          <span class="dc-face dc-face-b"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#16b878"/><circle cx="17.5" cy="20.5" r="2.7" fill="#fff"/><circle cx="30.5" cy="20.5" r="2.7" fill="#fff"/><path d="M16 29c2.4 3 5 4.5 8 4.5s5.6-1.5 8-4.5" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/></svg></span>
+        </div>
+        <p class="eyebrow">DIRECT CONTACT</p>
+        <h2>김의현 / SWAG</h2>
+        <p class="dc-note">상담부터 배포까지 이 두 사람이 담당합니다. 카카오 오픈채팅으로 바로 상담할 수 있습니다.</p>
+        <div class="dc-actions"><a class="btn btn-ghost magnetic" href="{{KAKAO_URL}}" target="_blank" rel="noopener noreferrer">카카오 오픈채팅 ↗</a></div>
+      </div>
     </section>
 
     {{CONTACT_STRIP}}
