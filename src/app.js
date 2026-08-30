@@ -76,7 +76,7 @@ if (smoothWheelEnabled) {
 
   window.addEventListener("wheel", (event) => {
     const nativeScroll = event.target instanceof Element
-      && event.target.closest(".film-window, textarea, select, input, [data-native-scroll]");
+      && event.target.closest("textarea, select, input, [data-native-scroll]");
     if (event.ctrlKey || event.shiftKey || root.classList.contains("menu-open") || nativeScroll || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
     const unit = event.deltaMode === 1 ? 18 : event.deltaMode === 2 ? window.innerHeight : 1;
     if (!steering) {
@@ -495,34 +495,62 @@ if (motionStage) {
 
 /* ------------------------------------------------- draggable service film */
 
+/* 카드 줄은 기술 스택 행처럼 늘 왼쪽으로 흐른다. 복제 세트 폭만큼 오프셋을
+   되감아 이음새 없이 돌고, 잡아끌면 그만큼 움직였다가 놓으면 다시 흐른다.
+   손을 올리면 카드 하나를 짚을 수 있게 천천히 - 완전히 멈추지 않는 것은,
+   멈춰 버리면 고장 난 것처럼 보이기 때문이다. */
+
 const filmWindow = document.querySelector("[data-drag-film]");
 
 if (filmWindow) {
-  let dragging = false;
-  let startX = 0;
-  let startScroll = 0;
-  let autoDirection = 1;
+  const filmTrack = filmWindow.querySelector(".film-track");
+  const filmSet = filmWindow.querySelector("[data-film-set]");
+  const FILM_SPEED = -27; // px/s, 음수 = 왼쪽
+  let filmOffset = 0;
+  let filmDistance = 0;
+  let filmVisible = true;
   let autoFrame = 0;
   let previousTime = 0;
-  let resumeAt = 0;
-  let filmVisible = true;
+  let speedScale = 1;
+  let speedTarget = 1;
+  let dragging = false;
+  let dragPointerId = 0;
+  let dragStartX = 0;
+  let dragStartOffset = 0;
 
-  // 화면 밖에서도 매 프레임 scrollWidth 를 재며 헛돌던 루프를,
-  // 관찰자가 보일 때만 돌리고 벗어나면 완전히 세운다.
+  const wrapFilm = () => {
+    if (!filmDistance) return;
+    while (filmOffset <= -filmDistance) filmOffset += filmDistance;
+    while (filmOffset > 0) filmOffset -= filmDistance;
+  };
+
+  const paintFilm = () => {
+    if (filmTrack) filmTrack.style.transform = `translate3d(${filmOffset}px, 0, 0)`;
+  };
+
+  const measureFilm = () => {
+    filmDistance = filmSet ? filmSet.offsetWidth : 0;
+    if (reducedMotion) {
+      // 모션 감소에서는 복제 세트가 숨고 원본을 손으로 넘긴다
+      if (filmTrack) filmTrack.style.transform = "none";
+      return;
+    }
+    wrapFilm();
+    paintFilm();
+  };
+
   const autoMove = (time = 0) => {
-    if (!filmVisible) {
+    if (!filmVisible || reducedMotion) {
       autoFrame = 0;
       return;
     }
-    const delta = Math.min(40, time - previousTime || 16);
+    const delta = Math.min(50, time - previousTime || 16) / 1000;
     previousTime = time;
-    if (!dragging && time > resumeAt) {
-      const max = Math.max(0, filmWindow.scrollWidth - filmWindow.clientWidth);
-      if (max > 0) {
-        filmWindow.scrollLeft += autoDirection * delta * .035;
-        if (filmWindow.scrollLeft >= max - 2) autoDirection = -1;
-        if (filmWindow.scrollLeft <= 2) autoDirection = 1;
-      }
+    speedScale += (speedTarget - speedScale) * Math.min(1, delta * 6);
+    if (!dragging && filmDistance) {
+      filmOffset += FILM_SPEED * speedScale * delta;
+      wrapFilm();
+      paintFilm();
     }
     autoFrame = window.requestAnimationFrame(autoMove);
   };
@@ -539,23 +567,38 @@ if (filmWindow) {
     }
   };
 
+  if (finePointer) {
+    filmWindow.addEventListener("pointerenter", () => { speedTarget = .16; });
+    filmWindow.addEventListener("pointerleave", () => { speedTarget = 1; });
+  }
+
+  // 탭(클릭)은 그대로 카드로 보내고, 6px 이상 끌 때부터 드래그로 본다.
+  // 캡처를 그때 잡아야 드래그 뒤의 click 이 카드로 새지 않는다.
   filmWindow.addEventListener("pointerdown", (event) => {
-    dragging = true;
-    startX = event.clientX;
-    startScroll = filmWindow.scrollLeft;
-    filmWindow.classList.add("is-dragging");
-    filmWindow.setPointerCapture(event.pointerId);
+    if (reducedMotion) return;
+    dragPointerId = event.pointerId;
+    dragStartX = event.clientX;
+    dragStartOffset = filmOffset;
+    dragging = false;
   });
 
   filmWindow.addEventListener("pointermove", (event) => {
-    if (!dragging) return;
-    filmWindow.scrollLeft = startScroll - (event.clientX - startX) * 1.15;
+    if (reducedMotion || event.pointerId !== dragPointerId) return;
+    const moved = event.clientX - dragStartX;
+    if (!dragging) {
+      if (Math.abs(moved) < 6) return;
+      dragging = true;
+      filmWindow.classList.add("is-dragging");
+      filmWindow.setPointerCapture(event.pointerId);
+    }
+    filmOffset = dragStartOffset + moved;
+    wrapFilm();
+    paintFilm();
   });
 
   const stopDragging = (event) => {
     if (!dragging) return;
     dragging = false;
-    resumeAt = performance.now() + 1800;
     filmWindow.classList.remove("is-dragging");
     if (filmWindow.hasPointerCapture(event.pointerId)) filmWindow.releasePointerCapture(event.pointerId);
   };
@@ -571,12 +614,17 @@ if (filmWindow) {
     }, { rootMargin: "160px 0px" }).observe(filmWindow);
   } else filmWindow.classList.add("is-inview");
 
+  if ("ResizeObserver" in window) new ResizeObserver(measureFilm).observe(filmWindow);
+  else window.addEventListener("resize", measureFilm, { passive: true });
+  if (document.fonts?.ready) document.fonts.ready.then(measureFilm);
+
+  measureFilm();
   syncAutoMove();
   window.addEventListener("pagehide", () => {
     window.cancelAnimationFrame(autoFrame);
     autoFrame = 0;
   });
-  // bfcache 복귀 시 죽은 프레임 id 가 재시작을 막지 않게 지우고 다시 잰다
+  // bfcache 복귀 시 죽은 프레임 id 가 재시작을 막지 않게 지우고 다시 돈다
   window.addEventListener("pageshow", (event) => {
     if (!event.persisted) return;
     autoFrame = 0;
