@@ -301,13 +301,31 @@ const renderTerminal = () => terminalLines.map((line, index) => {
   return `<span class="term-line" style="--li:${index}">${body}</span>`;
 }).join("");
 
+/* 배경 장식 조각들. 전부 aria-hidden 컨테이너 안 장식이라 읽히지 않고,
+   글자를 담지 않으므로 본문 글자 크기 규칙과도 무관하다. */
+
+const heroSparkle = (extra) => `<svg class="hero-sparkle ${extra}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1c1.1 6.2 3.7 8.8 11 11-7.3 2.2-9.9 4.8-11 11-1.1-6.2-3.7-8.8-11-11 7.3-2.2 9.9-4.8 11-11Z"/></svg>`;
+
 const renderHero = () => `
   <section class="hero" data-impact-hero data-motion-scope>
-    <div class="hero-backdrop" aria-hidden="true"><i class="hero-grid"></i><i class="hero-beam"></i></div>
+    <div class="hero-backdrop" aria-hidden="true">
+      <i class="hero-grid"></i>
+      <i class="hero-beam"></i>
+      <i class="hero-blob hero-blob-1"></i>
+      <i class="hero-blob hero-blob-2"></i>
+      <i class="hero-blob hero-blob-3"></i>
+      <i class="hero-orbit hero-orbit-1"></i>
+      <i class="hero-orbit hero-orbit-2"></i>
+      ${heroSparkle("hs-1")}${heroSparkle("hs-2")}${heroSparkle("hs-3")}${heroSparkle("hs-4")}
+      <span class="hero-mote hm-1"><i></i></span>
+      <span class="hero-mote hm-2"><i></i></span>
+      <span class="hero-mote hm-3"><i></i></span>
+      <span class="hero-mote hm-4"><i></i></span>
+    </div>
     <div class="hero-inner shell">
       <div class="hero-copy">
         <p class="hero-eyebrow" data-reveal><span class="pulse-dot" aria-hidden="true"></span>${escapeHtml(data.brand.expansion)}</p>
-        <h1 data-reveal data-split>필요한 건 <span class="hero-rotator"><b class="rotator-word" data-rotator data-rotator-words="${escapeHtml(JSON.stringify(rotatorWords))}">${escapeHtml(rotatorWords[0])}</b></span><br>만드는 건 SWAG</h1>
+        <h1 data-reveal data-split>필요한 건 <span class="hero-rotator"><b class="rotator-word" data-rotator data-rotator-words="${escapeHtml(JSON.stringify(rotatorWords))}">${escapeHtml(rotatorWords[0])}</b><svg class="rotator-squiggle" viewBox="0 0 120 10" preserveAspectRatio="none" aria-hidden="true"><path d="M3 6.5Q14 2.5 27 6T51 6T75 6T99 6T117 5.5"/></svg><svg class="rotator-pop" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1c1.1 6.2 3.7 8.8 11 11-7.3 2.2-9.9 4.8-11 11-1.1-6.2-3.7-8.8-11-11 7.3-2.2 9.9-4.8 11-11Z"/></svg></span><br>만드는 건 SWAG</h1>
         <p class="hero-lead" data-reveal>상담한 두 사람이 기획 · 디자인 · 개발 · 검수 · 배포를 끝까지 맡는 ${escapeHtml(data.brand.description)}입니다.</p>
         <div class="hero-actions" data-reveal>
           <a class="btn btn-primary magnetic" href="contact/">${escapeHtml(data.brand.primaryCta)} <span aria-hidden="true">→</span></a>
@@ -332,6 +350,7 @@ const renderHero = () => `
         <div class="hero-chip hero-chip-2"><i class="chip-ring"></i> 검수 중</div>
       </div>
     </div>
+    <svg class="hero-hem" viewBox="0 0 1440 64" preserveAspectRatio="none" aria-hidden="true"><path class="hem-back" d="M0 36C180 12 380 52 640 34C900 16 1160 50 1440 24L1440 64L0 64Z"/><path class="hem-front" d="M0 46C220 24 460 60 760 42C1020 27 1240 56 1440 38L1440 64L0 64Z"/></svg>
     <a class="scroll-cue" href="./#stats"><span>SCROLL</span><i aria-hidden="true"></i></a>
   </section>`;
 

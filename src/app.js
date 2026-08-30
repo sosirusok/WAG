@@ -99,6 +99,12 @@ if (smoothWheelEnabled) {
   document.addEventListener("keydown", (event) => {
     if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(event.key)) stopSmoothWheel();
   });
+  // 앵커 이동(부드러운 스크롤)이 시작될 때 관성 글라이드가 남아 있으면
+  // 목적지로 가는 스크롤을 도로 끌어당긴다. 해시 링크를 누르면 손을 뗀다.
+  document.addEventListener("click", (event) => {
+    const link = event.target instanceof Element && event.target.closest('a[href*="#"]');
+    if (link) stopSmoothWheel();
+  }, true);
 }
 
 /* --------------------------------------- scroll progress, parallax, header */
@@ -241,36 +247,91 @@ if (rotator) {
   } catch {
     words = [];
   }
-  if (words.length > 1 && !reducedMotion) {
+  if (words.length) {
     // 단어마다 정확한 너비를 재 두고, 바뀔 때 그 너비로 부드럽게 늘었다 줄었다 한다.
     // 가장 긴 단어로 자리를 고정하면 짧은 단어일 때 제목이 한 줄 더 내려간다.
     const slot = rotator.closest(".hero-rotator") || rotator;
-    const probe = document.createElement("span");
-    probe.style.cssText = "position:absolute;visibility:hidden;white-space:nowrap;";
-    probe.className = rotator.className;
-    slot.parentElement?.append(probe);
-    const widths = words.map((word) => {
-      probe.textContent = word;
-      return Math.ceil(probe.offsetWidth) + 2;
-    });
-    probe.remove();
-    const applyWidth = (i) => { if (widths[i]) slot.style.width = `${widths[i]}px`; };
-    applyWidth(0);
-    window.addEventListener("resize", () => applyWidth(index), { passive: true });
-
+    const heading = rotator.closest("h1") || slot.parentElement;
+    let widths = [];
     let index = 0;
-    window.setInterval(() => {
-      if (document.hidden) return;
-      rotator.classList.add("is-out");
-      window.setTimeout(() => {
-        index = (index + 1) % words.length;
-        rotator.textContent = words[index];
-        applyWidth(index);
-        rotator.classList.remove("is-out");
-        rotator.classList.add("is-in");
-        window.setTimeout(() => rotator.classList.remove("is-in"), 460);
-      }, 260);
-    }, 2600);
+
+    // "운영 시스템"처럼 긴 단어가 오면 첫 줄이 칼럼보다 넓어져 로테이터가
+    // 통째로 다음 줄로 꺾였다. 단어를 자를 수도, 자리를 넓힐 수도 없으니
+    // 제일 긴 첫 줄이 딱 들어가는 비율로 제목 폰트를 줄인다(--h1-fit).
+    // 로테이터 앞 글자("필요한 건 ")는 마크업에서 그대로 읽어 온다.
+    const linePrefix = () => {
+      let prefix = "";
+      for (const node of heading.childNodes) {
+        if (node === slot || (node.nodeType === 1 && node.contains(slot))) break;
+        prefix += node.textContent;
+      }
+      return prefix;
+    };
+
+    // 뷰포트 폰트(5.6vw)라 크기가 바뀔 때마다 다시 재야 한다.
+    // 예전에는 처음 잰 너비를 리사이즈에서 재사용해 폭이 어긋났다.
+    const measure = () => {
+      heading.style.setProperty("--h1-fit", "1");
+      const probe = document.createElement("span");
+      probe.style.cssText = "position:absolute;visibility:hidden;white-space:pre;";
+      probe.className = "rotator-word";
+      heading.append(probe);
+      // 로테이터는 <b>라 제목(800)보다 굵게 그려질 수 있다.
+      // 앞 글자는 제목 두께로, 단어는 실제 로테이터 두께로 따로 잰다.
+      const rotatorWeight = window.getComputedStyle(rotator).fontWeight;
+      const prefix = linePrefix();
+      probe.style.fontWeight = "inherit";
+      probe.textContent = prefix;
+      const prefixWidth = probe.offsetWidth;
+      probe.style.fontWeight = rotatorWeight;
+      let longestWord = 0;
+      words.forEach((word) => {
+        probe.textContent = word;
+        longestWord = Math.max(longestWord, probe.offsetWidth);
+      });
+      const longestLine = prefixWidth + longestWord;
+      // 슬롯이 ceil(+2px)로 잡히고 fit 은 소수점 4자리라, 딱 맞게 나누면
+      // 1px 미만 오차로도 줄이 꺾인다. 눈에 안 보이는 여유(8px)를 빼고 계산한다.
+      const available = heading.clientWidth;
+      const fit = longestLine > 0 && available > 0
+        ? Math.min(1, Math.floor(((available - 2) / (longestLine + 8)) * 1000) / 1000)
+        : 1;
+      heading.style.setProperty("--h1-fit", String(fit));
+      widths = words.map((word) => {
+        probe.textContent = word;
+        return Math.ceil(probe.offsetWidth) + 2;
+      });
+      probe.remove();
+      if (widths[index]) slot.style.width = `${widths[index]}px`;
+    };
+
+    let measureFrame = 0;
+    const requestMeasure = () => {
+      if (!measureFrame) measureFrame = window.requestAnimationFrame(() => {
+        measureFrame = 0;
+        measure();
+      });
+    };
+
+    measure();
+    window.addEventListener("resize", requestMeasure, { passive: true });
+    // SUIT 폰트가 늦게 도착하면 폴백 글꼴 기준 폭이 남는다. 도착 후 한 번 더.
+    document.fonts?.ready?.then(requestMeasure);
+
+    if (words.length > 1 && !reducedMotion) {
+      window.setInterval(() => {
+        if (document.hidden) return;
+        rotator.classList.add("is-out");
+        window.setTimeout(() => {
+          index = (index + 1) % words.length;
+          rotator.textContent = words[index];
+          if (widths[index]) slot.style.width = `${widths[index]}px`;
+          rotator.classList.remove("is-out");
+          rotator.classList.add("is-in");
+          window.setTimeout(() => rotator.classList.remove("is-in"), 460);
+        }, 260);
+      }, 2600);
+    }
   }
 }
 
@@ -373,6 +434,8 @@ if (motionStage) {
     previousMotionTime = time;
 
     // scrolling fast pushes every row along its own direction - the wall reacts to you
+    // 스크롤이 멈춘 뒤에도 속도값이 남아 가속이 눌어붙지 않게 매 프레임 식힌다
+    scrollVelocity += (0 - scrollVelocity) * Math.min(1, delta * 3);
     const boost = 1 + Math.min(2.6, Math.abs(scrollVelocity) * .06);
     speedScale += (speedTarget - speedScale) * Math.min(1, delta * 6);
 
@@ -413,7 +476,14 @@ if (motionStage) {
   document.addEventListener("visibilitychange", syncMotionRows);
   window.addEventListener("pagehide", () => {
     if (motionFrame) window.cancelAnimationFrame(motionFrame);
-  }, { once: true });
+    motionFrame = 0;
+  });
+  // bfcache 복귀 시 죽은 프레임 id 가 재시작을 막지 않게 지우고 다시 돈다
+  window.addEventListener("pageshow", (event) => {
+    if (!event.persisted) return;
+    motionFrame = 0;
+    syncMotionRows();
+  });
 
   measureMotionRows();
   if (document.fonts?.ready) document.fonts.ready.then(measureMotionRows);
@@ -434,16 +504,36 @@ if (filmWindow) {
   let resumeAt = 0;
   let filmVisible = true;
 
+  // 화면 밖에서도 매 프레임 scrollWidth 를 재며 헛돌던 루프를,
+  // 관찰자가 보일 때만 돌리고 벗어나면 완전히 세운다.
   const autoMove = (time = 0) => {
+    if (!filmVisible) {
+      autoFrame = 0;
+      return;
+    }
     const delta = Math.min(40, time - previousTime || 16);
     previousTime = time;
-    const max = Math.max(0, filmWindow.scrollWidth - filmWindow.clientWidth);
-    if (!reducedMotion && filmVisible && !dragging && time > resumeAt && max > 0) {
-      filmWindow.scrollLeft += autoDirection * delta * .035;
-      if (filmWindow.scrollLeft >= max - 2) autoDirection = -1;
-      if (filmWindow.scrollLeft <= 2) autoDirection = 1;
+    if (!dragging && time > resumeAt) {
+      const max = Math.max(0, filmWindow.scrollWidth - filmWindow.clientWidth);
+      if (max > 0) {
+        filmWindow.scrollLeft += autoDirection * delta * .035;
+        if (filmWindow.scrollLeft >= max - 2) autoDirection = -1;
+        if (filmWindow.scrollLeft <= 2) autoDirection = 1;
+      }
     }
     autoFrame = window.requestAnimationFrame(autoMove);
+  };
+
+  const syncAutoMove = () => {
+    if (reducedMotion) return;
+    if (filmVisible && !autoFrame) {
+      previousTime = 0;
+      autoFrame = window.requestAnimationFrame(autoMove);
+    }
+    if (!filmVisible && autoFrame) {
+      window.cancelAnimationFrame(autoFrame);
+      autoFrame = 0;
+    }
   };
 
   filmWindow.addEventListener("pointerdown", (event) => {
@@ -474,11 +564,21 @@ if (filmWindow) {
     new IntersectionObserver(([entry]) => {
       filmVisible = entry.isIntersecting;
       filmWindow.classList.toggle("is-inview", entry.isIntersecting);
+      syncAutoMove();
     }, { rootMargin: "160px 0px" }).observe(filmWindow);
   } else filmWindow.classList.add("is-inview");
 
-  if (!reducedMotion) autoFrame = window.requestAnimationFrame(autoMove);
-  window.addEventListener("pagehide", () => window.cancelAnimationFrame(autoFrame), { once: true });
+  syncAutoMove();
+  window.addEventListener("pagehide", () => {
+    window.cancelAnimationFrame(autoFrame);
+    autoFrame = 0;
+  });
+  // bfcache 복귀 시 죽은 프레임 id 가 재시작을 막지 않게 지우고 다시 잰다
+  window.addEventListener("pageshow", (event) => {
+    if (!event.persisted) return;
+    autoFrame = 0;
+    syncAutoMove();
+  });
 }
 
 /* ------------------------------------------------- route expand transition */
@@ -533,18 +633,29 @@ document.querySelectorAll("[data-route-expand]").forEach((link) => {
   });
 });
 
+/* 뒤로 가기(bfcache)로 돌아오면 확장 오버레이가 화면을 덮은 채 복원된다.
+   페이지가 다시 보일 때 전환 잔재를 전부 걷는다. */
+window.addEventListener("pageshow", (event) => {
+  if (!event.persisted) return;
+  document.querySelectorAll(".route-expand-overlay").forEach((node) => node.remove());
+  document.querySelectorAll(".is-expanding-source").forEach((node) => node.classList.remove("is-expanding-source"));
+  root.classList.remove("route-leaving");
+});
+
 /* --------------------------------------------------------- magnetic links */
 
+/* transform 을 인라인으로 덮으면 CSS 의 :active 눌림 · hover 리프트가 전부
+   무시된다. 합성 가능한 translate 속성을 쓰면 둘이 자연스럽게 겹친다. */
 if (!reducedMotion && finePointer) {
   document.querySelectorAll(".magnetic").forEach((link) => {
     link.addEventListener("pointermove", (event) => {
       const bounds = link.getBoundingClientRect();
       const x = (event.clientX - bounds.left - bounds.width / 2) * .08;
       const y = (event.clientY - bounds.top - bounds.height / 2) * .12;
-      link.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      link.style.translate = `${x.toFixed(1)}px ${y.toFixed(1)}px`;
     });
     link.addEventListener("pointerleave", () => {
-      link.style.transform = "";
+      link.style.translate = "";
     });
   });
 }
@@ -710,6 +821,7 @@ if (finePointer && !reducedMotion && window.matchMedia("(min-width: 901px)").mat
   let ringX = pointerX;
   let ringY = pointerY;
   let cursorFrame = 0;
+  let cursorStopped = false;
 
   const paintCursor = () => {
     ringX += (pointerX - ringX) * .18;
@@ -720,7 +832,7 @@ if (finePointer && !reducedMotion && window.matchMedia("(min-width: 901px)").mat
   };
 
   document.addEventListener("pointermove", (event) => {
-    if (event.pointerType === "touch") return;
+    if (cursorStopped || event.pointerType === "touch") return;
     pointerX = event.clientX;
     pointerY = event.clientY;
     if (!layer.classList.contains("is-live")) layer.classList.add("is-live");
@@ -739,7 +851,24 @@ if (finePointer && !reducedMotion && window.matchMedia("(min-width: 901px)").mat
   document.addEventListener("pointerleave", () => layer.classList.remove("is-live"), { passive: true });
 
   cursorFrame = window.requestAnimationFrame(paintCursor);
-  window.addEventListener("pagehide", () => window.cancelAnimationFrame(cursorFrame), { once: true });
+  window.addEventListener("pagehide", () => window.cancelAnimationFrame(cursorFrame));
+
+  // 뒤로 가기(bfcache)로 돌아오면 pagehide 에서 세운 루프가 죽은 채 남는다
+  window.addEventListener("pageshow", (event) => {
+    if (!event.persisted || cursorStopped) return;
+    window.cancelAnimationFrame(cursorFrame);
+    cursorFrame = window.requestAnimationFrame(paintCursor);
+  });
+
+  // 열려 있는 동안 OS 에서 모션 감소를 켜면 CSS 는 커서 레이어만 숨기고
+  // body 의 cursor:none 은 is-live 에 걸려 남는다 - 커서가 통째로 사라진다.
+  // 설정이 바뀌는 즉시 링을 내리고, pointermove 가 되살리지 못하게 잠근다.
+  window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener?.("change", (event) => {
+    if (!event.matches) return;
+    cursorStopped = true;
+    layer.classList.remove("is-live", "is-hover", "is-down", "is-text");
+    window.cancelAnimationFrame(cursorFrame);
+  });
 }
 
 /* ------------------------------------------------- 어두운 구역 스포트라이트 */
@@ -1064,6 +1193,7 @@ if (codeBody && !reducedMotion) {
   const lines = [...codeBody.querySelectorAll(".code-line")];
   let lineIndex = 0;
   let highlightTimer = 0;
+  let highlightInView = false;
 
   const moveHighlight = () => {
     if (document.hidden || !lines.length) return;
@@ -1085,16 +1215,20 @@ if (codeBody && !reducedMotion) {
 
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(([entry]) => {
+      highlightInView = entry.isIntersecting;
       if (entry.isIntersecting) startHighlight();
       else stopHighlight();
     }, { threshold: .2 }).observe(codeBody);
   } else {
+    highlightInView = true;
     startHighlight();
   }
 
+  // 탭이 돌아왔다고 무조건 다시 켜면, 화면 밖에서 관찰자가 세워 둔
+  // 타이머가 도로 살아난다. 히어로가 보일 때만 다시 켠다.
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) stopHighlight();
-    else startHighlight();
+    else if (highlightInView) startHighlight();
   });
 }
 
