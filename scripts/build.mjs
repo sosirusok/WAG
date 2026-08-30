@@ -358,9 +358,12 @@ const renderStats = () => statTiles.map((stat, index) => `
 
 /* --------------------------------------------------------- service cards */
 
+/* 카드 줄은 늘 왼쪽으로 흐르는 무한 루프다. 이어 붙일 복제 세트는
+   읽히지 않게 aria-hidden 으로 두고, 링크가 탭 순서에 두 번 잡히지 않게
+   tabindex 를 걷는다. */
 const renderHomeFilm = () => {
-  const items = data.services.map((service, index) => `
-    <a class="service-card film-shot film-shot-${index + 1}" href="services/#${escapeHtml(service.id)}" data-route-expand data-tilt>
+  const filmCard = (service, index, duplicated) => `
+    <a class="service-card film-shot film-shot-${index + 1}" href="services/#${escapeHtml(service.id)}" data-route-expand data-tilt${duplicated ? ' tabindex="-1"' : ""}>
       <figure class="service-card-visual" data-motion-scope>${mockups[service.id] || mockups.web}<span class="card-sheen" aria-hidden="true"></span></figure>
       <div class="service-card-copy">
         <p class="service-card-tag">${escapeHtml(service.short)}</p>
@@ -368,8 +371,10 @@ const renderHomeFilm = () => {
         <p>${escapeHtml(service.description)}</p>
         <span class="btn btn-small">자세히 보기</span>
       </div>
-    </a>`).join("");
-  return `<div class="film-track">${items}</div>`;
+    </a>`;
+  const items = data.services.map((service, index) => filmCard(service, index, false)).join("");
+  const duplicates = data.services.map((service, index) => filmCard(service, index, true)).join("");
+  return `<div class="film-track"><div class="film-set" data-film-set>${items}</div><div class="film-set" aria-hidden="true">${duplicates}</div></div>`;
 };
 
 /* ------------------------------------------------------------ tech stack */

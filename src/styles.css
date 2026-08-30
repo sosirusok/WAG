@@ -856,31 +856,38 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 
 .home-scope { padding-block: clamp(48px, 6vw, 80px) clamp(56px, 8vw, 104px); }
 
+/* 카드 줄은 화면 끝에서 끝까지, 늘 왼쪽으로 흐른다(app.js).
+   왼쪽에 큰 여백을 두던 예전 정렬은 첫 화면이 비어 보여서 걷어냈다.
+   손을 올리면 천천히, 잡아끌면 그만큼 움직이고 놓으면 다시 흐른다. */
 .film-window {
-  display: flex;
-  overflow-x: auto;
-  scrollbar-width: none;
+  overflow: hidden;
   cursor: grab;
   padding-block: 10px 26px;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
 }
 
-.film-window::-webkit-scrollbar { display: none; }
 .film-window.is-dragging { cursor: grabbing; }
 .film-window.is-dragging .service-card { pointer-events: none; }
 
 .film-track {
   display: flex;
-  gap: clamp(16px, 2vw, 24px);
-  padding-inline: max(calc((100vw - 1200px) / 2 + clamp(20px, 4.5vw, 48px)), clamp(20px, 4.5vw, 48px));
+  width: max-content;
+  will-change: transform;
+}
+
+.film-set {
+  display: flex;
+  gap: clamp(14px, 1.6vw, 22px);
+  padding-inline: clamp(7px, .8vw, 11px);
 }
 
 .film-hint { text-align: center; font-size: 14px; font-weight: 700; color: var(--sub); letter-spacing: .08em; }
 
+/* 1440px 기준 다섯 장이 처음부터 전부 보이는 폭 */
 .service-card {
   flex: 0 0 auto;
-  width: min(84vw, 360px);
+  width: clamp(240px, 18.4vw, 300px);
   border-radius: var(--r-lg);
   background: var(--surface);
   border: 1px solid var(--line);
@@ -2664,6 +2671,10 @@ html:not(.js) .intro-curtain { display: none; }
   .mobile-menu[open] .mobile-menu-panel nav a { animation: none !important; clip-path: inset(0 0 -20% 0); }
 
   .motion-set[aria-hidden="true"] { display: none; }
+  /* 카드 줄도 정지: 복제 세트를 걷고 원본만 손으로 넘길 수 있게 남긴다 */
+  .film-set[aria-hidden="true"] { display: none; }
+  .film-track { transform: none !important; width: auto; }
+  .film-window { overflow-x: auto; scrollbar-width: none; }
   .image-scan { display: none; }
   .case-visual img { transform: none; }
   .hero-visual { transform: none; }
