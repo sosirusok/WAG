@@ -289,7 +289,10 @@ if (rotator) {
         probe.textContent = word;
         longestWord = Math.max(longestWord, probe.offsetWidth);
       });
-      const longestLine = prefixWidth + longestWord;
+      // 형광펜 블록의 좌우 패딩은 슬롯(.hero-rotator)에 있으므로 따로 더한다
+      const slotStyle = window.getComputedStyle(slot);
+      const slotPad = (parseFloat(slotStyle.paddingLeft) || 0) + (parseFloat(slotStyle.paddingRight) || 0);
+      const longestLine = prefixWidth + longestWord + slotPad;
       // 슬롯이 ceil(+2px)로 잡히고 fit 은 소수점 4자리라, 딱 맞게 나누면
       // 1px 미만 오차로도 줄이 꺾인다. 눈에 안 보이는 여유(8px)를 빼고 계산한다.
       const available = heading.clientWidth;

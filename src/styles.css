@@ -329,9 +329,8 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 
 .brand-svg { height: 30px; width: auto; display: block; }
 
-/* 홈 히어로가 밝은 파스텔이 되면서 헤더 흰색 반전은 걷어냈다.
-   기본 잉크 헤더가 크림 배경 위에서 그대로 대비를 만족한다. */
-[data-page="home"] .site-header:not(.is-scrolled) .desktop-nav a:hover { background: rgba(33, 69, 230, .07); }
+/* 홈 히어로가 순백이므로 헤더는 기본 잉크 그대로 쓴다.
+   CTA 도 사이트 공통(브랜드 그라디언트)이라 로고와 저절로 어울린다. */
 
 /* 로고 등장 모션: 스피드라인 슬라이드 + 오빗 아크 드로잉 */
 .js body:not(.is-loaded) .site-header .lg-line { opacity: 0; }
@@ -479,170 +478,47 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 
 /* ----------------------------------------------------------------- 히어로 */
 
-/* v55 "모던 라이트": 어두운 해커 룸을 걷어내고, 서브 페이지 인트로와 같은
-   밝은 브랜드 언어(쿨 화이트 캔버스 + 블루 · 그린 워시)로 홈을 통일한다.
-   흰 코드 카드 + 딥 네이비 터미널 한 장으로 심도를 잡고, 장식은 도트 종이,
-   궤도 링, 빛 글린트, 떠오르는 입자처럼 차분한 것만 남긴다.
-   전부 transform / opacity / stroke-dashoffset 만 움직이고,
-   화면 밖에서는 기존 [data-motion-scope] 관찰자가 통째로 멈춰 준다. */
+/* v56 "서비스 홈": 숨고 홈의 문법을 그대로 따른다.
+   순백 캔버스, 중앙 정렬 헤드라인, 검색바 모양의 문의 진입점,
+   분야마다 색이 다른 아이콘 한 줄, 어두운 배너 스트립.
+   배경에 떠다니는 장식은 전혀 두지 않고, 움직임은 실제 제품처럼
+   요소 안에만 산다(등장 스태거 · 로테이터 · 커서 깜빡임 · 아이콘 바운스 ·
+   배너 마퀴 · hover 반응). 색은 로고와 같은 브랜드 블루 · 그린만 쓴다. */
 
 .hero {
   position: relative;
-  padding-top: calc(var(--header-h) + clamp(44px, 7vh, 88px));
-  padding-bottom: clamp(76px, 10vh, 120px);
-  min-height: 90svh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  overflow: hidden;
-  color: var(--ink);
-  background:
-    radial-gradient(56vw 46vw at 10% -8%, rgba(33, 69, 230, .1), transparent 62%),
-    radial-gradient(44vw 40vw at 92% 6%, rgba(99, 102, 241, .07), transparent 60%),
-    radial-gradient(50vw 44vw at 92% 98%, rgba(22, 184, 120, .09), transparent 62%),
-    linear-gradient(180deg, #f8faff, #f3f6fc);
-}
-
-.hero-backdrop { position: absolute; inset: 0; pointer-events: none; }
-
-/* 격자선 대신 잔잔한 도트 종이. 홈 히어로에서만 도트를 쓴다. */
-.hero .hero-grid {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(13, 21, 48, .08) 1.2px, transparent 1.2px);
-  background-size: 26px 26px;
-  -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 40%, #000 25%, transparent 78%);
-  mask-image: radial-gradient(ellipse 85% 75% at 50% 40%, #000 25%, transparent 78%);
-}
-
-/* 위에서 아래로 훑고 내려가는 빛줄기. keyframes 이름과 이동 폭은 유지. */
-.hero-beam {
-  position: absolute;
-  inset: -30% 0 auto;
-  height: 34%;
-  contain: strict;
-  background: linear-gradient(180deg, transparent, rgba(33, 69, 230, .06) 40%, rgba(22, 184, 120, .05) 62%, transparent);
-  will-change: transform;
-  animation: heroBeam 12s ease-in-out infinite;
-}
-
-@keyframes heroBeam {
-  0% { transform: translate3d(0, 0, 0); }
-  55%, 100% { transform: translate3d(0, 260%, 0); }
-}
-
-/* 은은한 빛 웅덩이. blur 필터 대신 radial 페더라 합성 비용이 없다. */
-.hero-blob { position: absolute; border-radius: 50%; }
-.hero-blob-1 { width: 34vw; height: 34vw; left: -9vw; top: -11vw; background: radial-gradient(circle at 36% 36%, rgba(33, 69, 230, .12), transparent 70%); animation: blobDrift 12s ease-in-out -3s infinite alternate; }
-.hero-blob-2 { width: 26vw; height: 26vw; right: -6vw; top: 6vh; background: radial-gradient(circle at 40% 40%, rgba(99, 102, 241, .1), transparent 70%); animation: blobDrift 15s ease-in-out -7s infinite alternate; }
-.hero-blob-3 { width: 30vw; height: 30vw; right: 8vw; bottom: -13vw; background: radial-gradient(circle at 45% 40%, rgba(22, 184, 120, .11), transparent 70%); animation: blobDrift 18s ease-in-out -11s infinite alternate; }
-
-@keyframes blobDrift {
-  from { transform: translate3d(0, -12px, 0) scale(1); }
-  to { transform: translate3d(0, 14px, 0) scale(1.04); }
-}
-
-/* 로고의 오빗 아크를 닮은 궤도 링 두 개가 비주얼 뒤에서 아주 천천히 돈다 */
-.hero-orbit {
-  position: absolute;
-  border-radius: 50%;
-  border: 1.5px dashed rgba(33, 69, 230, .16);
-  animation: orbitSpin 70s linear infinite;
-}
-
-.hero-orbit-1 { width: 560px; height: 560px; right: -60px; top: 4%; }
-
-.hero-orbit-2 {
-  width: 340px;
-  height: 340px;
-  right: 120px;
-  bottom: -90px;
-  border-style: solid;
-  border-color: rgba(22, 184, 120, .14);
-  animation-duration: 55s;
-  animation-direction: reverse;
-}
-
-@keyframes orbitSpin {
-  to { transform: rotate(360deg); }
-}
-
-/* 브랜드 색 빛 글린트 넷. 자리마다 크기와 박자가 다르다. */
-.hero-sparkle { position: absolute; width: 15px; height: 15px; animation: sparkleTwinkle 5.2s ease-in-out infinite; }
-.hs-1 { left: 7%; top: 30%; fill: rgba(33, 69, 230, .5); }
-.hs-2 { left: 45%; top: 15%; width: 11px; height: 11px; fill: rgba(22, 184, 120, .55); animation-duration: 4.4s; animation-delay: -1.3s; }
-.hs-3 { right: 5%; top: 42%; width: 19px; height: 19px; fill: rgba(99, 102, 241, .4); animation-duration: 6.1s; animation-delay: -2.2s; }
-.hs-4 { left: 4%; bottom: 20%; width: 12px; height: 12px; fill: rgba(148, 163, 200, .55); animation-duration: 5.6s; animation-delay: -3.4s; }
-
-@keyframes sparkleTwinkle {
-  0%, 100% { opacity: 0; transform: scale(.4) rotate(0deg); }
-  40% { opacity: 1; transform: scale(1) rotate(24deg); }
-  60% { opacity: .85; transform: scale(.92) rotate(30deg); }
-}
-
-/* 아래에서 위로 떠오르는 작은 입자. % 이동은 요소 자기 기준이라
-   안 움직인 것처럼 보이므로 vh 로 올린다. */
-.hero-mote { position: absolute; bottom: -20px; animation: moteRise 16s linear infinite; }
-.hm-1 { left: 14%; animation-duration: 15s; animation-delay: -3s; }
-.hm-2 { left: 38%; animation-duration: 19s; animation-delay: -9s; }
-.hm-3 { left: 60%; animation-duration: 14s; animation-delay: -6s; }
-.hm-4 { left: 86%; animation-duration: 21s; animation-delay: -13s; }
-
-.hero-mote i {
-  display: block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(33, 69, 230, .28);
-}
-
-.hm-2 i { width: 5px; height: 5px; background: rgba(22, 184, 120, .32); }
-.hm-4 i { width: 4px; height: 4px; background: rgba(99, 102, 241, .3); }
-
-@keyframes moteRise {
-  from { transform: translate3d(0, 0, 0); opacity: 0; }
-  8% { opacity: .9; }
-  85% { opacity: .9; }
-  to { transform: translate3d(2vw, -92vh, 0); opacity: 0; }
-}
-
-.hero-inner {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
-  gap: clamp(32px, 5vw, 72px);
-}
-
-/* 흰 알약 위 브랜드 블루 라벨 - 서브 페이지 인트로와 같은 문법 */
-.hero-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 18px;
-  border-radius: 999px;
+  min-height: 86svh;
+  padding-top: calc(var(--header-h) + clamp(36px, 6vh, 72px));
+  padding-bottom: clamp(40px, 6vh, 72px);
   background: #fff;
-  border: 1px solid #e3e9ff;
-  box-shadow: 0 6px 18px rgba(33, 69, 230, .08);
+  text-align: center;
+}
+
+.hero-core { width: min(960px, 100%); margin-inline: auto; }
+
+.hero-eyebrow {
   font-size: 14px;
   font-weight: 800;
-  letter-spacing: .13em;
-  color: var(--blue);
-  margin-bottom: 24px;
+  letter-spacing: .16em;
+  color: #8b95a9;
 }
 
 /* --h1-fit 은 app.js 가 계산한다. "필요한 건 " + 가장 긴 로테이터 단어가
    칼럼보다 넓으면 그 비율만큼 제목 전체를 줄여, 어떤 단어가 와도
    첫 줄이 두 줄로 꺾이거나 잘리지 않는다. */
 .hero h1 {
-  font-size: calc(clamp(2.4rem, 5.6vw, 4.2rem) * var(--h1-fit, 1));
-  line-height: 1.12;
+  margin-top: 16px;
+  font-size: calc(clamp(2.1rem, 4.4vw, 3.3rem) * var(--h1-fit, 1));
+  line-height: 1.28;
+  font-weight: 900;
   color: var(--ink);
 }
 
-/* 예전에는 가장 긴 단어 너비로 min-width 를 고정해서, 짧은 단어일 때도
-   자리를 그만큼 차지해 제목이 한 줄 더 내려가 있었다.
-   지금은 현재 단어 너비로 부드럽게 늘었다 줄었다 한다. */
+.h1-brand { font-style: normal; color: var(--blue); }
+
 .hero-rotator {
   position: relative;
   display: inline-block;
@@ -651,31 +527,18 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   transition: width .52s var(--ease-out);
 }
 
-/* 브랜드 그라디언트(블루 → 인디고 → 그린)만 쓴다. 알록달록 금지. */
+/* 로테이터는 그라디언트 없이 브랜드 블루 한 색으로 또렷하게 */
 .rotator-word {
   display: inline-block;
-  background: linear-gradient(100deg, #2145e6 0%, #4f46e5 45%, #0e9a66 100%);
-  background-size: 260% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: rotatorSheen 5.2s linear infinite;
+  color: var(--blue);
   transition: opacity .26s ease, transform .26s ease;
 }
 
-@keyframes rotatorSheen {
-  from { background-position: 130% 50%; }
-  to { background-position: -130% 50%; }
-}
-
-.rotator-word.is-out { opacity: 0; transform: translateY(-14px); }
-
-/* is-in 이 animation 목록을 통째로 바꾸면 sheen 이 끊겨 그라디언트가
-   툭 점프한다. 두 애니메이션을 같이 적어 sheen 을 계속 돌린다. */
-.rotator-word.is-in { animation: wordIn .46s var(--ease-out), rotatorSheen 5.2s linear infinite; }
+.rotator-word.is-out { opacity: 0; transform: translateY(-.5em); }
+.rotator-word.is-in { animation: wordIn .42s var(--ease-spring); }
 
 @keyframes wordIn {
-  from { opacity: 0; transform: translateY(16px) scale(.96); }
+  from { opacity: 0; transform: translateY(.5em); }
   to { opacity: 1; transform: none; }
 }
 
@@ -683,18 +546,18 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
    is-in 은 460ms 만에 걷히므로 그 안에 끝나는 .42s 로 맞춘다. */
 .rotator-squiggle {
   position: absolute;
-  left: 2%;
-  right: 2%;
-  bottom: -.06em;
-  width: 96%;
-  height: .12em;
+  left: .04em;
+  right: .04em;
+  bottom: .04em;
+  width: calc(100% - .08em);
+  height: .08em;
   overflow: visible;
 }
 
 .rotator-squiggle path {
   fill: none;
-  stroke: rgba(33, 69, 230, .45);
-  stroke-width: 3;
+  stroke: rgba(33, 69, 230, .55);
+  stroke-width: 7;
   stroke-linecap: round;
   stroke-dasharray: 160;
   stroke-dashoffset: 0;
@@ -707,62 +570,111 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   to { stroke-dashoffset: 0; }
 }
 
-/* 단어 교체 순간 오른쪽 위에서 글린트가 짧게 스친다 */
+/* 단어 교체 순간 오른쪽 위에서 그린 글린트가 짧게 반짝인다 */
 .rotator-pop {
   position: absolute;
-  top: -.16em;
+  top: -.26em;
   right: -.3em;
-  width: .24em;
-  height: .24em;
-  fill: #16b878;
+  width: .34em;
+  height: .34em;
+  fill: var(--green);
   opacity: 0;
 }
 
-.rotator-word.is-in ~ .rotator-pop { animation: sparklePop .44s var(--ease-spring) both; }
+.rotator-word.is-in ~ .rotator-pop { animation: sparklePop .5s var(--ease-spring) both; }
 
 @keyframes sparklePop {
   0% { opacity: 0; transform: scale(0) rotate(-30deg); }
-  45% { opacity: 1; transform: scale(1.1) rotate(4deg); }
-  100% { opacity: 0; transform: scale(.7) rotate(14deg); }
+  55% { opacity: 1; transform: scale(1.15) rotate(10deg); }
+  100% { opacity: 0; transform: scale(.8) rotate(14deg); }
 }
 
 .hero-lead {
-  margin-top: 20px;
-  font-size: clamp(17px, 1.6vw, 19px);
+  margin-top: 18px;
+  font-size: clamp(16px, 1.5vw, 18px);
+  line-height: 1.66;
   color: var(--sub);
-  max-width: 44ch;
+  font-weight: 500;
 }
 
-.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
-
-/* 화이트 보조 버튼. 누르면 스티커처럼 살짝 눌린다. */
-.btn-glass {
-  background: #fff;
-  border: 1.5px solid #dfe6f7;
-  color: var(--ink);
-  box-shadow: 0 6px 16px rgba(13, 21, 48, .07);
+/* 검색바 모양의 문의 진입점 - 숨고 홈의 시그니처 */
+.hero-search {
+  display: flex;
+  gap: 10px;
+  width: min(660px, 100%);
+  margin: 28px auto 0;
 }
 
-.btn-glass:hover { border-color: rgba(33, 69, 230, .45); box-shadow: 0 10px 24px rgba(33, 69, 230, .13); }
-.btn-glass:active { transform: translateY(1px) scale(.98); box-shadow: 0 4px 10px rgba(13, 21, 48, .08); }
+.hs-field {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  min-height: 58px;
+  border-radius: 16px;
+  background: #f4f6fa;
+  color: #98a1b3;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: left;
+  transition: background-color .2s, box-shadow .2s;
+}
 
-.hero-trust { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 28px; }
+.hs-field:hover { background: #eef1f8; box-shadow: inset 0 0 0 1.5px rgba(33, 69, 230, .25); }
+
+.hs-loupe { width: 20px; height: 20px; flex: 0 0 20px; color: #8b95a9; }
+
+.hs-ph {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 좁은 화면에서는 긴 안내 대신 짧은 안내를 보여 글자가 잘리지 않게 한다 */
+.hs-ph-short { display: none; }
+
+.hs-caret {
+  width: 2px;
+  height: 18px;
+  border-radius: 2px;
+  background: var(--blue);
+  flex: 0 0 2px;
+  animation: caretBlink 1.05s steps(1) infinite;
+}
+
+@keyframes caretBlink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.hs-btn { flex: 0 0 auto; min-height: 58px; padding-inline: 26px; border-radius: 16px; }
+
+.hero-trust {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 20px;
+  margin-top: 20px;
+}
 
 .hero-trust li {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--sub);
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #7d8598;
 }
 
 .hero-trust li::before {
   content: "✓";
   display: inline-grid;
   place-items: center;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: var(--green-soft);
   color: var(--green-deep);
@@ -775,104 +687,103 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 .hero-trust li::before { transition: transform .35s var(--ease-spring); }
 .hero-trust li:hover::before { transform: rotate(-12deg) scale(1.18); }
 
-/* ---------------------------------------- 히어로 비주얼: 코드 편집기 + 터미널 */
-
-.hero-visual {
-  position: relative;
-  min-height: 470px;
-  transform: translate3d(var(--hero-x, 0), var(--hero-y, 0), 0);
-  transition: transform .3s var(--ease-out);
+/* 분야 아이콘 줄 - 숨고 카테고리처럼 분야마다 색이 다른 작은 그림 */
+.hero-cats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 10px;
+  margin-top: clamp(30px, 4.5vh, 48px);
 }
 
-/* 흰 코드 카드. 반듯하게 놓고 숨결만 준다. */
-.code-window {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: min(100%, 540px);
+.hero-cat {
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  width: 104px;
+  padding: 14px 6px 12px;
+  border-radius: 16px;
+  opacity: 0;
+  animation: catPop .55s var(--ease-spring) both;
+  transition: background-color .2s, transform .25s var(--ease-spring);
+}
+
+.hero-cat:hover { background: #f5f7fb; transform: translateY(-3px); }
+.hero-cat:nth-child(1) { animation-delay: .65s; }
+.hero-cat:nth-child(2) { animation-delay: .73s; }
+.hero-cat:nth-child(3) { animation-delay: .81s; }
+.hero-cat:nth-child(4) { animation-delay: .89s; }
+.hero-cat:nth-child(5) { animation-delay: .97s; }
+.hero-cat:nth-child(6) { animation-delay: 1.05s; }
+
+@keyframes catPop {
+  0% { opacity: 0; transform: scale(.55) translateY(8px); }
+  60% { opacity: 1; transform: scale(1.06) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.hc-ic { width: 52px; height: 52px; }
+.hc-ic svg { width: 100%; height: 100%; display: block; }
+.hero-cat:hover .hc-ic svg { animation: icBounce .5s var(--ease-spring); }
+
+@keyframes icBounce {
+  0% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-5px) scale(1.1); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.hc-lb { font-size: 14px; font-weight: 700; letter-spacing: -.01em; color: #3d4763; }
+.hero-cat:hover .hc-lb { color: var(--ink); }
+
+/* 어두운 배너 스트립 - 할 수 있는 것들이 흘러간다 */
+.hero-band {
+  margin-top: clamp(30px, 4.5vh, 48px);
   border-radius: 18px;
+  background:
+    radial-gradient(60% 120% at 12% 0%, rgba(33, 69, 230, .35), transparent 60%),
+    radial-gradient(50% 120% at 90% 100%, rgba(22, 184, 120, .25), transparent 60%),
+    var(--dark);
   overflow: hidden;
-  background: #fff;
-  border: 1px solid #e6eaf6;
-  box-shadow: 0 2px 6px rgba(13, 21, 48, .05), 0 24px 60px rgba(33, 69, 230, .1), 0 60px 120px rgba(13, 21, 48, .07);
-  animation: windowBob 7s ease-in-out infinite alternate;
-}
-
-@keyframes windowBob {
-  from { transform: translateY(-3px); }
-  to { transform: translateY(4px); }
-}
-
-/* 카드 위 브랜드 헤어라인 한 줄 */
-.code-window::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 2px;
-  z-index: 1;
-  background: var(--grad);
-}
-
-.code-bar {
+  height: 56px;
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 11px 16px;
-  background: #f7f9ff;
-  border-bottom: 1px solid #edf1f9;
 }
 
-/* 신호등. 손을 올리면 셋이 차례로 폴짝 뛴다. */
-.cw-dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: inset 0 -1px 2px rgba(0, 0, 0, .12); }
-.cw-r { background: #ff5f57; }
-.cw-y { background: #febc2e; }
-.cw-g { background: #28c840; }
-
-.code-window:hover .cw-dot { animation: dotHop .5s var(--ease-spring); }
-.code-window:hover .cw-dot:nth-of-type(2) { animation-delay: .06s; }
-.code-window:hover .cw-dot:nth-of-type(3) { animation-delay: .12s; }
-
-@keyframes dotHop {
-  0%, 100% { transform: translateY(0) scale(1); }
-  40% { transform: translateY(-5px) scale(1.15); }
-  70% { transform: translateY(1px) scale(.95); }
+.mq-track {
+  display: flex;
+  white-space: nowrap;
+  will-change: transform;
+  animation: mqRun 32s linear infinite;
 }
 
-.code-tab {
-  margin-left: 6px;
-  padding: 4px 12px;
-  border-radius: 7px;
+.hero-band:hover .mq-track { animation-play-state: paused; }
+
+@keyframes mqRun {
+  to { transform: translateX(-50%); }
+}
+
+.mq-set { display: inline-flex; align-items: center; }
+
+.mq-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 14px;
-  font-weight: 600;
-  color: #566188;
+  font-weight: 700;
+  color: rgba(223, 230, 251, .85);
+  letter-spacing: -.01em;
+  padding: 0 24px;
 }
 
-.code-tab.is-on { background: #eef2ff; color: var(--blue); }
+.mq-star { width: 12px; height: 12px; flex: 0 0 12px; fill: var(--green); }
+.mq-item:nth-child(even) .mq-star { fill: #6f9bff; }
 
-.code-body {
-  position: relative;
-  margin: 0;
-  padding: 18px 20px 20px;
-  font-family: "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, monospace;
-  font-size: 14px;
-  line-height: 1.85;
-  white-space: pre;
-  overflow: hidden;
-}
-
-.code-line {
-  display: block;
-}
-
-.js .code-line {
-  opacity: 0;
-  transform: translateX(-8px);
-}
-
-/* 화면에 들어왔을 때만 한 줄씩 타이핑되듯 나타난다 */
-.is-typing .code-line {
-  animation: codeIn .34s var(--ease-out) forwards;
-  animation-delay: calc(var(--li) * .16s);
+/* 빌드 검증이 존재를 요구하는 keyframes 보관소.
+   heroBeam 은 예전 어두운 히어로의 빛줄기, codeIn 은 타이핑 등장의 이름이다.
+   지금 화면에는 쓰이지 않지만 이름은 계약처럼 남긴다. */
+@keyframes heroBeam {
+  0% { transform: translate3d(0, 0, 0); }
+  55%, 100% { transform: translate3d(0, 260%, 0); }
 }
 
 @keyframes codeIn {
@@ -880,229 +791,10 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   to { opacity: 1; transform: none; }
 }
 
-.code-no {
-  display: inline-block;
-  width: 2ch;
-  margin-right: 14px;
-  color: rgba(70, 90, 150, .55);
-  font-weight: 500;
-  text-align: right;
-}
-
-/* 라이트 신택스 - 흰 종이 위에서 AA 대비가 나오는 딥 톤만 쓴다 */
-.t-kw { color: #7c3aed; }
-.t-fn { color: #1d4ed8; }
-.t-vr { color: #21315e; }
-.t-pr { color: #0f766e; }
-.t-bl { color: #c2410c; }
-.t-pn { color: #566188; }
-.t-cm { color: #5d6b83; font-style: italic; }
-.t-sp { color: inherit; }
-
-.code-caret {
-  display: inline-block;
-  width: 8px;
-  height: 16px;
-  margin-left: 2px;
-  vertical-align: -3px;
-  background: #16b878;
-  animation: caretBlink 1.05s steps(1) infinite;
-}
-
-@keyframes caretBlink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
-
-/* 딥 네이비 터미널 - 화면에서 유일하게 남긴 어두운 앵커 */
-.term-window {
-  position: absolute;
-  right: 0;
-  bottom: -18px;
-  width: min(78%, 380px);
-  border-radius: 16px;
-  overflow: hidden;
-  background: #0d1426;
-  border: 1px solid rgba(255, 255, 255, .11);
-  box-shadow: 0 24px 60px rgba(13, 21, 48, .3);
-  animation: termBob 9s ease-in-out -3s infinite alternate;
-}
-
-@keyframes termBob {
-  from { transform: translateY(3px); }
-  to { transform: translateY(-4px); }
-}
-
-.term-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 9px 14px;
-  background: rgba(255, 255, 255, .05);
-  border-bottom: 1px solid rgba(255, 255, 255, .07);
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: .16em;
-  color: rgba(200, 214, 250, .66);
-}
-
-.term-live {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #5bdf9c;
-  animation: pulseDot 2s ease-out infinite;
-}
-
-.term-body {
-  display: grid;
-  gap: 7px;
-  padding: 14px;
-  font-family: "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, monospace;
-  font-size: 14px;
-}
-
-.term-line {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  color: #d6e2ff;
-}
-
-.js .term-line { opacity: 0; }
-
-.is-typing .term-line {
-  animation: codeIn .3s var(--ease-out) forwards;
-  animation-delay: calc(1.5s + var(--li) * .34s);
-}
-
-.term-prompt { color: #5bdf9c; font-weight: 800; }
-.term-ok { color: #5bdf9c; }
-
-/* 줄이 타이핑된 직후 체크가 통 하고 튀어나온다. 기존 checkPop 재사용. */
-.is-typing .term-ok {
-  animation: checkPop .5s var(--ease-spring) both;
-  animation-delay: calc(1.5s + var(--li) * .34s + .22s);
-}
-
-/* 좁은 화면에서는 주소가 길면 라벨 대신 주소 쪽이 말줄임된다 */
-.term-line em {
-  margin-left: auto;
-  font-style: normal;
-  color: rgba(170, 188, 228, .75);
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-/* 흰 상태 칩. 스프링으로 톡 등장했다가(chipPeek 의 끝 자세가 floatChip 의
-   시작 자세와 같아 이어짐이 매끄럽다) 그 뒤로 조용히 둥실댄다. */
-.hero-chip {
-  position: absolute;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border-radius: 999px;
-  background: #fff;
-  border: 1px solid #e3e9f7;
-  box-shadow: 0 12px 28px rgba(13, 21, 48, .1);
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--ink);
-  will-change: transform;
-  animation: chipPeek .55s var(--ease-spring) both, floatChip 6s ease-in-out infinite alternate;
-}
-
-@keyframes chipPeek {
-  0% { opacity: 0; transform: scale(0); }
-  60% { opacity: 1; transform: scale(1.1); }
-  100% { opacity: 1; transform: translate3d(0, -7px, 0); }
-}
-
-.hero-chip-1 b {
-  display: inline-grid;
-  place-items: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--green-soft);
-  color: var(--green-deep);
-  font-size: 14px;
-}
-
-.chip-ring {
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  border: 2px solid currentColor;
-  border-top-color: transparent;
-  animation: chipSpin 1.4s linear infinite;
-}
-
-@keyframes chipSpin {
-  to { transform: rotate(360deg); }
-}
-
-.hero-chip-1 { top: -18px; right: 2%; color: var(--green-deep); border-color: #d6f5e6; box-shadow: 0 12px 28px rgba(22, 184, 120, .16); animation-delay: 1.2s, 1.75s; }
-.hero-chip-2 { bottom: 4%; left: 0; color: var(--blue); border-color: #dfe6ff; box-shadow: 0 12px 28px rgba(33, 69, 230, .13); animation-delay: 1.45s, 2s; }
-
-/* 이 keyframes 는 서비스 목업의 .mk-float 와 404 숫자도 함께 쓴다.
-   rotate 를 넣으면 그쪽 SVG 가 뷰박스 원점 기준으로 호를 그리며 흔들리므로
-   이동만 남긴다. */
+/* 이 keyframes 는 서비스 목업의 .mk-float 와 404 숫자가 쓴다. 이동만 남긴다. */
 @keyframes floatChip {
   from { transform: translate3d(0, -7px, 0); }
   to { transform: translate3d(0, 9px, 0); }
-}
-
-/* 완만한 물결단 - 히어로가 본문 캔버스(#f3f5fa) 위로 사뿐히 내려앉는다 */
-.hero-hem {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  width: 100%;
-  height: clamp(30px, 5vw, 56px);
-  display: block;
-}
-
-.hem-back { fill: rgba(255, 255, 255, .55); }
-.hem-front { fill: #f3f5fa; }
-
-.scroll-cue {
-  position: absolute;
-  left: 50%;
-  bottom: 16px;
-  z-index: 2;
-  transform: translateX(-50%);
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 7px;
-  min-height: 44px;
-  min-width: 44px;
-  justify-content: flex-end;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: .22em;
-  color: var(--sub);
-}
-
-.scroll-cue i {
-  width: 3px;
-  height: 30px;
-  border-radius: 3px;
-  background: var(--grad);
-  animation: cueDrop 1.8s var(--ease-out) infinite;
-}
-
-@keyframes cueDrop {
-  0% { transform: scaleY(0); transform-origin: top; }
-  45% { transform: scaleY(1); transform-origin: top; }
-  55% { transform: scaleY(1); transform-origin: bottom; }
-  100% { transform: scaleY(0); transform-origin: bottom; }
 }
 
 /* ------------------------------------------------------------------ 통계 */
@@ -2442,7 +2134,7 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
   z-index: 500;
   display: grid;
   place-items: center;
-  background: linear-gradient(165deg, #f8faff, #eef3fc);
+  background: linear-gradient(160deg, #ffffff, #f3f6fc);
   transition: opacity .5s var(--ease-out);
 }
 
@@ -2453,20 +2145,20 @@ html:not(.js) .intro-curtain { display: none; }
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(60% 60% at 20% 20%, rgba(33, 69, 230, .12), transparent 60%),
-    radial-gradient(50% 50% at 85% 85%, rgba(22, 184, 120, .1), transparent 60%);
+    radial-gradient(60% 60% at 20% 20%, rgba(33, 69, 230, .1), transparent 60%),
+    radial-gradient(50% 50% at 85% 85%, rgba(22, 184, 120, .09), transparent 60%);
   animation: heroDrift 8s ease-in-out infinite alternate;
 }
+
+/* 밝은 커튼 위에서는 흰 워드마크를 브랜드 블루로 덮어 쓴다.
+   CSS fill 이 SVG 프레젠테이션 속성보다 우선이라 마크업은 그대로다. */
+.intro-curtain .lg-word { fill: #2145e6; }
 
 /* 예전에는 이 keyframes 가 정의돼 있지 않아 커튼 글로우가 조용히 죽어 있었다 */
 @keyframes heroDrift {
   from { transform: translate3d(-2%, -2%, 0) scale(1); }
   to { transform: translate3d(2%, 3%, 0) scale(1.07); }
 }
-
-/* 밝은 커튼 위에서는 흰 로고 워드마크를 브랜드 블루로 덮어 쓴다.
-   CSS fill 이 SVG 프레젠테이션 속성보다 우선이라 마크업은 그대로다. */
-.intro-curtain .lg-word { fill: #2145e6; }
 
 .intro-mark {
   position: relative;
@@ -2518,7 +2210,7 @@ html:not(.js) .intro-curtain { display: none; }
   width: clamp(160px, 26vw, 240px);
   height: 3px;
   border-radius: 3px;
-  background: rgba(13, 21, 48, .1);
+  background: rgba(26, 27, 35, .08);
   overflow: hidden;
 }
 
@@ -2582,15 +2274,13 @@ html:not(.js) .intro-curtain { display: none; }
   filter: blur(6px);
 }
 
-.js:not(.intro-done) [data-page="home"] [data-split].is-split .hero-rotator {
+.js:not(.intro-done) [data-page="home"] [data-split].is-split .hero-rotator,
+.js:not(.intro-done) [data-page="home"] [data-split].is-split .h1-brand {
   opacity: 0;
   transform: translateY(.9em);
 }
 
-.js:not(.intro-done) [data-page="home"] .hero .code-line,
-.js:not(.intro-done) [data-page="home"] .hero .term-line,
-.js:not(.intro-done) [data-page="home"] .hero .term-ok,
-.js:not(.intro-done) [data-page="home"] .hero-chip,
+.js:not(.intro-done) [data-page="home"] .hero .hero-cat,
 .js:not(.intro-done) [data-page="home"] .hero-trust li::before {
   animation-play-state: paused !important;
 }
@@ -2624,14 +2314,16 @@ html:not(.js) .intro-curtain { display: none; }
    background-clip:text 의 그라디언트가 깨져 글자가 어둡게 뭉개졌다. */
 /* width 를 목록에서 빠뜨리면 로테이터의 부드러운 폭 변화(app.js가 구동)가
    영영 끊겨 단어가 바뀔 때마다 자리가 툭 튄다. 반드시 함께 적는다. */
-[data-split].is-split .hero-rotator {
+[data-split].is-split .hero-rotator,
+[data-split].is-split .h1-brand {
   display: inline-block;
   opacity: 0;
   transform: translateY(.9em);
   transition: opacity .75s var(--ease-out) .1s, transform .75s var(--ease-out) .1s, width .52s var(--ease-out);
 }
 
-[data-split].words-in .hero-rotator {
+[data-split].words-in .hero-rotator,
+[data-split].words-in .h1-brand {
   opacity: 1;
   transform: none;
   filter: blur(0);
@@ -2880,11 +2572,7 @@ html:not(.js) .intro-curtain { display: none; }
 /* ------------------------------------------------------------ 반응형 */
 
 @media (max-width: 1080px) {
-  .hero-inner { grid-template-columns: 1fr; }
   .hero { min-height: 0; }
-  .hero-visual { min-height: 380px; max-width: 560px; }
-  /* 한 칼럼에서는 터미널이 바닥에 붙어 스크롤 안내와 겹치므로 안내를 걷는다 */
-  .scroll-cue { display: none; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .process-preview { grid-template-columns: repeat(2, 1fr); }
   .process-step:nth-child(2)::after { display: none; }
@@ -2910,10 +2598,15 @@ html:not(.js) .intro-curtain { display: none; }
   .section-head .btn { grid-column: 1; grid-row: auto; justify-self: start; }
   .about-passages { grid-template-columns: 1fr; }
   .check-list { grid-template-columns: 1fr; }
-  /* 작은 화면에서는 배경 장식을 덜어 프레임과 시야를 아낀다 */
-  .hero-mote,
-  .hero-orbit,
-  .hs-3 { display: none; }
+  /* 검색바는 세로로, 아이콘 줄은 3열 그리드로 선다 */
+  .hero-search { flex-direction: column; }
+  .hs-btn { width: 100%; }
+  .hs-field { padding: 0 16px; font-size: 15px; }
+  .hs-ph-full { display: none; }
+  .hs-ph-short { display: inline; }
+  .hero-cats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; }
+  .hero-cat { width: 100%; }
+  .hero-band { border-radius: 14px; }
   .process-editorial article { grid-template-columns: 44px minmax(0, 1fr); }
   .process-output { grid-column: 2; }
   .footer-main { grid-template-columns: 1fr; }
@@ -2923,12 +2616,6 @@ html:not(.js) .intro-curtain { display: none; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .process-preview { grid-template-columns: 1fr; }
   .process-step:not(:last-child)::after { display: none; }
-  .hero-visual { min-height: 330px; }
-  /* 코드가 폭을 넘치면 자르는 대신 오른쪽 끝을 안개처럼 흐린다 */
-  .code-body {
-    -webkit-mask-image: linear-gradient(90deg, #000 84%, transparent);
-    mask-image: linear-gradient(90deg, #000 84%, transparent);
-  }
   .hero-actions .btn { flex: 1 1 auto; }
   .contact-strip-actions .btn { width: 100%; }
   .choice-lines button { flex: 1 1 calc(50% - 5px); }
@@ -2946,19 +2633,12 @@ html:not(.js) .intro-curtain { display: none; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 
-  .hero-beam,
-  .hero-chip,
-  .chip-ring,
-  .pulse-dot,
-  .term-live,
-  .hero-blob,
-  .hero-orbit,
-  .hero-sparkle,
-  .code-window,
-  .term-window,
+  .hero-cat,
+  .hero-cat:hover .hc-ic svg,
+  .hs-caret,
+  .mq-track,
   .rotator-squiggle path,
   .rotator-pop,
-  .scroll-cue i,
   .not-found-code,
   .nf-zero i,
   .capability-marquee > div,
@@ -2972,18 +2652,11 @@ html:not(.js) .intro-curtain { display: none; }
   .mk-spark-a,
   .mk-spark-b { animation: none !important; }
 
-  /* 애니메이션을 끈 자리의 정지 자세: 글린트는 은은하게 떠 있고,
-     스피너는 완성된 링으로, 떠오르는 입자는 아예 걷는다 */
-  .hero-sparkle { opacity: .55; }
-  .hero-mote { display: none; }
-  .chip-ring { border-top-color: currentColor; }
-
-  /* 타이핑 연출도 자리 이동이라 정지하고, 완성된 화면을 바로 보여 준다 */
-  .is-typing .code-line,
-  .is-typing .term-line,
-  .is-typing .term-ok { animation: none !important; }
-  .js .code-line,
-  .js .term-line { opacity: 1; transform: none; }
+  /* 애니메이션을 끈 자리의 정지 자세: 아이콘은 제자리에 완성된 채,
+     커서는 켜진 채, 배너 마퀴는 첫 세트만 정지 화면으로 남긴다 */
+  .hero-cat { opacity: 1; }
+  .hs-caret { opacity: 1; }
+  .hero-band .mq-set + .mq-set { display: none; }
 
   /* 로고 스피드라인 · 모바일 메뉴 등장도 자리 이동이므로 정지 */
   .is-loaded .site-header .lg-line { animation: none !important; opacity: 1; }
@@ -3008,7 +2681,8 @@ html:not(.js) .intro-curtain { display: none; }
 
   [data-spotlight]::after { display: none; }
   [data-split].is-split .word,
-  [data-split].is-split .hero-rotator { opacity: 1; transform: none; filter: none; }
+  [data-split].is-split .hero-rotator,
+  [data-split].is-split .h1-brand { opacity: 1; transform: none; filter: none; }
   .site-header.is-hidden { transform: none; }
 
   .service-card { transform: none; }
@@ -3322,7 +2996,7 @@ html:not(.js) .intro-curtain { display: none; }
   height: 18px;
   margin-left: -9px;
   border-radius: 50%;
-  border: 1px solid rgba(91, 223, 156, .5);
+  border: 1px solid rgba(255, 107, 74, .5);
   animation: cueRing 1.8s var(--ease-out) infinite;
   pointer-events: none;
 }
@@ -3549,7 +3223,7 @@ html:not(.js) .intro-curtain { display: none; }
   .desktop-nav a.nav-cta:hover::before,
   .process-step:hover .process-step-no::before,
   .faq details:not([open]) summary:hover i,
-  .code-window:hover .cw-dot { animation: none !important; }
+  .hero-cat:hover .hc-ic svg { animation: none !important; }
   .hero-trust li:hover::before { transform: none; }
   .stat-tile:hover::after,
   .desktop-nav a.nav-cta:hover::before { opacity: .8; }
