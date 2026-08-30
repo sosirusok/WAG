@@ -820,18 +820,7 @@ h1, h2, h3 { line-height: 1.16; font-weight: 800; letter-spacing: -.034em; }
 
 .stat-tile:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
 
-.stat-tile::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto auto 0;
-  width: 100%;
-  height: 4px;
-  background: var(--grad);
-  opacity: 0;
-  transition: opacity .3s;
-}
-
-.stat-tile:hover::before { opacity: 1; }
+/* 상단 그라디언트 바는 v58 의 회전 보더 빔으로 대체했다 (파일 하단) */
 
 .stat-value { display: flex; align-items: baseline; gap: 4px; }
 
@@ -3198,18 +3187,7 @@ html:not(.js) .intro-curtain { display: none; }
 /* 모든 버튼이 스티커처럼 눌린다 */
 .btn:active { transform: translateY(1px) scale(.98); }
 
-/* 숫자 타일에 손을 올리면 모서리에서 별이 반짝 */
-.stat-tile::after { content: none; }
-
-.stat-tile:hover::after {
-  content: "✦" / "";
-  position: absolute;
-  top: 10px;
-  right: 14px;
-  color: var(--green-deep);
-  font-size: 18px;
-  animation: sparklePop .6s var(--ease-spring) both;
-}
+/* 숫자 타일의 별 반짝임은 v58 의 회전 보더 빔으로 대체했다 (파일 하단) */
 
 /* 진행 단계 번호가 젤리처럼 출렁 */
 .process-step:hover .process-step-no::before { animation: jellyPop .5s var(--ease-spring); }
@@ -3230,12 +3208,181 @@ html:not(.js) .intro-curtain { display: none; }
 .studio-points li { transition-timing-function: var(--ease-spring); }
 
 @media (prefers-reduced-motion: reduce) {
-  .stat-tile:hover::after,
   .desktop-nav a.nav-cta:hover::before,
   .process-step:hover .process-step-no::before,
   .faq details:not([open]) summary:hover i,
   .hero-cat:hover .hc-ic svg { animation: none !important; }
   .hero-trust li:hover::before { transform: none; }
-  .stat-tile:hover::after,
   .desktop-nav a.nav-cta:hover::before { opacity: .8; }
+}
+
+/* ==========================================================================
+   v58 시그니처 이펙트 레이어
+
+   "이 팀은 이런 것도 만드네" 하고 눈에 남는 장치들.
+   전부 transform / opacity / conic 각도 / stroke 계열만 움직이고,
+   hover 전용이거나 화면 밖에서 관찰자가 멈추는 것만 더한다. 캔버스는 없다.
+   ========================================================================== */
+
+/* --------------------------------------------- 숫자 타일 회전 보더 빔
+
+   손을 올리면 브랜드 그라디언트 빛줄기가 타일 테두리를 한 바퀴 돈다.
+   conic 각도를 커스텀 프로퍼티로 등록해 각도만 회전시키고,
+   마스크로 테두리 2px 만 남긴다. 미지원 브라우저는 정지된 링으로 보인다. */
+
+@property --beam-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.stat-tile::before { content: none; }
+
+.stat-tile:hover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(from var(--beam-angle), transparent 0 70%, #2145e6 82%, #5bdf9c 92%, transparent 98%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: beamSpin 2.4s linear infinite;
+}
+
+@keyframes beamSpin {
+  to { --beam-angle: 360deg; }
+}
+
+/* --------------------------------------------- 다크 배너 위 별똥별
+
+   능력 태그가 흐르는 어두운 밴드 위로 가느다란 빛줄기가 이따금 스친다.
+   왕복의 대부분은 투명 구간이라 한가하게, 지나갈 때만 반짝. */
+
+.hero-band { position: relative; }
+
+.band-star {
+  position: absolute;
+  top: 12px;
+  left: -90px;
+  width: 74px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .85), rgba(111, 155, 255, .5), transparent);
+  transform: rotate(9deg);
+  opacity: 0;
+  will-change: transform;
+  animation: bandStar 7.5s linear infinite;
+}
+
+.band-star-2 {
+  top: 34px;
+  width: 52px;
+  animation-duration: 9.5s;
+  animation-delay: -4.6s;
+  background: linear-gradient(90deg, transparent, rgba(91, 223, 156, .8), transparent);
+}
+
+@keyframes bandStar {
+  0% { transform: translate3d(0, 0, 0) rotate(9deg); opacity: 0; }
+  4% { opacity: .9; }
+  16% { transform: translate3d(min(96vw, 1200px), 26px, 0) rotate(9deg); opacity: 0; }
+  100% { transform: translate3d(min(96vw, 1200px), 26px, 0) rotate(9deg); opacity: 0; }
+}
+
+/* --------------------------------------------- 문의 밴드 오로라 드리프트
+
+   정지해 있던 CTA 밴드의 빛 웅덩이가 아주 천천히 흐르며 살아 숨쉰다. */
+
+.strip-aurora {
+  position: absolute;
+  inset: -22%;
+  pointer-events: none;
+  background:
+    radial-gradient(42% 58% at 24% 28%, rgba(33, 69, 230, .38), transparent 62%),
+    radial-gradient(36% 52% at 78% 74%, rgba(22, 184, 120, .3), transparent 60%),
+    radial-gradient(30% 44% at 60% 20%, rgba(111, 155, 255, .22), transparent 58%);
+  will-change: transform;
+  animation: auroraDrift 16s ease-in-out infinite alternate;
+}
+
+@keyframes auroraDrift {
+  from { transform: translate3d(-3%, 2%, 0) scale(1) rotate(-1.5deg); }
+  to { transform: translate3d(3%, -2%, 0) scale(1.1) rotate(1.5deg); }
+}
+
+/* --------------------------------------------- 분야 아이콘 궤도 링
+
+   아이콘에 손을 올리면 점선 링이 톡 그려지며 천천히 돈다.
+   로고의 오빗 아크와 같은 언어라 장식이 아니라 브랜드로 읽힌다. */
+
+.hero-cat { position: relative; }
+
+.hero-cat::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: calc(50% - 34px);
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(33, 69, 230, .45);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hero-cat:hover::before {
+  opacity: 1;
+  animation: catRingIn .45s var(--ease-spring) both, catRingSpin 7s linear .4s infinite;
+}
+
+@keyframes catRingIn {
+  from { transform: scale(.55) rotate(0deg); }
+  to { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes catRingSpin {
+  from { transform: scale(1) rotate(0deg); }
+  to { transform: scale(1) rotate(360deg); }
+}
+
+/* --------------------------------------------- 커서 혜성 꼬리
+
+   커서 링 뒤로 작은 점 세 개가 점점 늦게 따라오며 꼬리를 만든다.
+   기존 커서 rAF 루프에서 같이 칠하므로 새 루프 비용이 없다. */
+
+.cursor-tail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  background: var(--blue);
+  will-change: transform;
+}
+
+.cursor-tail-1 { width: 5px; height: 5px; opacity: .38; }
+.cursor-tail-2 { width: 4px; height: 4px; opacity: .24; }
+.cursor-tail-3 { width: 3px; height: 3px; opacity: .14; }
+
+.cursor-layer.is-hover .cursor-tail,
+.cursor-layer.is-text .cursor-tail { opacity: 0; }
+
+/* --------------------------------------------- 검색바 타이핑 플레이스홀더
+
+   만들 수 있는 것들이 실제로 입력되듯 한 글자씩 찍힌다(app.js).
+   글자가 찍히는 동안은 안내문보다 살짝 진하게. */
+
+.hs-ph.is-typing-live { color: #6b7590; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-tile:hover::before,
+  .band-star,
+  .strip-aurora,
+  .hero-cat:hover::before { animation: none !important; }
+  .band-star { opacity: 0; }
+  .hero-cat:hover::before { opacity: .7; }
+  .cursor-tail { display: none; }
 }

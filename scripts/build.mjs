@@ -297,6 +297,8 @@ const renderHeroBand = () => {
   return `
       <div class="hero-band" data-reveal aria-hidden="true">
         <div class="mq-track"><span class="mq-set">${items}</span><span class="mq-set">${items}</span></div>
+        <i class="band-star band-star-1"></i>
+        <i class="band-star band-star-2"></i>
       </div>`;
 };
 
@@ -307,9 +309,9 @@ const renderHero = () => `
       <h1 data-reveal data-split>필요한 건 <span class="hero-rotator"><b class="rotator-word" data-rotator data-rotator-words="${escapeHtml(JSON.stringify(rotatorWords))}">${escapeHtml(rotatorWords[0])}</b><svg class="rotator-squiggle" viewBox="0 0 120 10" preserveAspectRatio="none" aria-hidden="true"><path d="M3 5.5H117"/></svg><svg class="rotator-pop" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1c1.1 6.2 3.7 8.8 11 11-7.3 2.2-9.9 4.8-11 11-1.1-6.2-3.7-8.8-11-11 7.3-2.2 9.9-4.8 11-11Z"/></svg></span><br>만드는 건 <em class="h1-brand">SWAG</em></h1>
       <p class="hero-lead" data-reveal>상담한 두 사람이 기획 · 디자인 · 개발 · 검수 · 배포를 끝까지 맡는 ${escapeHtml(data.brand.description)}입니다.</p>
       <div class="hero-search" data-reveal>
-        <a class="hs-field" href="contact/">
+        <a class="hs-field" href="contact/" aria-label="${escapeHtml(data.brand.primaryCta)}" data-type-field>
           <svg class="hs-loupe" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M16.2 16.2 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          <span class="hs-ph hs-ph-full">${escapeHtml(data.contact.responseNote)}</span>
+          <span class="hs-ph hs-ph-full" data-type-words="${escapeHtml(JSON.stringify(data.capabilities))}">${escapeHtml(data.contact.responseNote)}</span>
           <span class="hs-ph hs-ph-short">제작 종류 · 필요한 기능</span>
           <i class="hs-caret" aria-hidden="true"></i>
         </a>
@@ -480,8 +482,9 @@ const renderFaq = () => data.faq.map((item) => `
   <details data-reveal><summary><span>${escapeHtml(item.question)}</span><i aria-hidden="true"></i></summary><div class="faq-body"><p>${escapeHtml(item.answer)}</p></div></details>`).join("");
 
 const renderContactStrip = () => `
-  <section class="contact-strip" data-reveal>
+  <section class="contact-strip" data-reveal data-motion-scope>
     <div class="shell" data-spotlight>
+      <i class="strip-aurora" aria-hidden="true"></i>
       <div class="contact-strip-glow" aria-hidden="true"></div>
       <p class="eyebrow">CONTACT</p>
       <h2 data-split>아이디어만 있어도 충분해요</h2>
