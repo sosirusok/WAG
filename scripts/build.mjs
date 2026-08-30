@@ -260,98 +260,69 @@ const renderPreloader = () => `
     <div class="intro-mark">${logoWhiteSvg}<span class="intro-bar"></span></div>
   </div>`;
 
-const codeLines = [
-  [["kw","export"],["sp"," "],["kw","async"],["sp"," "],["kw","function"],["sp"," "],["fn","ship"],["pn","(brief)"],["sp"," "],["pn","{"]],
-  [["sp","  "],["kw","const"],["sp"," "],["vr","plan"],["sp"," = "],["kw","await"],["sp"," "],["fn","consult"],["pn","(brief)"],["pn",";"],["sp","   "],["cm","// 상담"]],
-  [["sp","  "],["kw","const"],["sp"," "],["vr","ui"],["sp"," = "],["kw","await"],["sp"," "],["fn","design"],["pn","(plan)"],["pn",";"],["sp","     "],["cm","// 기획 · 디자인"]],
-  [["sp","  "],["kw","const"],["sp"," "],["vr","app"],["sp"," = "],["kw","await"],["sp"," "],["fn","build"],["pn","(ui, {"]],
-  [["sp","    "],["pr","web"],["pn",": "],["bl","true"],["pn",", "],["pr","app"],["pn",": "],["bl","true"],["pn",","]],
-  [["sp","    "],["pr","game"],["pn",": "],["bl","true"],["pn",", "],["pr","ai"],["pn",": "],["bl","true"],["pn",","]],
-  [["sp","  "],["pn","});"]],
-  [["sp","  "],["kw","return"],["sp"," "],["fn","deploy"],["pn","(app)"],["pn",";"],["sp","      "],["cm","// 검수 · 배포"]],
-  [["pn","}"]]
-];
+/* 히어로는 숨고 홈의 문법을 그대로 따른다: 순백 캔버스, 중앙 정렬 헤드라인,
+   검색바 모양의 문의 진입점, 알록달록한 분야 아이콘 한 줄, 어두운 배너 스트립.
+   떠다니는 장식 카드는 쓰지 않는다. 화면의 모든 값과 링크는 실제 데이터다. */
 
-const renderCodeBody = () => codeLines.map((tokens, index) => {
-  const inner = tokens.map(([kind, text]) => `<span class="t-${kind}">${escapeHtml(text)}</span>`).join("");
-  return `<span class="code-line" style="--li:${index}"><b class="code-no">${index + 1}</b>${inner}</span>`;
-}).join("");
+const heroCheck = `<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 6.2 4.8 9 10 3.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
-/* 터미널에 찍히는 값은 전부 실제로 확인 가능한 것만 쓴다.
-   예전에는 지어낸 빌드 시간과 검수 수치, 그리고 소유하지도 않은 가짜 도메인을
-   출력하고 있었다. 사이트가 스스로 거짓말을 하고 있던 셈이라 가장 먼저 눈에
-   걸리던 부분이다. validate.mjs 가 그 도메인 문자열을 금지어로 잡는다.
-   지금은 실제 경로 수, 실제 링크 감사 결과, 실제 운영 주소를 쓴다. */
+const heroTinyStar = `<svg class="mq-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1c1.1 6.2 3.7 8.8 11 11-7.3 2.2-9.9 4.8-11 11-1.1-6.2-3.7-8.8-11-11 7.3-2.2 9.9-4.8 11-11Z"/></svg>`;
 
-const ROUTE_COUNT = 8; // scripts/audit-links.mjs 가 감사하는 경로 수와 같아야 한다
-const liveOrigin = normalizedSiteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
+/* 분야 아이콘 - 숨고 카테고리처럼 분야마다 색이 다르다. 단순한 도형이라
+   어느 크기에서도 깨지지 않고, 본문 글자 규칙과도 무관한 장식 그래픽이다. */
+const heroCatIcons = {
+  all: `<svg viewBox="0 0 48 48" aria-hidden="true"><g fill="#8a94ad"><circle cx="17" cy="17" r="5"/><circle cx="31" cy="17" r="5"/><circle cx="17" cy="31" r="5"/><circle cx="31" cy="31" r="5"/></g></svg>`,
+  web: `<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="10" width="36" height="27" rx="5" fill="#2145e6"/><rect x="6" y="10" width="36" height="8" rx="4" fill="#183ac2"/><circle cx="11.5" cy="14" r="1.6" fill="#9db4ff"/><circle cx="16.5" cy="14" r="1.6" fill="#9db4ff"/><rect x="11" y="23" width="17" height="3.2" rx="1.6" fill="#fff" opacity=".95"/><rect x="11" y="29" width="11" height="3.2" rx="1.6" fill="#9db4ff"/><rect x="18" y="38" width="12" height="3" rx="1.5" fill="#c6d2ff"/></svg>`,
+  app: `<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="14" y="5" width="20" height="38" rx="6" fill="#16b878"/><rect x="14" y="5" width="20" height="38" rx="6" fill="none"/><rect x="21" y="9" width="6" height="2.6" rx="1.3" fill="#bff2db"/><circle cx="24" cy="37" r="2.4" fill="#bff2db"/><rect x="19" y="16" width="10" height="10" rx="3" fill="#eafcf3"/></svg>`,
+  game: `<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 13h20c5.2 0 9 4.6 8.4 9.8l-1 7.8c-.4 3.6-3.4 6.4-7 6.4-2 0-3.8-1-5-2.4l-1.4-1.8c-1-1.2-2.6-2-4-2s-3 .8-4 2l-1.4 1.8c-1.2 1.4-3 2.4-5 2.4-3.6 0-6.6-2.8-7-6.4l-1-7.8C5 17.6 8.8 13 14 13Z" fill="#f0609e"/><path d="M16 20v6M13 23h6" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="31" cy="21.5" r="2.2" fill="#ffd3e6"/><circle cx="35.5" cy="26" r="2.2" fill="#fff"/></svg>`,
+  ai: `<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6c1.2 9.2 6.8 14.8 16 16-9.2 1.2-14.8 6.8-16 16-1.2-9.2-6.8-14.8-16-16 9.2-1.2 14.8-6.8 16-16Z" fill="#8b5cf6"/><path d="M38 6.5c.5 3.6 2.4 5.5 6 6-3.6.5-5.5 2.4-6 6-.5-3.6-2.4-5.5-6-6 3.6-.5 5.5-2.4 6-6Z" fill="#c4b0fb"/></svg>`,
+  platform: `<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="6" width="16" height="16" rx="4.5" fill="#f5a623"/><rect x="26" y="6" width="16" height="10" rx="4" fill="#ffd28a"/><rect x="26" y="20" width="16" height="22" rx="4.5" fill="#f5a623"/><rect x="6" y="26" width="16" height="16" rx="4.5" fill="#ffd28a"/></svg>`
+};
 
-const terminalLines = [
-  ["cmd", "npm run deploy"],
-  ["ok", "빌드 완료", `${ROUTE_COUNT} 페이지`],
-  ["ok", "링크 감사 통과", "0 오류"],
-  ["ok", "운영 주소 발급", liveOrigin]
-];
+const renderHeroCats = () => {
+  const services = data.services.map((service) => `
+      <a class="hero-cat" href="services/#${escapeHtml(service.id)}">
+        <span class="hc-ic">${heroCatIcons[service.id] || heroCatIcons.web}</span>
+        <span class="hc-lb">${escapeHtml(service.title)}</span>
+      </a>`).join("");
+  return `
+      <a class="hero-cat" href="services/">
+        <span class="hc-ic">${heroCatIcons.all}</span>
+        <span class="hc-lb">전체 보기</span>
+      </a>${services}`;
+};
 
-const renderTerminal = () => terminalLines.map((line, index) => {
-  const [kind, label, meta] = line;
-  const body = kind === "cmd"
-    ? `<b class="term-prompt">$</b><span>${escapeHtml(label)}</span>`
-    : `<b class="term-ok">✓</b><span>${escapeHtml(label)}</span>${meta ? `<em>${escapeHtml(meta)}</em>` : ""}`;
-  return `<span class="term-line" style="--li:${index}">${body}</span>`;
-}).join("");
-
-/* 배경 장식 조각들. 전부 aria-hidden 컨테이너 안 장식이라 읽히지 않고,
-   글자를 담지 않으므로 본문 글자 크기 규칙과도 무관하다. */
-
-const heroSparkle = (extra) => `<svg class="hero-sparkle ${extra}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1c1.1 6.2 3.7 8.8 11 11-7.3 2.2-9.9 4.8-11 11-1.1-6.2-3.7-8.8-11-11 7.3-2.2 9.9-4.8 11-11Z"/></svg>`;
+const renderHeroBand = () => {
+  const items = data.capabilities.map((cap) => `<span class="mq-item">${heroTinyStar}${escapeHtml(cap)}</span>`).join("");
+  return `
+      <div class="hero-band" data-reveal aria-hidden="true">
+        <div class="mq-track"><span class="mq-set">${items}</span><span class="mq-set">${items}</span></div>
+      </div>`;
+};
 
 const renderHero = () => `
-  <section class="hero" data-impact-hero data-motion-scope>
-    <div class="hero-backdrop" aria-hidden="true">
-      <i class="hero-grid"></i>
-      <i class="hero-beam"></i>
-      <i class="hero-blob hero-blob-1"></i>
-      <i class="hero-blob hero-blob-2"></i>
-      <i class="hero-blob hero-blob-3"></i>
-      <i class="hero-orbit hero-orbit-1"></i>
-      <i class="hero-orbit hero-orbit-2"></i>
-      ${heroSparkle("hs-1")}${heroSparkle("hs-2")}${heroSparkle("hs-3")}${heroSparkle("hs-4")}
-      <span class="hero-mote hm-1"><i></i></span>
-      <span class="hero-mote hm-2"><i></i></span>
-      <span class="hero-mote hm-3"><i></i></span>
-      <span class="hero-mote hm-4"><i></i></span>
-    </div>
-    <div class="hero-inner shell">
-      <div class="hero-copy">
-        <p class="hero-eyebrow" data-reveal><span class="pulse-dot" aria-hidden="true"></span>${escapeHtml(data.brand.expansion)}</p>
-        <h1 data-reveal data-split>필요한 건 <span class="hero-rotator"><b class="rotator-word" data-rotator data-rotator-words="${escapeHtml(JSON.stringify(rotatorWords))}">${escapeHtml(rotatorWords[0])}</b><svg class="rotator-squiggle" viewBox="0 0 120 10" preserveAspectRatio="none" aria-hidden="true"><path d="M3 6.5Q14 2.5 27 6T51 6T75 6T99 6T117 5.5"/></svg><svg class="rotator-pop" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1c1.1 6.2 3.7 8.8 11 11-7.3 2.2-9.9 4.8-11 11-1.1-6.2-3.7-8.8-11-11 7.3-2.2 9.9-4.8 11-11Z"/></svg></span><br>만드는 건 SWAG</h1>
-        <p class="hero-lead" data-reveal>상담한 두 사람이 기획 · 디자인 · 개발 · 검수 · 배포를 끝까지 맡는 ${escapeHtml(data.brand.description)}입니다.</p>
-        <div class="hero-actions" data-reveal>
-          <a class="btn btn-primary magnetic" href="contact/">${escapeHtml(data.brand.primaryCta)} <span aria-hidden="true">→</span></a>
-          <a class="btn btn-glass magnetic" href="work/">${escapeHtml(data.brand.secondaryCta)}</a>
-        </div>
-        <ul class="hero-trust" data-reveal>
-          <li>같은 담당자가 끝까지</li>
-          <li>재하청 없는 직접 개발</li>
-          <li>카카오 오픈채팅 상담</li>
-        </ul>
+  <section class="hero" data-motion-scope>
+    <div class="hero-core shell">
+      <p class="hero-eyebrow" data-reveal>${escapeHtml(data.brand.expansion)}</p>
+      <h1 data-reveal data-split>필요한 건 <span class="hero-rotator"><b class="rotator-word" data-rotator data-rotator-words="${escapeHtml(JSON.stringify(rotatorWords))}">${escapeHtml(rotatorWords[0])}</b><svg class="rotator-squiggle" viewBox="0 0 120 10" preserveAspectRatio="none" aria-hidden="true"><path d="M3 5.5H117"/></svg><svg class="rotator-pop" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1c1.1 6.2 3.7 8.8 11 11-7.3 2.2-9.9 4.8-11 11-1.1-6.2-3.7-8.8-11-11 7.3-2.2 9.9-4.8 11-11Z"/></svg></span><br>만드는 건 <em class="h1-brand">SWAG</em></h1>
+      <p class="hero-lead" data-reveal>상담한 두 사람이 기획 · 디자인 · 개발 · 검수 · 배포를 끝까지 맡는 ${escapeHtml(data.brand.description)}입니다.</p>
+      <div class="hero-search" data-reveal>
+        <a class="hs-field" href="contact/">
+          <svg class="hs-loupe" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M16.2 16.2 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="hs-ph hs-ph-full">${escapeHtml(data.contact.responseNote)}</span>
+          <span class="hs-ph hs-ph-short">제작 종류 · 필요한 기능</span>
+          <i class="hs-caret" aria-hidden="true"></i>
+        </a>
+        <a class="btn btn-primary hs-btn magnetic" href="contact/">${escapeHtml(data.brand.primaryCta)}</a>
       </div>
-      <div class="hero-visual" data-hero-photo data-reveal="zoom" aria-hidden="true">
-        <div class="code-window">
-          <div class="code-bar"><i class="cw-dot cw-r"></i><i class="cw-dot cw-y"></i><i class="cw-dot cw-g"></i><span class="code-tab is-on">ship.ts</span><span class="code-tab">deploy.yml</span></div>
-          <pre class="code-body" data-typer>${renderCodeBody()}<span class="code-caret"></span></pre>
-        </div>
-        <div class="term-window">
-          <div class="term-bar"><span>TERMINAL</span><i class="term-live"></i></div>
-          <div class="term-body">${renderTerminal()}</div>
-        </div>
-        <div class="hero-chip hero-chip-1"><b>✓</b> 배포 완료</div>
-        <div class="hero-chip hero-chip-2"><i class="chip-ring"></i> 검수 중</div>
-      </div>
+      <ul class="hero-trust" data-reveal>
+        <li>같은 담당자가 끝까지</li>
+        <li>재하청 없는 직접 개발</li>
+        <li>카카오 오픈채팅 상담</li>
+      </ul>
+      <nav class="hero-cats" data-reveal aria-label="제작 분야">${renderHeroCats()}
+      </nav>${renderHeroBand()}
     </div>
-    <svg class="hero-hem" viewBox="0 0 1440 64" preserveAspectRatio="none" aria-hidden="true"><path class="hem-back" d="M0 36C180 12 380 52 640 34C900 16 1160 50 1440 24L1440 64L0 64Z"/><path class="hem-front" d="M0 46C220 24 460 60 760 42C1020 27 1240 56 1440 38L1440 64L0 64Z"/></svg>
-    <a class="scroll-cue" href="./#stats"><span>SCROLL</span><i aria-hidden="true"></i></a>
   </section>`;
 
 /* ------------------------------------------------------------ home stats */
